@@ -15,8 +15,16 @@
         </div>
         <div class="controls-container">
             <div class="date-selector">
-                <input type="date" id="startDate">
-                <input type="date" id="endDate">
+                <div class="time-input-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate">
+                    <input type="time" id="startTime">
+                </div>
+                <div class="time-input-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate">
+                    <input type="time" id="endTime">
+                </div>
             </div>
             <div class="sensor-buttons">
                 <button class="sensor-btn active" data-sensor="sensor1">Sensor 1</button>

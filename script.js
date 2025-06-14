@@ -30,7 +30,7 @@ function initChart(data) {
             label: `Sensor ${index + 1}`,
             data: data.map(point => ({
                 x: new Date(point.heure),
-                y: point[sensor]
+                y: parseFloat(point[sensor])
             })),
             borderColor: chartColors[index],
             backgroundColor: chartColors[index] + '20',
@@ -53,19 +53,32 @@ function initChart(data) {
                     labels: {
                         color: '#e6f1ff'
                     }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}°C`;
+                        }
+                    }
                 }
             },
             scales: {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'hour'
+                        unit: 'hour',
+                        displayFormats: {
+                            hour: 'MMM d, HH:mm'
+                        },
+                        tooltipFormat: 'MMM d, HH:mm'
                     },
                     grid: {
                         color: '#112240'
                     },
                     ticks: {
-                        color: '#e6f1ff'
+                        color: '#e6f1ff',
+                        maxRotation: 45,
+                        minRotation: 45
                     }
                 },
                 y: {
@@ -73,7 +86,10 @@ function initChart(data) {
                         color: '#112240'
                     },
                     ticks: {
-                        color: '#e6f1ff'
+                        color: '#e6f1ff',
+                        callback: function(value) {
+                            return value + '°C';
+                        }
                     }
                 }
             }
@@ -81,13 +97,12 @@ function initChart(data) {
     });
 }
 
-// Update chart based on date range
-function updateChartDateRange(startDate, endDate) {
+// Update chart based on date and time range
+function updateChartDateRange(startDate, startTime, endDate, endTime) {
     if (!temperatureChart) return;
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999);
+    const start = new Date(`${startDate}T${startTime}`);
+    const end = new Date(`${endDate}T${endTime}`);
 
     temperatureChart.options.scales.x.min = start;
     temperatureChart.options.scales.x.max = end;
@@ -103,30 +118,49 @@ function toggleSensor(sensorIndex) {
     temperatureChart.update();
 }
 
+// Set default time range to last 24 hours
+function setDefaultTimeRange() {
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const formatTime = (date) => date.toTimeString().slice(0, 5);
+
+    document.getElementById('startDate').value = formatDate(yesterday);
+    document.getElementById('startTime').value = formatTime(yesterday);
+    document.getElementById('endDate').value = formatDate(now);
+    document.getElementById('endTime').value = formatTime(now);
+
+    updateChartDateRange(
+        formatDate(yesterday),
+        formatTime(yesterday),
+        formatDate(now),
+        formatTime(now)
+    );
+}
+
 // Initialize the application
 async function init() {
     const data = await fetchData();
     if (!data) return;
 
     initChart(data);
+    setDefaultTimeRange();
 
-    // Set initial date range
-    const dates = data.map(point => new Date(point.heure));
-    const startDate = new Date(Math.min(...dates));
-    const endDate = new Date(Math.max(...dates));
-
-    document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-    document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-
-    // Add event listeners
-    document.getElementById('startDate').addEventListener('change', (e) => {
-        updateChartDateRange(e.target.value, document.getElementById('endDate').value);
+    // Add event listeners for date and time inputs
+    const dateTimeInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
+    dateTimeInputs.forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+            updateChartDateRange(
+                document.getElementById('startDate').value,
+                document.getElementById('startTime').value,
+                document.getElementById('endDate').value,
+                document.getElementById('endTime').value
+            );
+        });
     });
 
-    document.getElementById('endDate').addEventListener('change', (e) => {
-        updateChartDateRange(document.getElementById('startDate').value, e.target.value);
-    });
-
+    // Add event listeners for sensor buttons
     document.querySelectorAll('.sensor-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => {
             btn.classList.toggle('active');
