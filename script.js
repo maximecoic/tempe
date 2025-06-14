@@ -352,6 +352,12 @@ function setDateRangeBySelector(range) {
     const now = new Date();
     let start;
     switch (range) {
+        case '2h':
+            start = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+            break;
+        case '6h':
+            start = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+            break;
         case 'day':
             start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
             break;
