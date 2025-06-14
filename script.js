@@ -3,7 +3,7 @@ let temperatureChart;
 
 // Sensor icon mapping
 const sensorIcons = {
-    'Paris': 'fa-tower-eiffel',
+    'Paris': 'fa-landmark',
     'Bureau': 'fa-desktop',
     'Bureau 1': 'fa-desktop',
     'Bureau 2': 'fa-desktop',
@@ -87,11 +87,15 @@ function createSensorButtons(sensorNames) {
     
     sensorNames.forEach((sensorName, index) => {
         const button = document.createElement('button');
-        button.className = 'sensor-btn active';
+        const hasIcon = sensorIcons[sensorName] || Object.entries(sensorIcons).some(([key]) => 
+            sensorName.toLowerCase().includes(key.toLowerCase())
+        );
+        
+        button.className = `sensor-btn active ${hasIcon ? 'icon-btn' : ''}`;
         button.dataset.sensor = sensorName;
         button.innerHTML = getSensorIcon(sensorName);
-        button.style.borderColor = colors[index];
-        button.style.color = colors[index];
+        button.style.backgroundColor = colors[index];
+        button.style.color = '#ffffff';
         sensorButtonsContainer.appendChild(button);
     });
 }
@@ -129,7 +133,7 @@ function initChart(data) {
         pointHoverRadius: 4,
         pointBorderWidth: 2,
         fill: false,
-        tension: 0.4
+        tension: 0.6 // Increased smoothness
     }));
 
     // Destroy existing chart if it exists
@@ -178,7 +182,7 @@ function initChart(data) {
                 },
                 y: {
                     grid: {
-                        color: '#112240'
+                        color: 'rgba(255, 255, 255, 0.3)' // White grid lines at 30% opacity
                     },
                     ticks: {
                         color: '#e6f1ff',
@@ -286,6 +290,21 @@ async function init() {
     document.querySelectorAll('.sensor-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
             btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            const color = btn.style.backgroundColor;
+            
+            if (isActive) {
+                btn.style.backgroundColor = color;
+                btn.style.color = '#ffffff';
+                btn.style.opacity = '1';
+            } else {
+                // Create a darker version of the color
+                const rgb = color.match(/\d+/g);
+                const darkerColor = `rgb(${Math.floor(rgb[0] * 0.3)}, ${Math.floor(rgb[1] * 0.3)}, ${Math.floor(rgb[2] * 0.3)})`;
+                btn.style.backgroundColor = darkerColor;
+                btn.style.opacity = '0.3';
+            }
+            
             toggleSensor(btn.dataset.sensor);
         });
     });

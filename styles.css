@@ -45,37 +45,28 @@ body {
 
 .date-selector {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
     padding: 1rem;
     background-color: var(--secondary-bg);
     border-radius: 1rem;
+    justify-content: center;
 }
 
 .time-input-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    min-width: 200px;
 }
 
 .time-input-group label {
     font-size: 0.9rem;
     color: var(--text-color);
     opacity: 0.8;
+    text-align: center;
 }
 
-.datetime-inputs {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.datetime-inputs input {
-    flex: 1;
-}
-
-input[type="date"],
-input[type="time"] {
+.time-input-group input {
     background-color: var(--button-bg);
     color: var(--text-color);
     border: none;
@@ -97,9 +88,8 @@ input[type="time"] {
 .sensor-btn {
     background-color: var(--button-bg);
     color: var(--text-color);
-    border: 2px solid;
-    padding: 0.75rem 1.5rem;
-    border-radius: 2rem;
+    border: none;
+    padding: 0.75rem;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1.2rem;
@@ -110,12 +100,17 @@ input[type="time"] {
     height: 3rem;
 }
 
-.sensor-btn:hover {
-    transform: scale(1.05);
+.sensor-btn.icon-btn {
+    border-radius: 50%;
 }
 
-.sensor-btn.active {
-    background-color: var(--button-active);
+.sensor-btn:not(.icon-btn) {
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+}
+
+.sensor-btn:hover {
+    transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
@@ -129,12 +124,6 @@ input[type="time"] {
     }
 
     .date-selector {
-        flex: 1;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-    .time-input-group {
         flex: 1;
     }
 
