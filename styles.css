@@ -45,11 +45,12 @@ body {
 
 .date-selector {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     padding: 1rem;
     background-color: var(--secondary-bg);
     border-radius: 1rem;
     justify-content: center;
+    align-items: center;
 }
 
 .time-input-group {
@@ -59,11 +60,13 @@ body {
     min-width: 200px;
 }
 
-.time-input-group label {
-    font-size: 0.9rem;
+.date-separator {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     color: var(--text-color);
-    opacity: 0.8;
-    text-align: center;
+    opacity: 0.5;
+    font-size: 0.8rem;
 }
 
 .time-input-group input {
@@ -98,6 +101,11 @@ body {
     justify-content: center;
     min-width: 3rem;
     height: 3rem;
+    opacity: 0.3;
+}
+
+.sensor-btn.active {
+    opacity: 1;
 }
 
 .sensor-btn.icon-btn {

@@ -149,15 +149,45 @@ function initChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
             plugins: {
                 legend: {
                     display: false // Hide the legend
                 },
                 tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
                     callbacks: {
                         label: function(context) {
                             return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}°C`;
+                        },
+                        title: function(context) {
+                            const date = new Date(context[0].parsed.x);
+                            return date.toLocaleString('fr-FR', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
                         }
+                    }
+                },
+                crosshair: {
+                    line: {
+                        color: 'rgba(100, 255, 218, 0.4)',
+                        width: 1,
+                        dashPattern: [5, 5]
+                    },
+                    sync: {
+                        enabled: true
+                    },
+                    zoom: {
+                        enabled: false
                     }
                 }
             },
@@ -194,6 +224,52 @@ function initChart(data) {
             }
         }
     });
+
+    // Add touch support
+    const chartContainer = ctx.parentElement;
+    chartContainer.addEventListener('touchstart', handleTouch);
+    chartContainer.addEventListener('touchmove', handleTouch);
+    chartContainer.addEventListener('touchend', handleTouchEnd);
+
+    function handleTouch(e) {
+        const touch = e.touches[0];
+        const rect = ctx.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        const chartArea = temperatureChart.chartArea;
+        const xScale = temperatureChart.scales.x;
+        const xValue = xScale.getValueForPixel(x);
+        
+        // Find the closest data point
+        let closestPoint = null;
+        let minDistance = Infinity;
+        
+        temperatureChart.data.datasets.forEach(dataset => {
+            if (!dataset.hidden) {
+                dataset.data.forEach(point => {
+                    const distance = Math.abs(point.x - xValue);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestPoint = point;
+                    }
+                });
+            }
+        });
+        
+        if (closestPoint) {
+            temperatureChart.setActiveElements([{
+                datasetIndex: 0,
+                index: temperatureChart.data.datasets[0].data.findIndex(p => p.x === closestPoint.x)
+            }]);
+            temperatureChart.update();
+        }
+    }
+
+    function handleTouchEnd() {
+        temperatureChart.setActiveElements([]);
+        temperatureChart.update();
+    }
 }
 
 // Update chart based on date and time range
@@ -290,21 +366,6 @@ async function init() {
     document.querySelectorAll('.sensor-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
             btn.classList.toggle('active');
-            const isActive = btn.classList.contains('active');
-            const color = btn.style.backgroundColor;
-            
-            if (isActive) {
-                btn.style.backgroundColor = color;
-                btn.style.color = '#ffffff';
-                btn.style.opacity = '1';
-            } else {
-                // Create a darker version of the color
-                const rgb = color.match(/\d+/g);
-                const darkerColor = `rgb(${Math.floor(rgb[0] * 0.3)}, ${Math.floor(rgb[1] * 0.3)}, ${Math.floor(rgb[2] * 0.3)})`;
-                btn.style.backgroundColor = darkerColor;
-                btn.style.opacity = '0.3';
-            }
-            
             toggleSensor(btn.dataset.sensor);
         });
     });
