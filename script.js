@@ -222,7 +222,8 @@ function initChart(data) {
                     }
                 }
             }
-        }
+        },
+        plugins: [verticalLinePlugin]
     });
 
     // Add touch support
@@ -335,6 +336,68 @@ function setDefaultTimeRange() {
     );
 }
 
+// --- Range Selector Logic ---
+function setRangeSelectorHandlers() {
+    const rangeButtons = document.querySelectorAll('.range-btn');
+    rangeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            rangeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            setDateRangeBySelector(btn.dataset.range);
+        });
+    });
+}
+
+function setDateRangeBySelector(range) {
+    const now = new Date();
+    let start;
+    switch (range) {
+        case 'day':
+            start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            break;
+        case 'week':
+            start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+        case 'month':
+            start = new Date(now);
+            start.setMonth(start.getMonth() - 1);
+            break;
+        case 'year':
+            start = new Date(now);
+            start.setFullYear(start.getFullYear() - 1);
+            break;
+        default:
+            start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    }
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const formatTime = (date) => date.toTimeString().slice(0, 5);
+    document.getElementById('startDate').value = formatDate(start);
+    document.getElementById('startTime').value = formatTime(start);
+    document.getElementById('endDate').value = formatDate(now);
+    document.getElementById('endTime').value = formatTime(now);
+    updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
+}
+
+// --- Custom Chart.js Plugin for Vertical Hover Line ---
+const verticalLinePlugin = {
+    id: 'verticalLine',
+    afterDraw: function(chart) {
+        if (chart.tooltip?._active && chart.tooltip._active.length) {
+            const ctx = chart.ctx;
+            ctx.save();
+            const activePoint = chart.tooltip._active[0];
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(activePoint.element.x, chart.chartArea.top);
+            ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(100,255,218,0.4)';
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+};
+
 // Initialize the application
 async function init() {
     const data = await fetchData();
@@ -345,6 +408,7 @@ async function init() {
 
     initChart(data);
     setDefaultTimeRange();
+    setRangeSelectorHandlers();
 
     // Add event listeners for date and time inputs
     const dateTimeInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
