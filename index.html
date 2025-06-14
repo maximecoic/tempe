@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
@@ -16,14 +17,18 @@
         <div class="controls-container">
             <div class="date-selector">
                 <div class="time-input-group">
-                    <label for="startDate">Start Date</label>
-                    <input type="date" id="startDate">
-                    <input type="time" id="startTime">
+                    <label for="startDate">Start</label>
+                    <div class="datetime-inputs">
+                        <input type="date" id="startDate">
+                        <input type="time" id="startTime">
+                    </div>
                 </div>
                 <div class="time-input-group">
-                    <label for="endDate">End Date</label>
-                    <input type="date" id="endDate">
-                    <input type="time" id="endTime">
+                    <label for="endDate">End</label>
+                    <div class="datetime-inputs">
+                        <input type="date" id="endDate">
+                        <input type="time" id="endTime">
+                    </div>
                 </div>
             </div>
             <div class="sensor-buttons">

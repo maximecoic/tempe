@@ -1,5 +1,16 @@
 // Chart configuration
 let temperatureChart;
+
+// Sensor icon mapping
+const sensorIcons = {
+    'Paris': 'fa-tower-eiffel',
+    'Bureau': 'fa-desktop',
+    'Bureau 1': 'fa-desktop',
+    'Bureau 2': 'fa-desktop',
+    'Chambre': 'fa-bed',
+    'SdB': 'fa-shower'
+};
+
 // Generate colors dynamically based on number of sensors
 function generateColors(count) {
     const baseColors = [
@@ -25,6 +36,24 @@ function generateColors(count) {
     }
     
     return baseColors.slice(0, count);
+}
+
+// Get icon for sensor
+function getSensorIcon(sensorName) {
+    // Check for exact match
+    if (sensorIcons[sensorName]) {
+        return `<i class="fas ${sensorIcons[sensorName]}"></i>`;
+    }
+    
+    // Check for partial matches
+    for (const [key, icon] of Object.entries(sensorIcons)) {
+        if (sensorName.toLowerCase().includes(key.toLowerCase())) {
+            return `<i class="fas ${icon}"></i>`;
+        }
+    }
+    
+    // If no match found, return the sensor name
+    return sensorName;
 }
 
 // Fetch and process data
@@ -60,8 +89,9 @@ function createSensorButtons(sensorNames) {
         const button = document.createElement('button');
         button.className = 'sensor-btn active';
         button.dataset.sensor = sensorName;
-        button.textContent = sensorName;
+        button.innerHTML = getSensorIcon(sensorName);
         button.style.borderColor = colors[index];
+        button.style.color = colors[index];
         sensorButtonsContainer.appendChild(button);
     });
 }
@@ -93,8 +123,11 @@ function initChart(data) {
             y: parseFloat(point[sensor])
         })).filter(point => !isNaN(point.y)), // Filter out invalid temperature values
         borderColor: colors[index],
-        backgroundColor: colors[index] + '20',
+        backgroundColor: colors[index],
         borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        pointBorderWidth: 2,
         fill: false,
         tension: 0.4
     }));
@@ -114,10 +147,7 @@ function initChart(data) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top',
-                    labels: {
-                        color: '#e6f1ff'
-                    }
+                    display: false // Hide the legend
                 },
                 tooltip: {
                     callbacks: {

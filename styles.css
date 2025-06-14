@@ -64,13 +64,14 @@ body {
     opacity: 0.8;
 }
 
-.time-input-group input {
-    background-color: var(--button-bg);
-    color: var(--text-color);
-    border: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
+.datetime-inputs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.datetime-inputs input {
+    flex: 1;
 }
 
 input[type="date"],
@@ -96,16 +97,21 @@ input[type="time"] {
 .sensor-btn {
     background-color: var(--button-bg);
     color: var(--text-color);
-    border: none;
+    border: 2px solid;
     padding: 0.75rem 1.5rem;
     border-radius: 2rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3rem;
+    height: 3rem;
 }
 
 .sensor-btn:hover {
-    background-color: var(--button-active);
+    transform: scale(1.05);
 }
 
 .sensor-btn.active {
