@@ -45,19 +45,19 @@ body {
 
 .date-selector {
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background-color: var(--secondary-bg);
-    border-radius: 1rem;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1.2rem;
 }
 
 .time-input-group {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
-    min-width: 200px;
 }
 
 .date-separator {
@@ -69,13 +69,16 @@ body {
     font-size: 0.8rem;
 }
 
-.time-input-group input {
-    background-color: var(--button-bg);
-    color: var(--text-color);
-    border: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
+.date-selector input[type="date"] {
+    width: 8.5em;
+    font-size: 1em;
+    letter-spacing: 0.01em;
+}
+
+.date-selector input[type="time"] {
+    width: 6em;
+    font-size: 1em;
+    letter-spacing: 0.01em;
 }
 
 .sensor-buttons {
@@ -153,13 +156,13 @@ body {
 
 .range-selector {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    gap: 0;
     margin-bottom: 0;
     margin-top: 0;
-    width: auto;
-    max-width: 100%;
     position: static;
     padding: 0;
 }
@@ -181,6 +184,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin: 0 0.1rem;
 }
 
 .range-btn.active {
@@ -195,37 +199,31 @@ body {
     opacity: 1;
 }
 
-.date-selector input[type="date"] {
-    width: 8.5em;
-    font-size: 1em;
-    letter-spacing: 0.01em;
+.range-separator {
+    color: #bfc9e0;
+    opacity: 0.5;
+    font-size: 1.2em;
+    margin: 0 0.1em;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    height: 1.5em;
 }
 
-.date-selector input[type="time"] {
-    width: 6em;
-    font-size: 1em;
-    letter-spacing: 0.01em;
-}
-
-@media (max-width: 500px) {
-    .box {
-        padding: 0.5rem 0.5rem;
+@media (max-width: 600px) {
+    .date-selector {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
     }
-    .range-selector {
-        gap: 0.2rem;
+    .time-input-group {
+        width: 100%;
+        align-items: center;
     }
-    .range-btn {
-        font-size: 0.95rem;
-        padding: 0.2rem 0.6rem;
-        min-width: 1.7rem;
-        max-width: 2.2rem;
-    }
-    .date-selector input[type="date"] {
-        width: 7.5em;
-        font-size: 0.95em;
-    }
+    .date-selector input[type="date"],
     .date-selector input[type="time"] {
-        width: 5.2em;
-        font-size: 0.95em;
+        width: 100%;
+        min-width: 0;
+        font-size: 1em;
     }
 } 
