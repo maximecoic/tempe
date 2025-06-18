@@ -59,7 +59,7 @@ function getSensorIcon(sensorName) {
 // Fetch and process data
 async function fetchData() {
     try {
-        const response = await fetch('https://script.googleusercontent.com/a/macros/coic.lv/echo?user_content_key=AehSKLhVArv2211ihNs2RzYk5MRK9VFCBok5rqo2X5345sVnwueUcXPlzopvHofOgrKYzwa9sBlD2g_KW7PvDr8ZTUx_F53ferK5k4xlWCe-5repjrg5yrnM5AF8x-ApiARu0djDF6KI7pBq8HcTGwTiRczluZtmBlVLg1RIiBDItawk7CEwJep5WJ7-QeGZuPVSH9Frf0QrqWN0AB6qrj4sjYKY2UMqoeVfjBA--JxJzE_tOuu0GX-_mxFDEIhnQAyqfY1f65CRHcLFIWfCPQSNV3H5qpJTp1OfpmGn-H6j9U-TgEdlU84&lib=MjE54VOUTJvBBczSHKNrag3eLxmpFSsFs');
+        const response = await fetch('https://raw.githubusercontent.com/maximecoic/tempe/main/data.json');
         const data = await response.json();
         
         if (!Array.isArray(data) || data.length === 0) {
