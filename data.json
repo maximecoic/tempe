@@ -1,10 +1,1906 @@
-<HTML>
-<HEAD>
-<TITLE>Moved Temporarily</TITLE>
-</HEAD>
-<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
-<!-- GSE Default Error -->
-<H1>Moved Temporarily</H1>
-The document has moved <A HREF="https://script.google.com/a/macros/coic.lv/s/AKfycbwfn2EFdSvjFqL0uq_ZoWbQHGs1xFJa3ekR_qrsum6IOu4OgBjVIOiEec87CGFsKEFS/exec">here</A>.
-</BODY>
-</HTML>
+[
+  {
+    "Heure": "2025-06-13T12:47:46.000Z",
+    "Paris": 32.1,
+    "Bureau 1": 26.7,
+    "Bureau 2": 27.7,
+    "Chambre": 26.7,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-13T13:45:56.000Z",
+    "Paris": 32.1,
+    "Bureau 1": 27,
+    "Bureau 2": 28,
+    "Chambre": 26.9,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T13:52:21.000Z",
+    "Paris": 32.1,
+    "Bureau 1": 27.3,
+    "Bureau 2": 28.1,
+    "Chambre": 26.9,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T13:58:21.000Z",
+    "Paris": 32.4,
+    "Bureau 1": 27.4,
+    "Bureau 2": 28.1,
+    "Chambre": 26.9,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T14:28:19.000Z",
+    "Paris": 32.1,
+    "Bureau 1": 27.6,
+    "Bureau 2": 28.6,
+    "Chambre": 26.9,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T14:58:20.000Z",
+    "Paris": 32.5,
+    "Bureau 1": 27.9,
+    "Bureau 2": 28.9,
+    "Chambre": 27,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T15:28:20.000Z",
+    "Paris": 32.9,
+    "Bureau 1": 28.1,
+    "Bureau 2": 29.1,
+    "Chambre": 27.1,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T15:58:19.000Z",
+    "Paris": 33,
+    "Bureau 1": 28.1,
+    "Bureau 2": 29.4,
+    "Chambre": 27.2,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T16:28:18.000Z",
+    "Paris": 33.2,
+    "Bureau 1": 28.4,
+    "Bureau 2": 29.7,
+    "Chambre": 27.3,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-13T16:58:19.000Z",
+    "Paris": 33.3,
+    "Bureau 1": 28.9,
+    "Bureau 2": 29.9,
+    "Chambre": 25.9,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T17:28:20.000Z",
+    "Paris": 33.2,
+    "Bureau 1": 29.4,
+    "Bureau 2": 30.2,
+    "Chambre": 23.9,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T17:58:19.000Z",
+    "Paris": 32.7,
+    "Bureau 1": 29.2,
+    "Bureau 2": 30,
+    "Chambre": 22.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T18:28:18.000Z",
+    "Paris": 32.4,
+    "Bureau 1": 29,
+    "Bureau 2": 29.7,
+    "Chambre": 22,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T18:58:21.000Z",
+    "Paris": 32.1,
+    "Bureau 1": 28.5,
+    "Bureau 2": 29.3,
+    "Chambre": 21.3,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T19:28:19.000Z",
+    "Paris": 31.8,
+    "Bureau 1": 28.3,
+    "Bureau 2": 29,
+    "Chambre": 21.2,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T19:58:19.000Z",
+    "Paris": 31.4,
+    "Bureau 1": 28.2,
+    "Bureau 2": 28.9,
+    "Chambre": 21.2,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-13T20:28:18.000Z",
+    "Paris": 31.2,
+    "Bureau 1": 28,
+    "Bureau 2": 28.8,
+    "Chambre": 21.1,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-13T20:58:18.000Z",
+    "Paris": 24.7,
+    "Bureau 1": 26.7,
+    "Bureau 2": 28,
+    "Chambre": 20.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-13T21:28:19.000Z",
+    "Paris": 24.1,
+    "Bureau 1": 26.1,
+    "Bureau 2": 27.7,
+    "Chambre": 20.1,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-13T21:58:19.000Z",
+    "Paris": 22,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.6,
+    "Chambre": 19.7,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-13T22:28:19.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 26.4,
+    "Bureau 2": 27.5,
+    "Chambre": 20.1,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-13T22:58:19.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.7,
+    "Chambre": 20.5,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-13T23:28:18.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.7,
+    "Chambre": 20.7,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-13T23:58:20.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 26.7,
+    "Bureau 2": 27.7,
+    "Chambre": 21.4,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-14T00:28:19.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 26.7,
+    "Bureau 2": 27.6,
+    "Chambre": 23,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-14T00:58:19.000Z",
+    "Paris": 21.9,
+    "Bureau 1": 26.7,
+    "Bureau 2": 27.7,
+    "Chambre": 24,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-14T01:28:21.000Z",
+    "Paris": 22.3,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.7,
+    "Chambre": 24.1,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-14T01:58:21.000Z",
+    "Paris": 22.6,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.7,
+    "Chambre": 24.5,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-14T02:28:20.000Z",
+    "Paris": 22.1,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 24.7,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T02:58:19.000Z",
+    "Paris": 22.3,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 24.9,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T03:28:20.000Z",
+    "Paris": 22.2,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 25.1,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T03:58:23.000Z",
+    "Paris": 22.1,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 25.3,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T04:28:20.000Z",
+    "Paris": 22.2,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 25.4,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T04:58:21.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 25.5,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T05:28:20.000Z",
+    "Paris": 22.8,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 25.2,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T05:58:21.000Z",
+    "Paris": 22.8,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.5,
+    "Chambre": 23.1,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T06:28:20.000Z",
+    "Paris": 22.9,
+    "Bureau 1": 26.3,
+    "Bureau 2": 27.4,
+    "Chambre": 21.6,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T06:58:20.000Z",
+    "Paris": 23.3,
+    "Bureau 1": 26.4,
+    "Bureau 2": 27.3,
+    "Chambre": 21.1,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T07:28:20.000Z",
+    "Paris": 23.6,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.1,
+    "Chambre": 21.3,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T07:58:19.000Z",
+    "Paris": 23.3,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.7,
+    "Chambre": 23.8,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T08:28:21.000Z",
+    "Paris": 24.1,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.7,
+    "Chambre": 24.1,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-14T08:58:21.000Z",
+    "Paris": 25.1,
+    "Bureau 1": 25.9,
+    "Bureau 2": 26.8,
+    "Chambre": 24.7,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T09:28:21.000Z",
+    "Paris": 25.4,
+    "Bureau 1": 26.2,
+    "Bureau 2": 26.9,
+    "Chambre": 25.3,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T09:58:21.000Z",
+    "Paris": 26.3,
+    "Bureau 1": 26.4,
+    "Bureau 2": 27.1,
+    "Chambre": 25.7,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T10:28:20.000Z",
+    "Paris": 26.1,
+    "Bureau 1": 26.3,
+    "Bureau 2": 27.3,
+    "Chambre": 26.1,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-14T10:58:21.000Z",
+    "Paris": 26.5,
+    "Bureau 1": 26.4,
+    "Bureau 2": 27.4,
+    "Chambre": 26.2,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T11:28:20.000Z",
+    "Paris": 27.1,
+    "Bureau 1": 26.5,
+    "Bureau 2": 27.6,
+    "Chambre": 26.3,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T11:58:20.000Z",
+    "Paris": 27.2,
+    "Bureau 1": 26.7,
+    "Bureau 2": 27.8,
+    "Chambre": 26.5,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T12:28:21.000Z",
+    "Paris": 27.4,
+    "Bureau 1": 26.7,
+    "Bureau 2": 28,
+    "Chambre": 26.6,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T12:58:20.000Z",
+    "Paris": 27.9,
+    "Bureau 1": 26.9,
+    "Bureau 2": 28.1,
+    "Chambre": 26.7,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-14T13:28:20.000Z",
+    "Paris": 27.7,
+    "Bureau 1": 26.9,
+    "Bureau 2": 28.2,
+    "Chambre": 26.9,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T13:58:20.000Z",
+    "Paris": 27.7,
+    "Bureau 1": 26.9,
+    "Bureau 2": 28.6,
+    "Chambre": 27,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T14:28:20.000Z",
+    "Paris": 27.4,
+    "Bureau 1": 27.1,
+    "Bureau 2": 28.5,
+    "Chambre": 27,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-14T14:58:20.000Z",
+    "Paris": 27.8,
+    "Bureau 1": 27.4,
+    "Bureau 2": 28.9,
+    "Chambre": 27,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-14T15:28:19.000Z",
+    "Paris": 27.6,
+    "Bureau 1": 28,
+    "Bureau 2": 29.3,
+    "Chambre": 27.2,
+    "SdB": 26.6
+  },
+  {
+    "Heure": "2025-06-14T15:58:22.000Z",
+    "Paris": 27.8,
+    "Bureau 1": 28.5,
+    "Bureau 2": 29.6,
+    "Chambre": 27.4,
+    "SdB": 26.8
+  },
+  {
+    "Heure": "2025-06-14T16:28:20.000Z",
+    "Paris": 26.6,
+    "Bureau 1": 28.5,
+    "Bureau 2": 29.7,
+    "Chambre": 27.4,
+    "SdB": 26.8
+  },
+  {
+    "Heure": "2025-06-14T16:58:21.000Z",
+    "Paris": 26.6,
+    "Bureau 1": 28.6,
+    "Bureau 2": 30,
+    "Chambre": 27.3,
+    "SdB": 26.9
+  },
+  {
+    "Heure": "2025-06-14T17:28:21.000Z",
+    "Paris": 26.1,
+    "Bureau 1": 28.4,
+    "Bureau 2": 29.8,
+    "Chambre": 27.3,
+    "SdB": 26.8
+  },
+  {
+    "Heure": "2025-06-14T17:58:20.000Z",
+    "Paris": 25.1,
+    "Bureau 1": 27.7,
+    "Bureau 2": 29,
+    "Chambre": 27.1,
+    "SdB": 26.8
+  },
+  {
+    "Heure": "2025-06-14T18:28:21.000Z",
+    "Paris": 24.2,
+    "Bureau 1": 27.3,
+    "Bureau 2": 28.2,
+    "Chambre": 26.7,
+    "SdB": 26.8
+  },
+  {
+    "Heure": "2025-06-14T18:58:18.000Z",
+    "Paris": 23.7,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.3,
+    "Chambre": 26.3,
+    "SdB": 26.7
+  },
+  {
+    "Heure": "2025-06-14T19:28:18.000Z",
+    "Paris": 23.4,
+    "Bureau 1": 25.6,
+    "Bureau 2": 26.9,
+    "Chambre": 25.9,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-14T19:52:01.000Z",
+    "Paris": 23.2,
+    "Bureau 1": 25.6,
+    "Bureau 2": 26.7,
+    "Chambre": 25.7,
+    "SdB": 26.5
+  },
+  {
+    "Heure": "2025-06-14T19:58:15.000Z",
+    "Paris": 23.2,
+    "Bureau 1": 25.5,
+    "Bureau 2": 26.6,
+    "Chambre": 25.7,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T20:05:56.000Z",
+    "Paris": 23.2,
+    "Bureau 1": 25.5,
+    "Bureau 2": 26.4,
+    "Chambre": 25.7,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T20:28:16.000Z",
+    "Paris": 22.7,
+    "Bureau 1": 25.4,
+    "Bureau 2": 26,
+    "Chambre": 25.6,
+    "SdB": 26.4
+  },
+  {
+    "Heure": "2025-06-14T20:58:16.000Z",
+    "Paris": 22.7,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.6,
+    "Chambre": 25.4,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T21:28:16.000Z",
+    "Paris": 22.6,
+    "Bureau 1": 24.9,
+    "Bureau 2": 25.3,
+    "Chambre": 24.8,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T21:58:16.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.8,
+    "Bureau 2": 25.4,
+    "Chambre": 24.4,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-14T22:28:15.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 25,
+    "Bureau 2": 25.4,
+    "Chambre": 24.6,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T22:58:15.000Z",
+    "Paris": 20.4,
+    "Bureau 1": 24.8,
+    "Bureau 2": 25.2,
+    "Chambre": 24.7,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T23:28:15.000Z",
+    "Paris": 19.9,
+    "Bureau 1": 24.7,
+    "Bureau 2": 25,
+    "Chambre": 24.8,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-14T23:58:15.000Z",
+    "Paris": 19.6,
+    "Bureau 1": 25,
+    "Bureau 2": 24.9,
+    "Chambre": 24.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-15T00:28:16.000Z",
+    "Paris": 19.4,
+    "Bureau 1": 24.7,
+    "Bureau 2": 24.5,
+    "Chambre": 24,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-15T00:58:16.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 24.4,
+    "Bureau 2": 24.3,
+    "Chambre": 23.6,
+    "SdB": 26.3
+  },
+  {
+    "Heure": "2025-06-15T01:28:17.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 24.4,
+    "Bureau 2": 24.4,
+    "Chambre": 23.7,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-15T01:58:17.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 24,
+    "Bureau 2": 23.8,
+    "Chambre": 23.2,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-15T02:28:17.000Z",
+    "Paris": 19.1,
+    "Bureau 1": 23.8,
+    "Bureau 2": 23.5,
+    "Chambre": 22.7,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-15T02:58:16.000Z",
+    "Paris": 18.9,
+    "Bureau 1": 23.5,
+    "Bureau 2": 23.3,
+    "Chambre": 21.9,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-15T03:28:16.000Z",
+    "Paris": 18.6,
+    "Bureau 1": 23.6,
+    "Bureau 2": 23.3,
+    "Chambre": 21.7,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-15T03:58:17.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 23,
+    "Bureau 2": 22.8,
+    "Chambre": 21.5,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T04:28:17.000Z",
+    "Paris": 18.1,
+    "Bureau 1": 22.9,
+    "Bureau 2": 22.6,
+    "Chambre": 21.3,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-15T04:58:16.000Z",
+    "Paris": 17.9,
+    "Bureau 1": 23,
+    "Bureau 2": 22.4,
+    "Chambre": 21.3,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T05:28:16.000Z",
+    "Paris": 18,
+    "Bureau 1": 23,
+    "Bureau 2": 22.8,
+    "Chambre": 22,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T05:58:17.000Z",
+    "Paris": 18.1,
+    "Bureau 1": 23.2,
+    "Bureau 2": 23.2,
+    "Chambre": 22.4,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-15T06:28:16.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 23.5,
+    "Bureau 2": 23.5,
+    "Chambre": 22.7,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-15T06:58:17.000Z",
+    "Paris": 18.1,
+    "Bureau 1": 23.6,
+    "Bureau 2": 23.5,
+    "Chambre": 22.8,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-15T07:28:16.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 23.7,
+    "Bureau 2": 23.4,
+    "Chambre": 22.8,
+    "SdB": 25
+  },
+  {
+    "Heure": "2025-06-15T07:58:17.000Z",
+    "Paris": 18,
+    "Bureau 1": 23.7,
+    "Bureau 2": 23.5,
+    "Chambre": 23.4,
+    "SdB": 25
+  },
+  {
+    "Heure": "2025-06-15T08:28:16.000Z",
+    "Paris": 18.1,
+    "Bureau 1": 23.8,
+    "Bureau 2": 23.6,
+    "Chambre": 23.9,
+    "SdB": 24.9
+  },
+  {
+    "Heure": "2025-06-15T08:58:17.000Z",
+    "Paris": 17.8,
+    "Bureau 1": 23.7,
+    "Bureau 2": 23.3,
+    "Chambre": 23.9,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-15T09:28:19.000Z",
+    "Paris": 17.7,
+    "Bureau 1": 23.4,
+    "Bureau 2": 23.1,
+    "Chambre": 24,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T09:44:55.000Z",
+    "Paris": 17.8,
+    "Bureau 1": 23.5,
+    "Bureau 2": 23.3,
+    "Chambre": 24,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T09:58:17.000Z",
+    "Paris": 17.8,
+    "Bureau 1": 23.5,
+    "Bureau 2": 23.4,
+    "Chambre": 24.1,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T10:28:17.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 23.7,
+    "Bureau 2": 23.4,
+    "Chambre": 24,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-15T10:58:17.000Z",
+    "Paris": 17.7,
+    "Bureau 1": 23.9,
+    "Bureau 2": 23.6,
+    "Chambre": 23.8,
+    "SdB": 25
+  },
+  {
+    "Heure": "2025-06-15T11:28:17.000Z",
+    "Paris": 18.1,
+    "Bureau 1": 24,
+    "Bureau 2": 23.6,
+    "Chambre": 23.8,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-15T11:58:16.000Z",
+    "Paris": 18.9,
+    "Bureau 1": 24.5,
+    "Bureau 2": 23.9,
+    "Chambre": 23.9,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-15T12:28:16.000Z",
+    "Paris": 19.6,
+    "Bureau 1": 25.2,
+    "Bureau 2": 24.5,
+    "Chambre": 24,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-15T12:58:17.000Z",
+    "Paris": 21,
+    "Bureau 1": 25.1,
+    "Bureau 2": 24.9,
+    "Chambre": 24.1,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-15T13:28:17.000Z",
+    "Paris": 21.5,
+    "Bureau 1": 25,
+    "Bureau 2": 25,
+    "Chambre": 24.2,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-15T13:58:17.000Z",
+    "Paris": 20.9,
+    "Bureau 1": 24.9,
+    "Bureau 2": 25.2,
+    "Chambre": 24.3,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-15T14:28:17.000Z",
+    "Paris": 21.8,
+    "Bureau 1": 25.1,
+    "Bureau 2": 25.3,
+    "Chambre": 24.3,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T14:58:16.000Z",
+    "Paris": 21.8,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.7,
+    "Chambre": 24.4,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T15:28:18.000Z",
+    "Paris": 22.4,
+    "Bureau 1": 25.3,
+    "Bureau 2": 25.8,
+    "Chambre": 24.6,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T15:58:17.000Z",
+    "Paris": 22.7,
+    "Bureau 1": 25.4,
+    "Bureau 2": 25.9,
+    "Chambre": 24.7,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-15T16:28:17.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 25.5,
+    "Bureau 2": 26.2,
+    "Chambre": 24.7,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-15T16:58:17.000Z",
+    "Paris": 22.7,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.6,
+    "Chambre": 24.8,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-15T17:28:17.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 26.1,
+    "Bureau 2": 27.2,
+    "Chambre": 24.9,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T17:58:18.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.3,
+    "Chambre": 24.9,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-15T18:28:18.000Z",
+    "Paris": 22.3,
+    "Bureau 1": 26.3,
+    "Bureau 2": 27.4,
+    "Chambre": 24.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-15T18:58:16.000Z",
+    "Paris": 21.8,
+    "Bureau 1": 25.8,
+    "Bureau 2": 27,
+    "Chambre": 24.8,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-15T19:28:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 25.3,
+    "Bureau 2": 26.1,
+    "Chambre": 24.6,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-15T19:58:16.000Z",
+    "Paris": 20.9,
+    "Bureau 1": 25,
+    "Bureau 2": 25.4,
+    "Chambre": 24.5,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-15T20:28:16.000Z",
+    "Paris": 20.4,
+    "Bureau 1": 24.9,
+    "Bureau 2": 25,
+    "Chambre": 24.4,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-15T20:58:16.000Z",
+    "Paris": 19.8,
+    "Bureau 1": 24.7,
+    "Bureau 2": 24,
+    "Chambre": 23.9,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T21:28:17.000Z",
+    "Paris": 19.5,
+    "Bureau 1": 24.4,
+    "Bureau 2": 23.8,
+    "Chambre": 23.2,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-15T21:58:16.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 23.8,
+    "Bureau 2": 23.2,
+    "Chambre": 22.7,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-15T22:28:16.000Z",
+    "Paris": 18.7,
+    "Bureau 1": 23.8,
+    "Bureau 2": 23.2,
+    "Chambre": 22.5,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-15T22:58:16.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 23.7,
+    "Bureau 2": 23.3,
+    "Chambre": 22.4,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-15T23:28:16.000Z",
+    "Paris": 17.9,
+    "Bureau 1": 23.6,
+    "Bureau 2": 23,
+    "Chambre": 22.2,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-15T23:58:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.8,
+    "Bureau 2": 22.5,
+    "Chambre": 21.4,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-16T00:28:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.9,
+    "Bureau 2": 22.4,
+    "Chambre": 21.2,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-16T00:58:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.7,
+    "Bureau 2": 22.2,
+    "Chambre": 21.2,
+    "SdB": 24.9
+  },
+  {
+    "Heure": "2025-06-16T01:28:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.5,
+    "Bureau 2": 21.9,
+    "Chambre": 21.2,
+    "SdB": 24.7
+  },
+  {
+    "Heure": "2025-06-16T01:58:17.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.4,
+    "Bureau 2": 21.9,
+    "Chambre": 21.2,
+    "SdB": 24.5
+  },
+  {
+    "Heure": "2025-06-16T02:28:17.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.5,
+    "Bureau 2": 21.8,
+    "Chambre": 21.1,
+    "SdB": 24.4
+  },
+  {
+    "Heure": "2025-06-16T02:58:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 21.8,
+    "Bureau 2": 21.7,
+    "Chambre": 21.1,
+    "SdB": 24.3
+  },
+  {
+    "Heure": "2025-06-16T03:28:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 21.9,
+    "Bureau 2": 21.7,
+    "Chambre": 21.1,
+    "SdB": 24.3
+  },
+  {
+    "Heure": "2025-06-16T03:58:16.000Z",
+    "Paris": 17.6,
+    "Bureau 1": 22.3,
+    "Bureau 2": 21.6,
+    "Chambre": 21,
+    "SdB": 24.1
+  },
+  {
+    "Heure": "2025-06-16T04:28:16.000Z",
+    "Paris": 15.4,
+    "Bureau 1": 22.1,
+    "Bureau 2": 21.6,
+    "Chambre": 21,
+    "SdB": 24
+  },
+  {
+    "Heure": "2025-06-16T04:58:16.000Z",
+    "Paris": 15.3,
+    "Bureau 1": 20.8,
+    "Bureau 2": 21.3,
+    "Chambre": 21.8,
+    "SdB": 23.9
+  },
+  {
+    "Heure": "2025-06-16T05:28:17.000Z",
+    "Paris": 15.2,
+    "Bureau 1": 21.8,
+    "Bureau 2": 21.6,
+    "Chambre": 21.7,
+    "SdB": 24.2
+  },
+  {
+    "Heure": "2025-06-16T05:58:16.000Z",
+    "Paris": 15.4,
+    "Bureau 1": 22.2,
+    "Bureau 2": 21.9,
+    "Chambre": 21.8,
+    "SdB": 24.4
+  },
+  {
+    "Heure": "2025-06-16T06:28:17.000Z",
+    "Paris": 15.8,
+    "Bureau 1": 22.6,
+    "Bureau 2": 22,
+    "Chambre": 22.8,
+    "SdB": 24.2
+  },
+  {
+    "Heure": "2025-06-16T06:58:16.000Z",
+    "Paris": 16.3,
+    "Bureau 1": 22.7,
+    "Bureau 2": 22.1,
+    "Chambre": 23.7,
+    "SdB": 24.2
+  },
+  {
+    "Heure": "2025-06-16T07:28:16.000Z",
+    "Paris": 17,
+    "Bureau 1": 22,
+    "Bureau 2": 21.7,
+    "Chambre": 23.7,
+    "SdB": 24.1
+  },
+  {
+    "Heure": "2025-06-16T07:58:18.000Z",
+    "Paris": 18.2,
+    "Bureau 1": 22.3,
+    "Bureau 2": 21.9,
+    "Chambre": 23.6,
+    "SdB": 24.1
+  },
+  {
+    "Heure": "2025-06-16T08:28:17.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 22.3,
+    "Bureau 2": 22.2,
+    "Chambre": 23.4,
+    "SdB": 24.2
+  },
+  {
+    "Heure": "2025-06-16T08:58:16.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 22.4,
+    "Bureau 2": 22,
+    "Chambre": 23.4,
+    "SdB": 24.1
+  },
+  {
+    "Heure": "2025-06-16T09:28:17.000Z",
+    "Paris": 19.4,
+    "Bureau 1": 22.6,
+    "Bureau 2": 22.3,
+    "Chambre": 23.5,
+    "SdB": 24.1
+  },
+  {
+    "Heure": "2025-06-16T09:58:17.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 22.8,
+    "Bureau 2": 22.7,
+    "Chambre": 23.4,
+    "SdB": 24.2
+  },
+  {
+    "Heure": "2025-06-16T10:28:17.000Z",
+    "Paris": 21.2,
+    "Bureau 1": 23.3,
+    "Bureau 2": 23,
+    "Chambre": 23.1,
+    "SdB": 24.4
+  },
+  {
+    "Heure": "2025-06-16T10:58:17.000Z",
+    "Paris": 22.4,
+    "Bureau 1": 23.8,
+    "Bureau 2": 23.6,
+    "Chambre": 23.6,
+    "SdB": 24.5
+  },
+  {
+    "Heure": "2025-06-16T11:28:18.000Z",
+    "Paris": 21.9,
+    "Bureau 1": 24.2,
+    "Bureau 2": 23.9,
+    "Chambre": 23.7,
+    "SdB": 24.7
+  },
+  {
+    "Heure": "2025-06-16T11:58:18.000Z",
+    "Paris": 22.6,
+    "Bureau 1": 24.4,
+    "Bureau 2": 24.1,
+    "Chambre": 23.8,
+    "SdB": 24.7
+  },
+  {
+    "Heure": "2025-06-16T12:28:18.000Z",
+    "Paris": 22.9,
+    "Bureau 1": 24.6,
+    "Bureau 2": 24.1,
+    "Chambre": 24,
+    "SdB": 24.7
+  },
+  {
+    "Heure": "2025-06-16T12:58:18.000Z",
+    "Paris": 23.6,
+    "Bureau 1": 24.7,
+    "Bureau 2": 24,
+    "Chambre": 24.1,
+    "SdB": 24.8
+  },
+  {
+    "Heure": "2025-06-16T13:28:17.000Z",
+    "Paris": 24,
+    "Bureau 1": 25,
+    "Bureau 2": 24.2,
+    "Chambre": 24,
+    "SdB": 24.9
+  },
+  {
+    "Heure": "2025-06-16T13:58:16.000Z",
+    "Paris": 25.8,
+    "Bureau 1": 25.2,
+    "Bureau 2": 24.5,
+    "Chambre": 24.1,
+    "SdB": 25
+  },
+  {
+    "Heure": "2025-06-16T14:28:17.000Z",
+    "Paris": 25.5,
+    "Bureau 1": 25,
+    "Bureau 2": 25,
+    "Chambre": 24.2,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-16T14:58:17.000Z",
+    "Paris": 25.6,
+    "Bureau 1": 25.1,
+    "Bureau 2": 25.5,
+    "Chambre": 24.3,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-16T15:28:17.000Z",
+    "Paris": 25.9,
+    "Bureau 1": 25.4,
+    "Bureau 2": 25.8,
+    "Chambre": 24.4,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-16T15:58:17.000Z",
+    "Paris": 25.3,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.3,
+    "Chambre": 24.5,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-16T16:28:17.000Z",
+    "Paris": 25.2,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.2,
+    "Chambre": 24.7,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-16T16:58:17.000Z",
+    "Paris": 25.8,
+    "Bureau 1": 26.3,
+    "Bureau 2": 27.8,
+    "Chambre": 24.8,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-16T17:28:17.000Z",
+    "Paris": 25.7,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.4,
+    "Chambre": 24.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T17:58:17.000Z",
+    "Paris": 25.4,
+    "Bureau 1": 25.9,
+    "Bureau 2": 27.1,
+    "Chambre": 25,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T18:28:19.000Z",
+    "Paris": 25.2,
+    "Bureau 1": 26,
+    "Bureau 2": 26.9,
+    "Chambre": 25,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T18:58:17.000Z",
+    "Paris": 25,
+    "Bureau 1": 25.7,
+    "Bureau 2": 26.7,
+    "Chambre": 25,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-16T19:28:18.000Z",
+    "Paris": 24.8,
+    "Bureau 1": 25.5,
+    "Bureau 2": 26.3,
+    "Chambre": 25,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T19:58:17.000Z",
+    "Paris": 24.7,
+    "Bureau 1": 25.3,
+    "Bureau 2": 26,
+    "Chambre": 24.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T20:28:18.000Z",
+    "Paris": 24.2,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.7,
+    "Chambre": 24.6,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T20:58:17.000Z",
+    "Paris": 23.9,
+    "Bureau 1": 24.6,
+    "Bureau 2": 25.3,
+    "Chambre": 24.1,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T21:28:19.000Z",
+    "Paris": 23.4,
+    "Bureau 1": 24.5,
+    "Bureau 2": 24.9,
+    "Chambre": 23.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T21:58:17.000Z",
+    "Paris": 22.9,
+    "Bureau 1": 24.6,
+    "Bureau 2": 24.7,
+    "Chambre": 24,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T22:28:18.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 24.5,
+    "Bureau 2": 24.7,
+    "Chambre": 24,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-16T22:58:17.000Z",
+    "Paris": 22.2,
+    "Bureau 1": 24.9,
+    "Bureau 2": 24.5,
+    "Chambre": 24.2,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T23:28:17.000Z",
+    "Paris": 21.8,
+    "Bureau 1": 24.9,
+    "Bureau 2": 24.5,
+    "Chambre": 24,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-16T23:58:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.8,
+    "Bureau 2": 24.4,
+    "Chambre": 24.1,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-17T00:28:18.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.6,
+    "Bureau 2": 24.2,
+    "Chambre": 23.2,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-17T00:58:16.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.2,
+    "Bureau 2": 24,
+    "Chambre": 22.7,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-17T01:28:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.4,
+    "Bureau 2": 23.9,
+    "Chambre": 22.5,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-17T01:58:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24.4,
+    "Bureau 2": 23.8,
+    "Chambre": 22.8,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-17T02:28:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24,
+    "Bureau 2": 23.8,
+    "Chambre": 22.8,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-17T02:58:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24,
+    "Bureau 2": 23.8,
+    "Chambre": 22.9,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-17T03:28:17.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 24,
+    "Bureau 2": 23.7,
+    "Chambre": 22.8,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-17T03:58:16.000Z",
+    "Paris": 21.4,
+    "Bureau 1": 23.9,
+    "Bureau 2": 23.6,
+    "Chambre": 22.6,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-17T04:28:17.000Z",
+    "Paris": 18.2,
+    "Bureau 1": 24,
+    "Bureau 2": 23.6,
+    "Chambre": 22.7,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-17T04:58:17.000Z",
+    "Paris": 18.4,
+    "Bureau 1": 24.1,
+    "Bureau 2": 23.5,
+    "Chambre": 23.5,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-17T05:28:18.000Z",
+    "Paris": 18.3,
+    "Bureau 1": 24.2,
+    "Bureau 2": 23.8,
+    "Chambre": 24,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-17T05:58:17.000Z",
+    "Paris": 18.6,
+    "Bureau 1": 24.3,
+    "Bureau 2": 23.8,
+    "Chambre": 24,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-17T06:28:18.000Z",
+    "Paris": 19.1,
+    "Bureau 1": 24.3,
+    "Bureau 2": 23.9,
+    "Chambre": 24.3,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-17T06:58:17.000Z",
+    "Paris": 19.8,
+    "Bureau 1": 24.5,
+    "Bureau 2": 23.9,
+    "Chambre": 24.5,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-17T07:28:17.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 24.7,
+    "Bureau 2": 24.1,
+    "Chambre": 24.4,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-17T07:58:18.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 24.7,
+    "Bureau 2": 24.1,
+    "Chambre": 24.5,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-17T08:28:18.000Z",
+    "Paris": 23.1,
+    "Bureau 1": 25.1,
+    "Bureau 2": 24.3,
+    "Chambre": 24.8,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-17T08:58:17.000Z",
+    "Paris": 23.9,
+    "Bureau 1": 25,
+    "Bureau 2": 24.8,
+    "Chambre": 25.1,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-17T09:28:17.000Z",
+    "Paris": 24.5,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.1,
+    "Chambre": 25.3,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-17T09:58:17.000Z",
+    "Paris": 25.2,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.4,
+    "Chambre": 25.3,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-17T10:28:18.000Z",
+    "Paris": 25.3,
+    "Bureau 1": 25.2,
+    "Bureau 2": 25.5,
+    "Chambre": 25.3,
+    "SdB": 25.7
+  },
+  {
+    "Heure": "2025-06-17T10:58:16.000Z",
+    "Paris": 25.8,
+    "Bureau 1": 25.3,
+    "Bureau 2": 25.7,
+    "Chambre": 25.3,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-17T11:28:17.000Z",
+    "Paris": 26.2,
+    "Bureau 1": 25.3,
+    "Bureau 2": 25.7,
+    "Chambre": 25.4,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T11:58:18.000Z",
+    "Paris": 26,
+    "Bureau 1": 25.3,
+    "Bureau 2": 25.8,
+    "Chambre": 25.4,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-17T12:28:17.000Z",
+    "Paris": 26.6,
+    "Bureau 1": 25.4,
+    "Bureau 2": 25.8,
+    "Chambre": 25.4,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T12:58:17.000Z",
+    "Paris": 26.7,
+    "Bureau 1": 25.5,
+    "Bureau 2": 25.8,
+    "Chambre": 25.4,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T13:28:18.000Z",
+    "Paris": 28.3,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26,
+    "Chambre": 25.5,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-17T13:58:17.000Z",
+    "Paris": 27.6,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.4,
+    "Chambre": 25.6,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T14:28:17.000Z",
+    "Paris": 27.2,
+    "Bureau 1": 25.8,
+    "Bureau 2": 26.8,
+    "Chambre": 25.6,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-17T14:58:21.000Z",
+    "Paris": 27.4,
+    "Bureau 1": 26,
+    "Bureau 2": 26.9,
+    "Chambre": 25.6,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T15:28:17.000Z",
+    "Paris": 27.4,
+    "Bureau 1": 26.2,
+    "Bureau 2": 27.4,
+    "Chambre": 25.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T15:58:17.000Z",
+    "Paris": 28,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.8,
+    "Chambre": 25.9,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T16:28:20.000Z",
+    "Paris": 28.3,
+    "Bureau 1": 26.4,
+    "Bureau 2": 27.8,
+    "Chambre": 25.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T16:58:18.000Z",
+    "Paris": 27.6,
+    "Bureau 1": 26.6,
+    "Bureau 2": 28,
+    "Chambre": 25.9,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-17T17:28:17.000Z",
+    "Paris": 27.8,
+    "Bureau 1": 27,
+    "Bureau 2": 28.3,
+    "Chambre": 25.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T17:58:22.000Z",
+    "Paris": 28,
+    "Bureau 1": 26.6,
+    "Bureau 2": 28.1,
+    "Chambre": 25.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T18:28:19.000Z",
+    "Paris": 27.2,
+    "Bureau 1": 26.6,
+    "Bureau 2": 27.7,
+    "Chambre": 25.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T18:58:19.000Z",
+    "Paris": 26.7,
+    "Bureau 1": 26.3,
+    "Bureau 2": 27.6,
+    "Chambre": 25.9,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T19:28:18.000Z",
+    "Paris": 26.6,
+    "Bureau 1": 25.9,
+    "Bureau 2": 27.2,
+    "Chambre": 25.8,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T19:58:18.000Z",
+    "Paris": 26.3,
+    "Bureau 1": 25.6,
+    "Bureau 2": 26.8,
+    "Chambre": 25.8,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T20:28:19.000Z",
+    "Paris": 25.8,
+    "Bureau 1": 25.5,
+    "Bureau 2": 26.7,
+    "Chambre": 25.7,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T20:58:18.000Z",
+    "Paris": 25.2,
+    "Bureau 1": 25.2,
+    "Bureau 2": 26.3,
+    "Chambre": 25.7,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T21:28:18.000Z",
+    "Paris": 23.4,
+    "Bureau 1": 25.1,
+    "Bureau 2": 25.9,
+    "Chambre": 25.8,
+    "SdB": 26.2
+  },
+  {
+    "Heure": "2025-06-17T21:58:18.000Z",
+    "Paris": 22.7,
+    "Bureau 1": 24.3,
+    "Bureau 2": 25.3,
+    "Chambre": 25.7,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T22:28:18.000Z",
+    "Paris": 22,
+    "Bureau 1": 24.1,
+    "Bureau 2": 25,
+    "Chambre": 25.4,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T22:58:18.000Z",
+    "Paris": 21.6,
+    "Bureau 1": 24.1,
+    "Bureau 2": 24.6,
+    "Chambre": 24.6,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-17T23:28:18.000Z",
+    "Paris": 21.3,
+    "Bureau 1": 23.6,
+    "Bureau 2": 24.4,
+    "Chambre": 24.1,
+    "SdB": 26.1
+  },
+  {
+    "Heure": "2025-06-17T23:58:17.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.4,
+    "Bureau 2": 24.4,
+    "Chambre": 24.1,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-18T00:28:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.4,
+    "Bureau 2": 23.6,
+    "Chambre": 23.6,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-18T00:58:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.3,
+    "Bureau 2": 23.6,
+    "Chambre": 23.2,
+    "SdB": 26
+  },
+  {
+    "Heure": "2025-06-18T01:28:17.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.4,
+    "Bureau 2": 23.5,
+    "Chambre": 23.2,
+    "SdB": 25.9
+  },
+  {
+    "Heure": "2025-06-18T01:58:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.2,
+    "Bureau 2": 23.1,
+    "Chambre": 23.1,
+    "SdB": 25.8
+  },
+  {
+    "Heure": "2025-06-18T02:28:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.1,
+    "Bureau 2": 23,
+    "Chambre": 22.9,
+    "SdB": 25.6
+  },
+  {
+    "Heure": "2025-06-18T02:58:17.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.1,
+    "Bureau 2": 23.1,
+    "Chambre": 23.1,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-18T03:28:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.3,
+    "Bureau 2": 23.1,
+    "Chambre": 23.2,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-18T03:58:18.000Z",
+    "Paris": 20.8,
+    "Bureau 1": 23.3,
+    "Bureau 2": 23.1,
+    "Chambre": 23.3,
+    "SdB": 25.4
+  },
+  {
+    "Heure": "2025-06-18T04:28:18.000Z",
+    "Paris": 18.8,
+    "Bureau 1": 23.2,
+    "Bureau 2": 23.1,
+    "Chambre": 23.2,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-18T04:58:18.000Z",
+    "Paris": 18.5,
+    "Bureau 1": 23.1,
+    "Bureau 2": 23,
+    "Chambre": 22.9,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-18T05:28:17.000Z",
+    "Paris": 18.7,
+    "Bureau 1": 23.1,
+    "Bureau 2": 23,
+    "Chambre": 23,
+    "SdB": 25.1
+  },
+  {
+    "Heure": "2025-06-18T05:58:19.000Z",
+    "Paris": 18.6,
+    "Bureau 1": 23.2,
+    "Bureau 2": 22.9,
+    "Chambre": 23.4,
+    "SdB": 25
+  },
+  {
+    "Heure": "2025-06-18T06:28:18.000Z",
+    "Paris": 19.2,
+    "Bureau 1": 23.5,
+    "Bureau 2": 23.3,
+    "Chambre": 24,
+    "SdB": 25.5
+  },
+  {
+    "Heure": "2025-06-18T06:58:17.000Z",
+    "Paris": 19.7,
+    "Bureau 1": 23.9,
+    "Bureau 2": 23.7,
+    "Chambre": 24.3,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-18T07:28:18.000Z",
+    "Paris": 20.2,
+    "Bureau 1": 24.1,
+    "Bureau 2": 23.9,
+    "Chambre": 24.6,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-18T07:58:18.000Z",
+    "Paris": 20.9,
+    "Bureau 1": 24,
+    "Bureau 2": 23.9,
+    "Chambre": 24.4,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-18T08:28:18.000Z",
+    "Paris": 21.3,
+    "Bureau 1": 24.3,
+    "Bureau 2": 24.2,
+    "Chambre": 24.4,
+    "SdB": 25.3
+  },
+  {
+    "Heure": "2025-06-18T08:58:17.000Z",
+    "Paris": 21.9,
+    "Bureau 1": 24.5,
+    "Bureau 2": 24.2,
+    "Chambre": 24.5,
+    "SdB": 25.2
+  },
+  {
+    "Heure": "2025-06-18T09:28:17.000Z",
+    "Paris": 22.5,
+    "Bureau 1": 24.8,
+    "Bureau 2": 24.3,
+    "Chambre": 24.6,
+    "SdB": 25.3
+  }
+]
