@@ -75,7 +75,7 @@ async function fetchData() {
 
 // Create sensor buttons dynamically
 function createSensorButtons(sensorNames) {
-    const sensorButtonsContainer = document.querySelector('.sensor-buttons');
+    const sensorButtonsContainer = document.querySelector('.floating-controls .sensor-buttons');
     if (!sensorButtonsContainer) {
         console.error('Sensor buttons container not found');
         return;
@@ -305,10 +305,10 @@ function toggleSensor(sensorName) {
     temperatureChart.update();
 }
 
-// Set default time range to last 24 hours
+// Set default time range to last 6 hours (as requested)
 function setDefaultTimeRange() {
     const now = new Date();
-    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 
     const formatDate = (date) => date.toISOString().split('T')[0];
     const formatTime = (date) => date.toTimeString().slice(0, 5);
@@ -323,14 +323,14 @@ function setDefaultTimeRange() {
         return;
     }
 
-    startDateInput.value = formatDate(yesterday);
-    startTimeInput.value = formatTime(yesterday);
+    startDateInput.value = formatDate(sixHoursAgo);
+    startTimeInput.value = formatTime(sixHoursAgo);
     endDateInput.value = formatDate(now);
     endTimeInput.value = formatTime(now);
 
     updateChartDateRange(
-        formatDate(yesterday),
-        formatTime(yesterday),
+        formatDate(sixHoursAgo),
+        formatTime(sixHoursAgo),
         formatDate(now),
         formatTime(now)
     );
