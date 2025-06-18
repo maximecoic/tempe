@@ -442,4 +442,32 @@ async function init() {
 }
 
 // Start the application
-init(); 
+init();
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Toggle floating controls
+  const floatingControls = document.getElementById('floatingControls');
+  const toggleBtn = document.getElementById('toggleControlsBtn');
+  const toggleChevron = document.getElementById('toggleChevron');
+  let controlsVisible = true;
+  toggleBtn.addEventListener('click', () => {
+    controlsVisible = !controlsVisible;
+    floatingControls.classList.toggle('hidden', !controlsVisible);
+    toggleChevron.innerHTML = controlsVisible ? '&#x25B2;' : '&#x25BC;';
+  });
+
+  // Date/time input listeners (in floating controls)
+  ['startDate', 'startTime', 'endDate', 'endTime'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', () => {
+        updateChartDateRange(
+          document.getElementById('startDate').value,
+          document.getElementById('startTime').value,
+          document.getElementById('endDate').value,
+          document.getElementById('endTime').value
+        );
+      });
+    }
+  });
+}); 
