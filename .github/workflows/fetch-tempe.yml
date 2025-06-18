@@ -14,7 +14,7 @@ jobs:
 
       - name: Fetch data from Apps Script
         run: |
-          curl -s "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgIk3iD1PbsjwM7O4hItEOlcZeYnZkrYoNPkF5jk2IzjZ17PH4zIlC7qi4UqbwAASoKQUacOaKQe2dHm0CUGhkMq0Yvc-VtdPiTLl4b1HwE06IL6UH8kM05F62kpQzjDWpj_xokjUV_BeGxNkL-xlPBfVIiU4RGVo5W1G3MX19PXnVD09V8dfiloGm7J2PxFlydSwQ2DTzadZoOcuv8NQgTuCQiFJWG7ExVEuGBX91R7RIJjUeU4hgp0K8B3sDz6bMa5bjUPimlVspSBnrv4ujDhnJ6nINb8LeES80AKccocRb58AI&lib=MjE54VOUTJvBBczSHKNrag3eLxmpFSsFs" -o data.json
+          curl -sL "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgIk3iD1PbsjwM7O4hItEOlcZeYnZkrYoNPkF5jk2IzjZ17PH4zIlC7qi4UqbwAASoKQUacOaKQe2dHm0CUGhkMq0Yvc-VtdPiTLl4b1HwE06IL6UH8kM05F62kpQzjDWpj_xokjUV_BeGxNkL-xlPBfVIiU4RGVo5W1G3MX19PXnVD09V8dfiloGm7J2PxFlydSwQ2DTzadZoOcuv8NQgTuCQiFJWG7ExVEuGBX91R7RIJjUeU4hgp0K8B3sDz6bMa5bjUPimlVspSBnrv4ujDhnJ6nINb8LeES80AKccocRb58AI&lib=MjE54VOUTJvBBczSHKNrag3eLxmpFSsFs" -o data.json
 
       - name: Commit and push if changed
         run: |
