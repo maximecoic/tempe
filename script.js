@@ -449,7 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const floatingControls = document.getElementById('floatingControls');
   const toggleBtn = document.getElementById('toggleControlsBtn');
   const toggleChevron = document.getElementById('toggleChevron');
-  let controlsVisible = true;
+  let controlsVisible = false; // Start hidden
+
   toggleBtn.addEventListener('click', () => {
     controlsVisible = !controlsVisible;
     floatingControls.classList.toggle('hidden', !controlsVisible);
@@ -470,4 +471,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-}); 
+});
