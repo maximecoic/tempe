@@ -276,6 +276,9 @@ body {
     flex-direction: column;
     align-items: stretch;
     transition: transform 0.3s cubic-bezier(.4,2,.6,1), opacity 0.3s;
+    height: 40vh;
+    max-height: 40vh;
+    overflow-y: auto;
 }
 
 .floating-controls.hidden {
@@ -449,4 +452,4 @@ body {
         height: 40px;
         font-size: 1.5rem;
     }
-} 
+}
