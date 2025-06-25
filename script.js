@@ -242,51 +242,51 @@ function initChart(data) {
         plugins: [verticalLinePlugin]
     });
 
-    // Add touch support
-    const chartContainer = ctx.parentElement;
-    chartContainer.addEventListener('touchstart', handleTouch);
-    chartContainer.addEventListener('touchmove', handleTouch);
-    chartContainer.addEventListener('touchend', handleTouchEnd);
+    // Add touch support (DISABLED to allow chartjs-plugin-zoom to handle gestures on mobile)
+    // const chartContainer = ctx.parentElement;
+    // chartContainer.addEventListener('touchstart', handleTouch);
+    // chartContainer.addEventListener('touchmove', handleTouch);
+    // chartContainer.addEventListener('touchend', handleTouchEnd);
 
-    function handleTouch(e) {
-        const touch = e.touches[0];
-        const rect = ctx.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
+    // function handleTouch(e) {
+    //     const touch = e.touches[0];
+    //     const rect = ctx.getBoundingClientRect();
+    //     const x = touch.clientX - rect.left;
+    //     const y = touch.clientY - rect.top;
         
-        const chartArea = temperatureChart.chartArea;
-        const xScale = temperatureChart.scales.x;
-        const xValue = xScale.getValueForPixel(x);
+    //     const chartArea = temperatureChart.chartArea;
+    //     const xScale = temperatureChart.scales.x;
+    //     const xValue = xScale.getValueForPixel(x);
         
-        // Find the closest data point
-        let closestPoint = null;
-        let minDistance = Infinity;
+    //     // Find the closest data point
+    //     let closestPoint = null;
+    //     let minDistance = Infinity;
         
-        temperatureChart.data.datasets.forEach(dataset => {
-            if (!dataset.hidden) {
-                dataset.data.forEach(point => {
-                    const distance = Math.abs(point.x - xValue);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestPoint = point;
-                    }
-                });
-            }
-        });
+    //     temperatureChart.data.datasets.forEach(dataset => {
+    //         if (!dataset.hidden) {
+    //             dataset.data.forEach(point => {
+    //                 const distance = Math.abs(point.x - xValue);
+    //                 if (distance < minDistance) {
+    //                     minDistance = distance;
+    //                     closestPoint = point;
+    //                 }
+    //             });
+    //         }
+    //     });
         
-        if (closestPoint) {
-            temperatureChart.setActiveElements([{
-                datasetIndex: 0,
-                index: temperatureChart.data.datasets[0].data.findIndex(p => p.x === closestPoint.x)
-            }]);
-            temperatureChart.update();
-        }
-    }
+    //     if (closestPoint) {
+    //         temperatureChart.setActiveElements([{
+    //             datasetIndex: 0,
+    //             index: temperatureChart.data.datasets[0].data.findIndex(p => p.x === closestPoint.x)
+    //         }]);
+    //         temperatureChart.update();
+    //     }
+    // }
 
-    function handleTouchEnd() {
-        temperatureChart.setActiveElements([]);
-        temperatureChart.update();
-    }
+    // function handleTouchEnd() {
+    //     temperatureChart.setActiveElements([]);
+    //     temperatureChart.update();
+    // }
 }
 
 // Update chart based on date and time range
