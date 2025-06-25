@@ -189,6 +189,21 @@ function initChart(data) {
                     zoom: {
                         enabled: false
                     }
+                },
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'x',
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'x',
+                    }
                 }
             },
             scales: {
@@ -207,7 +222,8 @@ function initChart(data) {
                     ticks: {
                         color: '#e6f1ff',
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        maxTicksLimit: 5 // Limit number of x-axis labels
                     }
                 },
                 y: {
