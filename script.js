@@ -164,27 +164,6 @@ function initChart(data) {
             legend: {
                 display: false // Hide the legend
             },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        const dataset = data.datasets[tooltipItem.datasetIndex];
-                        const value = dataset.data[tooltipItem.index];
-                        return `${dataset.label}: ${value.y.toFixed(1)}°C`;
-                    },
-                    title: function(tooltipItems) {
-                        const date = new Date(tooltipItems[0].xLabel);
-                        return date.toLocaleString('fr-FR', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                }
-            },
             pan: {
                 enabled: true,
                 mode: 'x'
@@ -241,8 +220,8 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
         return;
     }
 
-    temperatureChart.options.scales.xAxes[0].time.min = start;
-    temperatureChart.options.scales.xAxes[0].time.max = end;
+    temperatureChart.options.scales.xAxes[0].ticks.min = start;
+    temperatureChart.options.scales.xAxes[0].ticks.max = end;
     temperatureChart.update();
 }
 
@@ -340,26 +319,6 @@ function setDateRangeBySelector(range) {
     updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
 }
 
-// --- Custom Chart.js Plugin for Vertical Hover Line ---
-// const verticalLinePlugin = {
-//     id: 'verticalLine',
-//     afterDraw: function(chart) {
-//         if (chart.tooltip?._active && chart.tooltip._active.length) {
-//             const ctx = chart.ctx;
-//             ctx.save();
-//             const activePoint = chart.tooltip._active[0];
-//             ctx.beginPath();
-//             ctx.setLineDash([5, 5]);
-//             ctx.moveTo(activePoint.element.x, chart.chartArea.top);
-//             ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
-//             ctx.lineWidth = 2;
-//             ctx.strokeStyle = 'rgba(100,255,218,0.4)';
-//             ctx.stroke();
-//             ctx.restore();
-//         }
-//     }
-// };
-
 // Initialize the application
 async function init() {
     const data = await fetchData();
@@ -393,8 +352,6 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Chart.register(verticalLinePlugin);
-
     await init();
 
     // Toggle floating controls
