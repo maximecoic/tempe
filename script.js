@@ -170,7 +170,7 @@ function initChart(data) {
                     display: false // Hide the legend
                 },
                 tooltip: {
-                    enabled: false,
+                    enabled: true,
                     mode: 'index',
                     intersect: false,
                     callbacks: {
@@ -405,7 +405,7 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Chart.register(verticalLinePlugin);
+    Chart.register(verticalLinePlugin);
 
     await init();
 
