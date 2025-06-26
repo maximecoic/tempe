@@ -161,81 +161,69 @@ function initChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
+            legend: {
+                display: false // Hide the legend
+            },
+            tooltips: {
                 mode: 'index',
                 intersect: false,
-            },
-            plugins: {
-                legend: {
-                    display: false // Hide the legend
-                },
-                tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}°C`;
-                        },
-                        title: function(context) {
-                            const date = new Date(context[0].parsed.x);
-                            return date.toLocaleString('fr-FR', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                        }
-                    }
-                },
-                zoom: {
-                    pan: {
-                        enabled: true,
-                        mode: 'x',
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        const dataset = data.datasets[tooltipItem.datasetIndex];
+                        const value = dataset.data[tooltipItem.index];
+                        return `${dataset.label}: ${value.y.toFixed(1)}°C`;
                     },
-                    zoom: {
-                        wheel: {
-                            enabled: true,
-                        },
-                        pinch: {
-                            enabled: true
-                        },
-                        mode: 'x',
+                    title: function(tooltipItems) {
+                        const date = new Date(tooltipItems[0].xLabel);
+                        return date.toLocaleString('fr-FR', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
                     }
                 }
             },
+            pan: {
+                enabled: true,
+                mode: 'x'
+            },
+            zoom: {
+                enabled: true,
+                mode: 'x'
+            },
             scales: {
-                x: {
+                xAxes: [{
                     type: 'time',
                     time: {
                         unit: 'hour',
                         displayFormats: {
-                            hour: 'MMM d, HH:mm'
+                            hour: 'MMM D, HH:mm'
                         },
-                        tooltipFormat: 'MMM d, HH:mm'
+                        tooltipFormat: 'll HH:mm'
                     },
-                    grid: {
+                    gridLines: {
                         color: '#112240'
                     },
                     ticks: {
-                        color: '#e6f1ff',
+                        fontColor: '#e6f1ff',
                         maxRotation: 45,
                         minRotation: 45,
                         maxTicksLimit: 5 // Limit number of x-axis labels
                     }
-                },
-                y: {
-                    grid: {
+                }],
+                yAxes: [{
+                    gridLines: {
                         color: 'rgba(255, 255, 255, 0.3)' // White grid lines at 30% opacity
                     },
                     ticks: {
-                        color: '#e6f1ff',
+                        fontColor: '#e6f1ff',
                         callback: function(value) {
                             return value + '°C';
                         }
                     }
-                }
+                }]
             }
         }
     });
@@ -253,8 +241,8 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
         return;
     }
 
-    temperatureChart.options.scales.x.min = start;
-    temperatureChart.options.scales.x.max = end;
+    temperatureChart.options.scales.xAxes[0].time.min = start;
+    temperatureChart.options.scales.xAxes[0].time.max = end;
     temperatureChart.update();
 }
 
@@ -353,24 +341,24 @@ function setDateRangeBySelector(range) {
 }
 
 // --- Custom Chart.js Plugin for Vertical Hover Line ---
-const verticalLinePlugin = {
-    id: 'verticalLine',
-    afterDraw: function(chart) {
-        if (chart.tooltip?._active && chart.tooltip._active.length) {
-            const ctx = chart.ctx;
-            ctx.save();
-            const activePoint = chart.tooltip._active[0];
-            ctx.beginPath();
-            ctx.setLineDash([5, 5]);
-            ctx.moveTo(activePoint.element.x, chart.chartArea.top);
-            ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgba(100,255,218,0.4)';
-            ctx.stroke();
-            ctx.restore();
-        }
-    }
-};
+// const verticalLinePlugin = {
+//     id: 'verticalLine',
+//     afterDraw: function(chart) {
+//         if (chart.tooltip?._active && chart.tooltip._active.length) {
+//             const ctx = chart.ctx;
+//             ctx.save();
+//             const activePoint = chart.tooltip._active[0];
+//             ctx.beginPath();
+//             ctx.setLineDash([5, 5]);
+//             ctx.moveTo(activePoint.element.x, chart.chartArea.top);
+//             ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
+//             ctx.lineWidth = 2;
+//             ctx.strokeStyle = 'rgba(100,255,218,0.4)';
+//             ctx.stroke();
+//             ctx.restore();
+//         }
+//     }
+// };
 
 // Initialize the application
 async function init() {
@@ -405,7 +393,7 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
-    Chart.register(verticalLinePlugin);
+    // Chart.register(verticalLinePlugin);
 
     await init();
 
