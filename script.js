@@ -238,8 +238,7 @@ function initChart(data) {
                     }
                 }
             }
-        },
-        plugins: [verticalLinePlugin, Chart.registry.getPlugin('zoom')]
+        }
     });
 
     // Add touch support (DISABLED to allow chartjs-plugin-zoom to handle gestures on mobile)
@@ -458,33 +457,28 @@ async function init() {
 }
 
 // Start the application
-init();
+// init(); // Will be called on DOMContentLoaded
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Toggle floating controls
-  const floatingControls = document.getElementById('floatingControls');
-  const toggleBtn = document.getElementById('toggleControlsBtn');
-  const toggleChevron = document.getElementById('toggleChevron');
-  let controlsVisible = false; // Start hidden
+document.addEventListener('DOMContentLoaded', async () => {
+    Chart.register(verticalLinePlugin, window.ChartZoom);
 
-  toggleBtn.addEventListener('click', () => {
-    controlsVisible = !controlsVisible;
-    floatingControls.classList.toggle('hidden', !controlsVisible);
-    toggleChevron.innerHTML = controlsVisible ? '&#x25B2;' : '&#x25BC;';
-  });
+    await init();
 
-  // Date/time input listeners (in floating controls)
-  ['startDate', 'startTime', 'endDate', 'endTime'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('change', () => {
-        updateChartDateRange(
-          document.getElementById('startDate').value,
-          document.getElementById('startTime').value,
-          document.getElementById('endDate').value,
-          document.getElementById('endTime').value
-        );
-      });
+    // Toggle floating controls
+    const floatingControls = document.getElementById('floatingControls');
+    const toggleBtn = document.getElementById('toggleControlsBtn');
+    const toggleChevron = document.getElementById('toggleChevron');
+    let controlsVisible = false; // Start hidden
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            controlsVisible = !controlsVisible;
+            if (floatingControls) {
+                floatingControls.classList.toggle('hidden', !controlsVisible);
+            }
+            if (toggleChevron) {
+                toggleChevron.innerHTML = controlsVisible ? '&#x25B2;' : '&#x25BC;';
+            }
+        });
     }
-  });
 });
