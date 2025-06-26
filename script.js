@@ -180,7 +180,7 @@ function initChart(data) {
                         displayFormats: {
                             hour: 'MMM d, HH:mm'
                         },
-                        tooltipFormat: 'll HH:mm'
+                        tooltipFormat: "MMM d, yyyy, HH:mm"
                     },
                     gridLines: {
                         color: '#112240'
