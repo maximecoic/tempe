@@ -199,7 +199,7 @@ function initChart(data) {
                     time: {
                         unit: 'hour',
                         displayFormats: {
-                            hour: 'MMM D, HH:mm'
+                            hour: 'MMM d, HH:mm'
                         },
                         tooltipFormat: 'll HH:mm'
                     },
