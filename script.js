@@ -98,6 +98,18 @@ function createSensorButtons(sensorNames) {
         button.style.color = '#ffffff';
         sensorButtonsContainer.appendChild(button);
     });
+
+    addSensorButtonListeners();
+}
+
+// Add event listeners for sensor buttons
+function addSensorButtonListeners() {
+    document.querySelectorAll('.sensor-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            toggleSensor(btn.dataset.sensor);
+        });
+    });
 }
 
 // Initialize chart
@@ -177,19 +189,6 @@ function initChart(data) {
                         }
                     }
                 },
-                crosshair: {
-                    line: {
-                        color: 'rgba(100, 255, 218, 0.4)',
-                        width: 1,
-                        dashPattern: [5, 5]
-                    },
-                    sync: {
-                        enabled: true
-                    },
-                    zoom: {
-                        enabled: false
-                    }
-                },
                 zoom: {
                     pan: {
                         enabled: true,
@@ -240,52 +239,6 @@ function initChart(data) {
             }
         }
     });
-
-    // Add touch support (DISABLED to allow chartjs-plugin-zoom to handle gestures on mobile)
-    // const chartContainer = ctx.parentElement;
-    // chartContainer.addEventListener('touchstart', handleTouch);
-    // chartContainer.addEventListener('touchmove', handleTouch);
-    // chartContainer.addEventListener('touchend', handleTouchEnd);
-
-    // function handleTouch(e) {
-    //     const touch = e.touches[0];
-    //     const rect = ctx.getBoundingClientRect();
-    //     const x = touch.clientX - rect.left;
-    //     const y = touch.clientY - rect.top;
-        
-    //     const chartArea = temperatureChart.chartArea;
-    //     const xScale = temperatureChart.scales.x;
-    //     const xValue = xScale.getValueForPixel(x);
-        
-    //     // Find the closest data point
-    //     let closestPoint = null;
-    //     let minDistance = Infinity;
-        
-    //     temperatureChart.data.datasets.forEach(dataset => {
-    //         if (!dataset.hidden) {
-    //             dataset.data.forEach(point => {
-    //                 const distance = Math.abs(point.x - xValue);
-    //                 if (distance < minDistance) {
-    //                     minDistance = distance;
-    //                     closestPoint = point;
-    //                 }
-    //             });
-    //         }
-    //     });
-        
-    //     if (closestPoint) {
-    //         temperatureChart.setActiveElements([{
-    //             datasetIndex: 0,
-    //             index: temperatureChart.data.datasets[0].data.findIndex(p => p.x === closestPoint.x)
-    //         }]);
-    //         temperatureChart.update();
-    //     }
-    // }
-
-    // function handleTouchEnd() {
-    //     temperatureChart.setActiveElements([]);
-    //     temperatureChart.update();
-    // }
 }
 
 // Update chart based on date and time range
@@ -445,14 +398,6 @@ async function init() {
                 );
             });
         }
-    });
-
-    // Add event listeners for sensor buttons
-    document.querySelectorAll('.sensor-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            btn.classList.toggle('active');
-            toggleSensor(btn.dataset.sensor);
-        });
     });
 }
 
