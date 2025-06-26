@@ -405,7 +405,7 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
-    Chart.register(verticalLinePlugin, window.ChartZoom);
+    Chart.register(verticalLinePlugin, window.zoomPlugin);
 
     await init();
 
