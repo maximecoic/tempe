@@ -239,7 +239,7 @@ function initChart(data) {
                 }
             }
         },
-        plugins: [verticalLinePlugin]
+        plugins: [verticalLinePlugin, Chart.registry.getPlugin('zoom')]
     });
 
     // Add touch support (DISABLED to allow chartjs-plugin-zoom to handle gestures on mobile)
