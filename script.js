@@ -141,8 +141,8 @@ function initChart(data) {
         borderColor: colors[index],
         backgroundColor: colors[index],
         borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
+        pointRadius: 1,
+        pointHoverRadius: 3,
         pointBorderWidth: 2,
         fill: false,
         tension: 0.6 // Increased smoothness
@@ -187,9 +187,15 @@ function initChart(data) {
                     },
                     ticks: {
                         fontColor: '#e6f1ff',
-                        maxRotation: 45,
-                        minRotation: 45,
-                        maxTicksLimit: 5
+                        maxRotation: 0,
+                        minRotation: 0,
+                        maxTicksLimit: 5,
+                        callback: function(value, index, values) {
+                            const date = new Date(value);
+                            const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+                            const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            return [day, time];
+                        }
                     }
                 }],
                 yAxes: [{

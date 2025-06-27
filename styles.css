@@ -37,7 +37,7 @@ body {
     width: 100vw;
     max-width: 100vw;
     height: calc(100vh - 120px);
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,11 +46,12 @@ body {
 
 .graph-container {
     background-color: var(--secondary-bg);
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: 0;
+    padding: 1rem 0;
     height: 50vh;
     min-height: 300px;
     margin-bottom: 0.7rem;
+    width: 100%;
 }
 
 .controls-container {
