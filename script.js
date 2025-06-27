@@ -188,9 +188,9 @@ function initChart(data) {
                     ticks: {
                         source: 'data',
                         fontColor: '#e6f1ff',
-                        maxRotation: 45,
-                        minRotation: 45,
-                        maxTicksLimit: 5 // Limit number of x-axis labels
+                        maxRotation: 0,
+                        minRotation: 0,
+                        maxTicksLimit: 5
                     }
                 }],
                 yAxes: [{

@@ -46,11 +46,12 @@ body {
 
 .graph-container {
     background-color: var(--secondary-bg);
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: 0;
+    padding: 1rem 0;
     height: 50vh;
     min-height: 300px;
     margin-bottom: 0.7rem;
+    width: 100%;
 }
 
 .controls-container {
@@ -161,14 +162,6 @@ body {
 }
 
 @media (min-width: 768px) {
-    .graph-container {
-        margin-left: -2rem;
-        margin-right: -2rem;
-        padding-left: 0;
-        padding-right: 0;
-        border-radius: 0;
-    }
-
     .container {
         padding: 2rem;
     }
