@@ -198,7 +198,9 @@ function initChart(data) {
                     }
                 }],
                 yAxes: [{
+                    position: 'right',
                     gridLines: {
+                        drawBorder: false,
                         color: themeColors.gridColor
                     },
                     ticks: {
