@@ -152,6 +152,9 @@ function initChart(data) {
     if (temperatureChart) {
         temperatureChart.destroy();
     }
+    
+    const theme = document.body.dataset.theme || 'dark';
+    const themeColors = themes[theme];
 
     temperatureChart = new Chart(ctx, {
         type: 'line',
@@ -183,10 +186,10 @@ function initChart(data) {
                         tooltipFormat: "MMM d, yyyy, HH:mm"
                     },
                     gridLines: {
-                        color: '#112240'
+                        color: themeColors.axisColor
                     },
                     ticks: {
-                        fontColor: '#e6f1ff',
+                        fontColor: themeColors.textColor,
                         maxRotation: 0,
                         minRotation: 0,
                         maxTicksLimit: 5,
@@ -200,10 +203,10 @@ function initChart(data) {
                 }],
                 yAxes: [{
                     gridLines: {
-                        color: 'rgba(255, 255, 255, 0.3)' // White grid lines at 30% opacity
+                        color: themeColors.gridColor
                     },
                     ticks: {
-                        fontColor: '#e6f1ff',
+                        fontColor: themeColors.textColor,
                         callback: function(value) {
                             return value + '°C';
                         }
@@ -325,6 +328,31 @@ function setDateRangeBySelector(range) {
     updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
 }
 
+const themes = {
+    dark: {
+        textColor: '#e6f1ff',
+        gridColor: 'rgba(255, 255, 255, 0.3)',
+        axisColor: '#112240',
+    },
+    light: {
+        textColor: '#1c1e21',
+        gridColor: 'rgba(0, 0, 0, 0.1)',
+        axisColor: '#ffffff',
+    }
+};
+
+function applyTheme(theme) {
+    document.body.dataset.theme = theme;
+    if (temperatureChart) {
+        const themeColors = themes[theme];
+        temperatureChart.options.scales.xAxes[0].ticks.fontColor = themeColors.textColor;
+        temperatureChart.options.scales.xAxes[0].gridLines.color = themeColors.axisColor;
+        temperatureChart.options.scales.yAxes[0].ticks.fontColor = themeColors.textColor;
+        temperatureChart.options.scales.yAxes[0].gridLines.color = themeColors.gridColor;
+        temperatureChart.update();
+    }
+}
+
 // Initialize the application
 async function init() {
     const data = await fetchData();
@@ -358,6 +386,14 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const lightModeQuery = window.matchMedia('(prefers-color-scheme: light)');
+    
+    applyTheme(lightModeQuery.matches ? 'light' : 'dark');
+
+    lightModeQuery.addEventListener('change', event => {
+        applyTheme(event.matches ? 'light' : 'dark');
+    });
+
     await init();
 
     // Toggle floating controls
