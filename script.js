@@ -12,30 +12,19 @@ const sensorIcons = {
 };
 
 // Generate colors dynamically based on number of sensors
-function generateColors(count) {
-    const baseColors = [
-        '#64ffda', // Teal
-        '#3a86ff', // Blue
-        '#ff006e', // Pink
-        '#8338ec', // Purple
-        '#ffbe0b', // Yellow
-        '#fb5607', // Orange
-        '#00b4d8', // Light Blue
-        '#06d6a0', // Mint
-        '#ef476f', // Rose
-        '#118ab2'  // Dark Blue
-    ];
+function generateColors(count, theme = 'dark') {
+    const themeColors = themes[theme].plotColors;
     
     // If we have more sensors than base colors, generate additional colors
-    if (count > baseColors.length) {
-        const additionalColors = Array.from({ length: count - baseColors.length }, (_, i) => {
+    if (count > themeColors.length) {
+        const additionalColors = Array.from({ length: count - themeColors.length }, (_, i) => {
             const hue = (i * 137.5) % 360; // Golden angle approximation for good distribution
             return `hsl(${hue}, 70%, 60%)`;
         });
-        return [...baseColors, ...additionalColors];
+        return [...themeColors, ...additionalColors];
     }
     
-    return baseColors.slice(0, count);
+    return themeColors.slice(0, count);
 }
 
 // Get icon for sensor
@@ -83,7 +72,8 @@ function createSensorButtons(sensorNames) {
     
     sensorButtonsContainer.innerHTML = ''; // Clear existing buttons
     
-    const colors = generateColors(sensorNames.length);
+    const theme = document.body.dataset.theme || 'dark';
+    const colors = generateColors(sensorNames.length, theme);
     
     sensorNames.forEach((sensorName, index) => {
         const button = document.createElement('button');
@@ -160,6 +150,11 @@ function initChart(data) {
         type: 'line',
         data: {
             datasets: datasets
+        },
+        config: { // Store original data for theme switching
+            data: {
+                originalData: data
+            }
         },
         options: {
             responsive: true,
@@ -333,23 +328,29 @@ const themes = {
         textColor: '#e6f1ff',
         gridColor: 'rgba(255, 255, 255, 0.3)',
         axisColor: '#112240',
+        plotColors: [
+            '#64ffda', '#3a86ff', '#ff006e', '#8338ec', '#ffbe0b',
+            '#fb5607', '#00b4d8', '#06d6a0', '#ef476f', '#118ab2'
+        ]
     },
     light: {
         textColor: '#1c1e21',
         gridColor: 'rgba(0, 0, 0, 0.1)',
         axisColor: '#ffffff',
+        plotColors: [
+            '#0052cc', '#0098db', '#f6511d', '#ffb400', '#7fb800',
+            '#5a3e8d', '#00a6a6', '#f25f5c', '#247ba0', '#d352c3'
+        ]
     }
 };
 
 function applyTheme(theme) {
     document.body.dataset.theme = theme;
     if (temperatureChart) {
-        const themeColors = themes[theme];
-        temperatureChart.options.scales.xAxes[0].ticks.fontColor = themeColors.textColor;
-        temperatureChart.options.scales.xAxes[0].gridLines.color = themeColors.axisColor;
-        temperatureChart.options.scales.yAxes[0].ticks.fontColor = themeColors.textColor;
-        temperatureChart.options.scales.yAxes[0].gridLines.color = themeColors.gridColor;
-        temperatureChart.update();
+        // Redraw chart with new theme colors
+        const sensorNames = Object.keys(temperatureChart.data.datasets).map(i => temperatureChart.data.datasets[i].label);
+        createSensorButtons(sensorNames);
+        initChart(temperatureChart.config.data.originalData); 
     }
 }
 
@@ -386,6 +387,7 @@ async function init() {
 // init(); // Will be called on DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', async () => {
+    Chart.defaults.global.defaultFontFamily = "'Gill Sans', sans-serif";
     const lightModeQuery = window.matchMedia('(prefers-color-scheme: light)');
     
     applyTheme(lightModeQuery.matches ? 'light' : 'dark');
