@@ -141,8 +141,8 @@ function initChart(data) {
         borderColor: colors[index],
         backgroundColor: colors[index],
         borderWidth: 2,
-        pointRadius: 1,
-        pointHoverRadius: 3,
+        pointRadius: 2,
+        pointHoverRadius: 4,
         pointBorderWidth: 2,
         fill: false,
         tension: 0.6 // Increased smoothness
@@ -161,24 +161,16 @@ function initChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 40
-                }
-            },
             legend: {
                 display: false // Hide the legend
             },
             pan: {
                 enabled: true,
-                mode: 'x',
-                onComplete: updateGridLineUnit
+                mode: 'x'
             },
             zoom: {
                 enabled: true,
-                mode: 'x',
-                onComplete: updateGridLineUnit
+                mode: 'x'
             },
             scales: {
                 xAxes: [{
@@ -195,20 +187,9 @@ function initChart(data) {
                     },
                     ticks: {
                         fontColor: '#e6f1ff',
-                        maxRotation: 0,
-                        minRotation: 0,
-                        maxTicksLimit: 5,
-                        callback: function(value, index, values) {
-                            const date = new Date(value);
-                            // Check if the screen is wide enough to consider multi-line
-                            if (window.innerWidth < 768) {
-                                return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
-                            }
-                            
-                            const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
-                            const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                            return [day, time];
-                        }
+                        maxRotation: 45,
+                        minRotation: 45,
+                        maxTicksLimit: 5
                     }
                 }],
                 yAxes: [{
@@ -241,7 +222,7 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 
     temperatureChart.options.scales.xAxes[0].ticks.min = start;
     temperatureChart.options.scales.xAxes[0].ticks.max = end;
-    updateGridLineUnit();
+    temperatureChart.update();
 }
 
 // Toggle sensor visibility
@@ -336,54 +317,6 @@ function setDateRangeBySelector(range) {
     document.getElementById('endDate').value = formatDate(now);
     document.getElementById('endTime').value = formatTime(now);
     updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
-}
-
-function updateGridLineUnit() {
-    if (!temperatureChart) return;
-
-    const min = temperatureChart.options.scales.xAxes[0].ticks.min || new Date(temperatureChart.scales['x-axis-0'].min);
-    const max = temperatureChart.options.scales.xAxes[0].ticks.max || new Date(temperatureChart.scales['x-axis-0'].max);
-    const durationMs = max - min;
-    const durationHours = durationMs / (1000 * 60 * 60);
-
-    const timeOptions = temperatureChart.options.scales.xAxes[0].time;
-
-    if (durationHours <= 8) {
-        timeOptions.unit = 'hour';
-        timeOptions.unitStepSize = 1;
-        timeOptions.displayFormats = { hour: 'HH:mm' };
-    } else if (durationHours <= 24 * 3) { // 3 days
-        timeOptions.unit = 'hour';
-        timeOptions.unitStepSize = 6;
-        timeOptions.displayFormats = { hour: 'MMM d, HH:mm' };
-    } else if (durationHours <= 24 * 7) { // 7 days
-        timeOptions.unit = 'day';
-        timeOptions.unitStepSize = 1;
-        timeOptions.displayFormats = { day: 'MMM d' };
-    } else if (durationHours <= 24 * 31) { // ~1 month
-        timeOptions.unit = 'week';
-        timeOptions.unitStepSize = 1;
-        timeOptions.displayFormats = { week: 'MMM d' };
-    } else { // More than a month
-        timeOptions.unit = 'month';
-        timeOptions.unitStepSize = 1;
-        timeOptions.displayFormats = { month: 'MMM yyyy' };
-    }
-    
-    temperatureChart.options.scales.xAxes[0].ticks.callback = function(value) {
-        const date = new Date(value);
-        const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
-        const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-        const durationHours = (temperatureChart.scales['x-axis-0'].max - temperatureChart.scales['x-axis-0'].min) / (1000 * 60 * 60);
-        if (durationHours <= 24) {
-            return [day, time];
-        }
-        return day;
-    };
-    
-    temperatureChart.options.clip = false;
-    temperatureChart.update();
 }
 
 // Initialize the application
