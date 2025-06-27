@@ -1,5 +1,6 @@
 // Chart configuration
 let temperatureChart;
+const sensorVisibility = new Map();
 
 // Sensor icon mapping
 const sensorIcons = {
@@ -81,7 +82,9 @@ function createSensorButtons(sensorNames) {
             sensorName.toLowerCase().includes(key.toLowerCase())
         );
         
-        button.className = `sensor-btn active ${hasIcon ? 'icon-btn' : ''}`;
+        const isHidden = sensorVisibility.get(sensorName);
+
+        button.className = `sensor-btn ${!isHidden ? 'active' : ''} ${hasIcon ? 'icon-btn' : ''}`;
         button.dataset.sensor = sensorName;
         button.innerHTML = getSensorIcon(sensorName);
         button.style.backgroundColor = colors[index];
@@ -96,7 +99,6 @@ function createSensorButtons(sensorNames) {
 function addSensorButtonListeners() {
     document.querySelectorAll('.sensor-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-            btn.classList.toggle('active');
             toggleSensor(btn.dataset.sensor);
         });
     });
@@ -111,14 +113,8 @@ function initChart(data) {
     }
 
     // --- 1. Get state from old chart (if it exists) ---
-    const oldChartHiddenStates = new Map();
     let oldXAxis = null;
     if (temperatureChart) {
-        temperatureChart.data.datasets.forEach((ds, index) => {
-            const meta = temperatureChart.getDatasetMeta(index);
-            // On toggle, the meta can be null for a moment, ds.hidden is the source of truth
-            oldChartHiddenStates.set(ds.label, ds.hidden || meta.hidden);
-        });
         oldXAxis = {
              min: temperatureChart.options.scales.xAxes[0].ticks.min,
              max: temperatureChart.options.scales.xAxes[0].ticks.max
@@ -126,7 +122,7 @@ function initChart(data) {
         temperatureChart.destroy();
     }
 
-    // --- 2. Prepare datasets and apply old state ---
+    // --- 2. Prepare datasets and apply visibility state ---
     const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
     const theme = document.body.dataset.theme || 'dark';
     const colors = generateColors(sensorNames.length, theme);
@@ -145,11 +141,11 @@ function initChart(data) {
         pointBorderWidth: 2,
         fill: false,
         tension: 0.6,
-        hidden: oldChartHiddenStates.get(sensor) || false
+        hidden: sensorVisibility.get(sensor) || false
     }));
     
     // On first load, create the sensor buttons
-    if (!oldChartHiddenStates.size) {
+    if (!temperatureChart) { // A bit of a hack to detect first run
         createSensorButtons(sensorNames);
     }
 
@@ -238,17 +234,18 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 function toggleSensor(sensorName) {
     if (!temperatureChart) return;
     
-    const datasetIndex = temperatureChart.data.datasets.findIndex(ds => ds.label === sensorName);
-    if (datasetIndex === -1) {
-        console.error(`Sensor ${sensorName} not found`);
-        return;
-    }
+    // 1. Update state model
+    const isCurrentlyHidden = sensorVisibility.get(sensorName);
+    sensorVisibility.set(sensorName, !isCurrentlyHidden);
+
+    // 2. Update button appearance
+    document.querySelectorAll('.sensor-btn').forEach(btn => {
+        if (btn.dataset.sensor === sensorName) {
+            btn.classList.toggle('active', isCurrentlyHidden); // Becomes active if it WAS hidden
+        }
+    });
     
-    // This is the source of truth for the new state
-    const dataset = temperatureChart.data.datasets[datasetIndex];
-    dataset.hidden = !dataset.hidden;
-    
-    // Re-initialize the chart to recalculate everything
+    // 3. Re-initialize the chart to recalculate everything
     initChart(temperatureChart.config.data.originalData);
 }
 
@@ -369,6 +366,10 @@ async function init() {
         console.error('Failed to initialize: No data available');
         return;
     }
+
+    // Initialize visibility state for all sensors
+    const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
+    sensorNames.forEach(name => sensorVisibility.set(name, false));
 
     initChart(data);
     setDefaultTimeRange();
