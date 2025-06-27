@@ -188,6 +188,7 @@ function initChart(data) {
                         maxRotation: 0,
                         minRotation: 0,
                         maxTicksLimit: 5,
+                        minTicksLimit: 3,
                         callback: function(value, index, values) {
                             const date = new Date(value);
                             const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
@@ -201,6 +202,7 @@ function initChart(data) {
                         color: themeColors.gridColor
                     },
                     ticks: {
+                        mirror: true,
                         fontColor: themeColors.textColor,
                         callback: function(value) {
                             return value + '°C';
