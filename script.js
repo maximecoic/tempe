@@ -197,13 +197,7 @@ function initChart(data) {
                         fontColor: '#e6f1ff',
                         maxRotation: 0,
                         minRotation: 0,
-                        maxTicksLimit: 5,
-                        callback: function(value, index, values) {
-                            const date = new Date(value);
-                            const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
-                            const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                            return [day, time];
-                        }
+                        maxTicksLimit: 5
                     }
                 }],
                 yAxes: [{
@@ -365,6 +359,19 @@ function updateGridLineUnit() {
         timeOptions.displayFormats = { month: 'MMM yyyy' };
     }
     
+    temperatureChart.options.scales.xAxes[0].ticks.callback = function(value) {
+        const date = new Date(value);
+        const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+        const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+        const durationHours = (temperatureChart.scales['x-axis-0'].max - temperatureChart.scales['x-axis-0'].min) / (1000 * 60 * 60);
+        if (durationHours <= 24) {
+            return [day, time];
+        }
+        return day;
+    };
+    
+    temperatureChart.options.clip = false;
     temperatureChart.update();
 }
 
