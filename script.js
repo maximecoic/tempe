@@ -109,17 +109,25 @@ function initChart(data) {
         console.error('Chart canvas not found');
         return;
     }
-    
-    // Get sensor names (all keys except 'Heure')
-    const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
-    if (sensorNames.length === 0) {
-        console.error('No sensor data found');
-        return;
+
+    // --- 1. Get state from old chart (if it exists) ---
+    const oldChartHiddenStates = new Map();
+    let oldXAxis = null;
+    if (temperatureChart) {
+        temperatureChart.data.datasets.forEach((ds, index) => {
+            const meta = temperatureChart.getDatasetMeta(index);
+            // On toggle, the meta can be null for a moment, ds.hidden is the source of truth
+            oldChartHiddenStates.set(ds.label, ds.hidden || meta.hidden);
+        });
+        oldXAxis = {
+             min: temperatureChart.options.scales.xAxes[0].ticks.min,
+             max: temperatureChart.options.scales.xAxes[0].ticks.max
+        };
+        temperatureChart.destroy();
     }
-    
-    // Create sensor buttons
-    createSensorButtons(sensorNames);
-    
+
+    // --- 2. Prepare datasets and apply old state ---
+    const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
     const theme = document.body.dataset.theme || 'dark';
     const colors = generateColors(sensorNames.length, theme);
     
@@ -128,7 +136,7 @@ function initChart(data) {
         data: data.map(point => ({
             x: new Date(point.Heure),
             y: parseFloat(point[sensor])
-        })).filter(point => !isNaN(point.y)), // Filter out invalid temperature values
+        })).filter(point => !isNaN(point.y)),
         borderColor: colors[index],
         backgroundColor: colors[index],
         borderWidth: 2,
@@ -136,59 +144,55 @@ function initChart(data) {
         pointHoverRadius: 3,
         pointBorderWidth: 2,
         fill: false,
-        tension: 0.6 // Increased smoothness
+        tension: 0.6,
+        hidden: oldChartHiddenStates.get(sensor) || false
     }));
-
-    // Destroy existing chart if it exists
-    if (temperatureChart) {
-        temperatureChart.destroy();
-    }
     
-    const themeColors = themes[theme];
+    // On first load, create the sensor buttons
+    if (!oldChartHiddenStates.size) {
+        createSensorButtons(sensorNames);
+    }
 
+    // --- 3. Calculate Y-axis scale from VISIBLE datasets ---
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
+    const visibleDatasets = datasets.filter(d => !d.hidden);
+    
+    visibleDatasets.forEach(dataset => {
+        dataset.data.forEach(point => {
+            if (point.y < minTemp) minTemp = point.y;
+            if (point.y > maxTemp) maxTemp = point.y;
+        });
+    });
+
+    const paddedMin = (minTemp === Infinity) ? 0 : Math.floor(minTemp) - 2;
+    const paddedMax = (maxTemp === -Infinity) ? 40 : Math.ceil(maxTemp) + 2;
+    
+    // --- 4. Create the new chart ---
+    const themeColors = themes[theme];
     temperatureChart = new Chart(ctx, {
         type: 'line',
-        data: {
-            datasets: datasets
-        },
-        config: { // Store original data for theme switching
-            data: {
-                originalData: data
-            }
-        },
+        data: { datasets: datasets },
+        config: { data: { originalData: data } },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            legend: {
-                display: false // Hide the legend
-            },
-            pan: {
-                enabled: true,
-                mode: 'x'
-            },
-            zoom: {
-                enabled: true,
-                mode: 'x'
-            },
+            legend: { display: false },
+            pan: { enabled: true, mode: 'x' },
+            zoom: { enabled: true, mode: 'x' },
             scales: {
                 xAxes: [{
                     type: 'time',
-                    time: {
-                        unit: 'hour',
-                        displayFormats: {
-                            hour: 'MMM d, HH:mm'
-                        },
-                        tooltipFormat: "MMM d, yyyy, HH:mm"
-                    },
-                    gridLines: {
-                        color: themeColors.gridColor
-                    },
+                    time: { unit: 'hour', displayFormats: { hour: 'MMM d, HH:mm' }, tooltipFormat: "MMM d, yyyy, HH:mm" },
+                    gridLines: { color: themeColors.gridColor },
                     ticks: {
                         fontColor: themeColors.textColor,
                         maxRotation: 0,
                         minRotation: 0,
                         maxTicksLimit: 5,
                         minTicksLimit: 3,
+                        min: oldXAxis ? oldXAxis.min : undefined,
+                        max: oldXAxis ? oldXAxis.max : undefined,
                         callback: function(value, index, values) {
                             const date = new Date(value);
                             const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
@@ -199,16 +203,13 @@ function initChart(data) {
                 }],
                 yAxes: [{
                     position: 'right',
-                    gridLines: {
-                        drawBorder: false,
-                        color: themeColors.gridColor
-                    },
+                    gridLines: { drawBorder: false, color: themeColors.gridColor },
                     ticks: {
+                        min: paddedMin,
+                        max: paddedMax,
                         mirror: true,
                         fontColor: themeColors.textColor,
-                        callback: function(value) {
-                            return value + '°C';
-                        }
+                        callback: function(value) { return value + '°C'; }
                     }
                 }]
             }
@@ -243,9 +244,12 @@ function toggleSensor(sensorName) {
         return;
     }
     
-    const meta = temperatureChart.getDatasetMeta(datasetIndex);
-    meta.hidden = !meta.hidden;
-    temperatureChart.update();
+    // This is the source of truth for the new state
+    const dataset = temperatureChart.data.datasets[datasetIndex];
+    dataset.hidden = !dataset.hidden;
+    
+    // Re-initialize the chart to recalculate everything
+    initChart(temperatureChart.config.data.originalData);
 }
 
 // Set default time range to last 6 hours (as requested)
