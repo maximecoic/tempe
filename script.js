@@ -164,13 +164,11 @@ function initChart(data) {
             },
             pan: {
                 enabled: true,
-                mode: 'x',
-                onComplete: updateGridLineUnit
+                mode: 'x'
             },
             zoom: {
                 enabled: true,
-                mode: 'x',
-                onComplete: updateGridLineUnit
+                mode: 'x'
             },
             scales: {
                 xAxes: [{
@@ -183,7 +181,7 @@ function initChart(data) {
                         tooltipFormat: "MMM d, yyyy, HH:mm"
                     },
                     gridLines: {
-                        color: themeColors.axisColor
+                        color: themeColors.gridColor
                     },
                     ticks: {
                         fontColor: themeColors.textColor,
@@ -228,37 +226,6 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 
     temperatureChart.options.scales.xAxes[0].ticks.min = start;
     temperatureChart.options.scales.xAxes[0].ticks.max = end;
-    updateGridLineUnit();
-}
-
-function updateGridLineUnit() {
-    if (!temperatureChart) return;
-
-    const minTimestamp = temperatureChart.scales['x-axis-0'].min;
-    const maxTimestamp = temperatureChart.scales['x-axis-0'].max;
-    
-    const durationMs = maxTimestamp - minTimestamp;
-    const durationHours = durationMs / (1000 * 60 * 60);
-
-    const timeOptions = temperatureChart.options.scales.xAxes[0].time;
-
-    if (durationHours <= 8) {
-        timeOptions.unit = 'hour';
-        timeOptions.unitStepSize = 1;
-    } else if (durationHours <= 24 * 3) { // up to 3 days
-        timeOptions.unit = 'hour';
-        timeOptions.unitStepSize = 6;
-    } else if (durationHours <= 24 * 7) { // up to 7 days
-        timeOptions.unit = 'day';
-        timeOptions.unitStepSize = 1;
-    } else if (durationHours <= 24 * 31) { // up to ~1 month
-        timeOptions.unit = 'week';
-        timeOptions.unitStepSize = 1;
-    } else { // More than a month
-        timeOptions.unit = 'month';
-        timeOptions.unitStepSize = 1;
-    }
-    
     temperatureChart.update();
 }
 
