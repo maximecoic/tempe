@@ -186,11 +186,16 @@ function initChart(data) {
                         color: '#112240'
                     },
                     ticks: {
-                        source: 'data',
                         fontColor: '#e6f1ff',
                         maxRotation: 0,
                         minRotation: 0,
-                        maxTicksLimit: 5
+                        maxTicksLimit: 5,
+                        callback: function(value, index, values) {
+                            const date = new Date(value);
+                            const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+                            const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            return [day, time];
+                        }
                     }
                 }],
                 yAxes: [{
