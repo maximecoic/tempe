@@ -161,16 +161,24 @@ function initChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 20
+                }
+            },
             legend: {
                 display: false // Hide the legend
             },
             pan: {
                 enabled: true,
-                mode: 'x'
+                mode: 'x',
+                onComplete: updateGridLineUnit
             },
             zoom: {
                 enabled: true,
-                mode: 'x'
+                mode: 'x',
+                onComplete: updateGridLineUnit
             },
             scales: {
                 xAxes: [{
@@ -228,7 +236,7 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 
     temperatureChart.options.scales.xAxes[0].ticks.min = start;
     temperatureChart.options.scales.xAxes[0].ticks.max = end;
-    temperatureChart.update();
+    updateGridLineUnit();
 }
 
 // Toggle sensor visibility
@@ -323,6 +331,36 @@ function setDateRangeBySelector(range) {
     document.getElementById('endDate').value = formatDate(now);
     document.getElementById('endTime').value = formatTime(now);
     updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
+}
+
+function updateGridLineUnit() {
+    if (!temperatureChart) return;
+
+    const min = temperatureChart.options.scales.xAxes[0].ticks.min || new Date(temperatureChart.scales['x-axis-0'].min);
+    const max = temperatureChart.options.scales.xAxes[0].ticks.max || new Date(temperatureChart.scales['x-axis-0'].max);
+    const durationMs = max - min;
+    const durationHours = durationMs / (1000 * 60 * 60);
+
+    const timeOptions = temperatureChart.options.scales.xAxes[0].time;
+
+    if (durationHours <= 8) {
+        timeOptions.unit = 'hour';
+        timeOptions.unitStepSize = 1;
+    } else if (durationHours <= 24 * 3) { // 3 days
+        timeOptions.unit = 'hour';
+        timeOptions.unitStepSize = 6;
+    } else if (durationHours <= 24 * 7) { // 7 days
+        timeOptions.unit = 'day';
+        timeOptions.unitStepSize = 1;
+    } else if (durationHours <= 24 * 31) { // ~1 month
+        timeOptions.unit = 'week';
+        timeOptions.unitStepSize = 1;
+    } else { // More than a month
+        timeOptions.unit = 'month';
+        timeOptions.unitStepSize = 1;
+    }
+    
+    temperatureChart.update();
 }
 
 // Initialize the application
