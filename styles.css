@@ -161,6 +161,14 @@ body {
 }
 
 @media (min-width: 768px) {
+    .graph-container {
+        margin-left: -2rem;
+        margin-right: -2rem;
+        padding-left: 0;
+        padding-right: 0;
+        border-radius: 0;
+    }
+
     .container {
         padding: 2rem;
     }

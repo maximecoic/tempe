@@ -141,8 +141,8 @@ function initChart(data) {
         borderColor: colors[index],
         backgroundColor: colors[index],
         borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
+        pointRadius: 1,
+        pointHoverRadius: 3,
         pointBorderWidth: 2,
         fill: false,
         tension: 0.6 // Increased smoothness
@@ -186,6 +186,7 @@ function initChart(data) {
                         color: '#112240'
                     },
                     ticks: {
+                        source: 'data',
                         fontColor: '#e6f1ff',
                         maxRotation: 45,
                         minRotation: 45,
