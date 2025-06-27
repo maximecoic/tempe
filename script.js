@@ -164,7 +164,7 @@ function initChart(data) {
             layout: {
                 padding: {
                     left: 10,
-                    right: 20
+                    right: 40
                 }
             },
             legend: {
@@ -346,18 +346,23 @@ function updateGridLineUnit() {
     if (durationHours <= 8) {
         timeOptions.unit = 'hour';
         timeOptions.unitStepSize = 1;
+        timeOptions.displayFormats = { hour: 'HH:mm' };
     } else if (durationHours <= 24 * 3) { // 3 days
         timeOptions.unit = 'hour';
         timeOptions.unitStepSize = 6;
+        timeOptions.displayFormats = { hour: 'MMM d, HH:mm' };
     } else if (durationHours <= 24 * 7) { // 7 days
         timeOptions.unit = 'day';
         timeOptions.unitStepSize = 1;
+        timeOptions.displayFormats = { day: 'MMM d' };
     } else if (durationHours <= 24 * 31) { // ~1 month
         timeOptions.unit = 'week';
         timeOptions.unitStepSize = 1;
+        timeOptions.displayFormats = { week: 'MMM d' };
     } else { // More than a month
         timeOptions.unit = 'month';
         timeOptions.unitStepSize = 1;
+        timeOptions.displayFormats = { month: 'MMM yyyy' };
     }
     
     temperatureChart.update();
