@@ -120,7 +120,8 @@ function initChart(data) {
     // Create sensor buttons
     createSensorButtons(sensorNames);
     
-    const colors = generateColors(sensorNames.length);
+    const theme = document.body.dataset.theme || 'dark';
+    const colors = generateColors(sensorNames.length, theme);
     
     const datasets = sensorNames.map((sensor, index) => ({
         label: sensor,
@@ -143,7 +144,6 @@ function initChart(data) {
         temperatureChart.destroy();
     }
     
-    const theme = document.body.dataset.theme || 'dark';
     const themeColors = themes[theme];
 
     temperatureChart = new Chart(ctx, {
