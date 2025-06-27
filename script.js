@@ -197,7 +197,18 @@ function initChart(data) {
                         fontColor: '#e6f1ff',
                         maxRotation: 0,
                         minRotation: 0,
-                        maxTicksLimit: 5
+                        maxTicksLimit: 5,
+                        callback: function(value, index, values) {
+                            const date = new Date(value);
+                            // Check if the screen is wide enough to consider multi-line
+                            if (window.innerWidth < 768) {
+                                return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+                            }
+                            
+                            const day = date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+                            const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            return [day, time];
+                        }
                     }
                 }],
                 yAxes: [{
