@@ -142,6 +142,64 @@ function updateYAxis(chart = temperatureChart) {
     chart.options.scales.yAxes[0].ticks.max = paddedMax;
 }
 
+// Update info boxes with min/max and live temperatures
+function updateInfoBoxes() {
+    if (!temperatureChart) return;
+
+    const averagesList = document.getElementById('averages-list');
+    const liveList = document.getElementById('live-list');
+
+    if (!averagesList || !liveList) return;
+
+    averagesList.innerHTML = '';
+    liveList.innerHTML = '';
+
+    const visibleDatasets = temperatureChart.data.datasets.filter(d => !d.hidden);
+    
+    // Custom sort: Paris, then Chambre, then alphabetically
+    const sortOrder = { 'Paris': 1, 'Chambre': 2 };
+    visibleDatasets.sort((a, b) => {
+        const aOrder = sortOrder[a.label] || 3;
+        const bOrder = sortOrder[b.label] || 3;
+        if (aOrder !== bOrder) {
+            return aOrder - bOrder;
+        }
+        return a.label.localeCompare(b.label); // Alphabetical for others
+    });
+
+    const chartMin = temperatureChart.scales['x-axis-0'].min;
+    const chartMax = temperatureChart.scales['x-axis-0'].max;
+
+    visibleDatasets.forEach(dataset => {
+        // --- Averages Box Logic ---
+        let minTemp = Infinity;
+        let maxTemp = -Infinity;
+        let hasVisiblePoints = false;
+
+        dataset.data.forEach(point => {
+            if (point.x >= chartMin && point.x <= chartMax) {
+                if (point.y < minTemp) minTemp = point.y;
+                if (point.y > maxTemp) maxTemp = point.y;
+                hasVisiblePoints = true;
+            }
+        });
+
+        const avgLi = document.createElement('li');
+        avgLi.innerHTML = hasVisiblePoints ?
+            `<span class="sensor-name">${dataset.label}</span><span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
+            `<span class="sensor-name">${dataset.label}</span><span class="temp-values">N/A</span>`;
+        averagesList.appendChild(avgLi);
+
+        // --- Live Box Logic ---
+        const liveLi = document.createElement('li');
+        const lastPoint = dataset.data.length > 0 ? dataset.data[dataset.data.length - 1] : null;
+        liveLi.innerHTML = lastPoint ?
+            `<span class="sensor-name">${dataset.label}</span><span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
+            `<span class="sensor-name">${dataset.label}</span><span class="live-temp">N/A</span>`;
+        liveList.appendChild(liveLi);
+    });
+}
+
 // --- Group Management Functions ---
 
 function loadGroups() {
@@ -218,6 +276,7 @@ function toggleGroup(groupId) {
     document.querySelector(`.group-btn[data-group-id="${groupId}"]`)?.classList.toggle('active', !newHiddenState);
     updateYAxis();
     temperatureChart.update();
+    updateInfoBoxes();
 }
 
 
@@ -329,6 +388,7 @@ function initChart(data) {
                 onPanComplete: ({chart}) => {
                     updateYAxis(chart);
                     chart.update({duration: 0});
+                    updateInfoBoxes();
                 }
             },
             zoom: {
@@ -337,6 +397,7 @@ function initChart(data) {
                 onZoomComplete: ({chart}) => {
                     updateYAxis(chart);
                     chart.update({duration: 0});
+                    updateInfoBoxes();
                 }
             },
             scales: {
@@ -374,6 +435,7 @@ function initChart(data) {
             }
         }
     });
+    updateInfoBoxes();
 }
 
 // Update chart based on date and time range
@@ -392,6 +454,7 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
     temperatureChart.options.scales.xAxes[0].ticks.max = end;
     updateYAxis();
     temperatureChart.update(); // Redraw the chart with new ranges
+    updateInfoBoxes();
 }
 
 // Toggle sensor visibility
@@ -421,6 +484,7 @@ function toggleSensor(sensorName) {
     // 4. Recalculate Y-axis and update chart
     updateYAxis();
     temperatureChart.update();
+    updateInfoBoxes();
 }
 
 // --- Range Selector Logic ---

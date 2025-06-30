@@ -484,3 +484,77 @@ body {
         font-size: 1.5rem;
     }
 }
+
+.info-container {
+    display: flex;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 0 0.5rem;
+    margin-bottom: 0.7rem;
+}
+
+.info-box {
+    flex: 1;
+    background: var(--secondary-bg);
+    border-radius: 1.2rem;
+    padding: 0.8rem 1rem;
+    min-height: 100px;
+}
+
+.info-title {
+    color: var(--accent-color);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--tertiary-bg);
+    padding-bottom: 0.4rem;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 15vh;
+    overflow-y: auto;
+}
+
+.info-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    color: var(--text-color-secondary);
+}
+
+.info-list .sensor-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.info-list .temp-values {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.info-list .min-temp, .info-list .max-temp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.info-list .min-temp { color: #3a86ff; }
+.info-list .max-temp { color: #ff006e; }
+body[data-theme="light"] .info-list .min-temp { color: #0052cc; }
+body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
+
+.info-list .live-temp { font-weight: bold; }
+
+@media (max-width: 600px) {
+    .info-container {
+        flex-direction: column;
+    }
+    .info-list {
+        max-height: none;
+    }
+}
