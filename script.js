@@ -31,20 +31,18 @@ function generateColors(count, theme = 'dark') {
 
 // Get icon for sensor
 function getSensorIcon(sensorName) {
-    // Check for exact match
-    if (sensorIcons[sensorName]) {
-        return `<i class="fas ${sensorIcons[sensorName]}"></i>`;
-    }
-    
-    // Check for partial matches
-    for (const [key, icon] of Object.entries(sensorIcons)) {
-        if (sensorName.toLowerCase().includes(key.toLowerCase())) {
-            return `<i class="fas ${icon}"></i>`;
+    // Check for exact match first
+    let iconClass = sensorIcons[sensorName];
+    // If no exact match, check for partial matches
+    if (!iconClass) {
+        for (const [key, icon] of Object.entries(sensorIcons)) {
+            if (sensorName.toLowerCase().includes(key.toLowerCase())) {
+                iconClass = icon;
+                break; // Found a match, stop searching
+            }
         }
     }
-    
-    // If no match found, return the sensor name
-    return sensorName;
+    return iconClass ? `<i class="fas ${iconClass}"></i>` : sensorName;
 }
 
 // Fetch and process data
@@ -103,6 +101,42 @@ function addSensorButtonListeners() {
             toggleSensor(btn.dataset.sensor);
         });
     });
+}
+
+// Recalculate Y-axis scale based on visible data in the current viewport
+function updateYAxis(chart = temperatureChart) {
+    if (!chart) return;
+
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
+
+    const visibleDatasets = chart.data.datasets.filter(d => !d.hidden);
+
+    if (visibleDatasets.length === 0) {
+        chart.options.scales.yAxes[0].ticks.min = 0;
+        chart.options.scales.yAxes[0].ticks.max = 40;
+        return;
+    }
+
+    // Get the min/max of the current x-axis view (timestamps)
+    const chartMin = chart.scales['x-axis-0'].min;
+    const chartMax = chart.scales['x-axis-0'].max;
+
+    visibleDatasets.forEach(dataset => {
+        // Iterate through points and only consider those within the visible x-range
+        dataset.data.forEach(point => {
+            if (point.x >= chartMin && point.x <= chartMax) {
+                if (point.y < minTemp) minTemp = point.y;
+                if (point.y > maxTemp) maxTemp = point.y;
+            }
+        });
+    });
+
+    const paddedMin = (minTemp === Infinity) ? 0 : Math.floor(minTemp) - 2;
+    const paddedMax = (maxTemp === -Infinity) ? 40 : Math.ceil(maxTemp) + 2;
+
+    chart.options.scales.yAxes[0].ticks.min = paddedMin;
+    chart.options.scales.yAxes[0].ticks.max = paddedMax;
 }
 
 // Initialize chart
@@ -182,8 +216,22 @@ function initChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             legend: { display: false },
-            pan: { enabled: true, mode: 'x' },
-            zoom: { enabled: true, mode: 'x' },
+            pan: {
+                enabled: true,
+                mode: 'x',
+                onPanComplete: ({chart}) => {
+                    updateYAxis(chart);
+                    chart.update({duration: 0});
+                }
+            },
+            zoom: {
+                enabled: true,
+                mode: 'x',
+                onZoomComplete: ({chart}) => {
+                    updateYAxis(chart);
+                    chart.update({duration: 0});
+                }
+            },
             scales: {
                 xAxes: [{
                     type: 'time',
@@ -235,7 +283,8 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 
     temperatureChart.options.scales.xAxes[0].ticks.min = start;
     temperatureChart.options.scales.xAxes[0].ticks.max = end;
-    temperatureChart.update();
+    updateYAxis();
+    temperatureChart.update(); // Redraw the chart with new ranges
 }
 
 // Toggle sensor visibility
@@ -246,47 +295,25 @@ function toggleSensor(sensorName) {
         console.error('toggleSensor: originalData is not a valid array', originalData);
         return;
     }
-    // 1. Update state model
-    const isCurrentlyHidden = sensorVisibility.get(sensorName);
-    sensorVisibility.set(sensorName, !isCurrentlyHidden);
+    // 1. Update visibility state
+    const newHiddenState = !sensorVisibility.get(sensorName);
+    sensorVisibility.set(sensorName, newHiddenState);
 
-    // 2. Update all button appearances
-    const sensorNames = Object.keys(originalData[0]).filter(key => key !== 'Heure');
-    createSensorButtons(sensorNames);
-    
-    // 3. Re-initialize the chart to recalculate everything
-    initChart(originalData);
-}
-
-// Set default time range to last 6 hours (as requested)
-function setDefaultTimeRange() {
-    const now = new Date();
-    const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-
-    const formatDate = (date) => date.toISOString().split('T')[0];
-    const formatTime = (date) => date.toTimeString().slice(0, 5);
-
-    const startDateInput = document.getElementById('startDate');
-    const startTimeInput = document.getElementById('startTime');
-    const endDateInput = document.getElementById('endDate');
-    const endTimeInput = document.getElementById('endTime');
-
-    if (!startDateInput || !startTimeInput || !endDateInput || !endTimeInput) {
-        console.error('Date/time inputs not found');
-        return;
+    // 2. Update chart dataset visibility
+    const dataset = temperatureChart.data.datasets.find(d => d.label === sensorName);
+    if (dataset) {
+        dataset.hidden = newHiddenState;
     }
 
-    startDateInput.value = formatDate(sixHoursAgo);
-    startTimeInput.value = formatTime(sixHoursAgo);
-    endDateInput.value = formatDate(now);
-    endTimeInput.value = formatTime(now);
+    // 3. Update button appearance
+    const button = document.querySelector(`.sensor-btn[data-sensor="${sensorName}"]`);
+    if (button) {
+        button.classList.toggle('active', !newHiddenState);
+    }
 
-    updateChartDateRange(
-        formatDate(sixHoursAgo),
-        formatTime(sixHoursAgo),
-        formatDate(now),
-        formatTime(now)
-    );
+    // 4. Recalculate Y-axis and update chart
+    updateYAxis();
+    temperatureChart.update();
 }
 
 // --- Range Selector Logic ---
@@ -303,38 +330,50 @@ function setRangeSelectorHandlers() {
 
 function setDateRangeBySelector(range) {
     const now = new Date();
-    let start;
+    const start = new Date(now); // Initialize with now
+
     switch (range) {
         case '2h':
-            start = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+            start.setHours(start.getHours() - 2);
             break;
         case '6h':
-            start = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+            start.setHours(start.getHours() - 6);
             break;
         case 'day':
-            start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            start.setDate(start.getDate() - 1);
             break;
         case 'week':
-            start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            start.setDate(start.getDate() - 7);
             break;
         case 'month':
-            start = new Date(now);
             start.setMonth(start.getMonth() - 1);
             break;
         case 'year':
-            start = new Date(now);
             start.setFullYear(start.getFullYear() - 1);
             break;
         default:
-            start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            // Default to 1 day for safety, though the UI should prevent this.
+            start.setDate(start.getDate() - 1);
     }
+
     const formatDate = (date) => date.toISOString().split('T')[0];
     const formatTime = (date) => date.toTimeString().slice(0, 5);
+
     document.getElementById('startDate').value = formatDate(start);
     document.getElementById('startTime').value = formatTime(start);
     document.getElementById('endDate').value = formatDate(now);
     document.getElementById('endTime').value = formatTime(now);
-    updateChartDateRange(formatDate(start), formatTime(start), formatDate(now), formatTime(now));
+
+    applyDateRangeToChart();
+}
+
+function applyDateRangeToChart() {
+    if (!temperatureChart) return;
+    const startDate = document.getElementById('startDate').value;
+    const startTime = document.getElementById('startTime').value;
+    const endDate = document.getElementById('endDate').value;
+    const endTime = document.getElementById('endTime').value;
+    updateChartDateRange(startDate, startTime, endDate, endTime);
 }
 
 const themes = {
@@ -384,24 +423,17 @@ async function init() {
 
     originalData = data; // Store globally for toggling
     initChart(originalData);
-    setDefaultTimeRange();
     setRangeSelectorHandlers();
 
     // Add event listeners for date and time inputs
     const dateTimeInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
     dateTimeInputs.forEach(id => {
         const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('change', () => {
-                updateChartDateRange(
-                    document.getElementById('startDate').value,
-                    document.getElementById('startTime').value,
-                    document.getElementById('endDate').value,
-                    document.getElementById('endTime').value
-                );
-            });
-        }
+        element?.addEventListener('change', applyDateRangeToChart);
     });
+
+    // Set initial range by simulating a click on the default active button.
+    document.querySelector('.range-btn.active')?.click();
 }
 
 // Start the application
