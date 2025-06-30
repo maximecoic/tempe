@@ -289,6 +289,12 @@ function createGroupButtons() {
         button.dataset.groupId = group.id;
         button.style.setProperty('--group-color', group.color);
         button.innerHTML = `<i class="fas ${group.icon}"></i> ${group.name}`;
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-group-btn';
+        editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+        editBtn.ariaLabel = `Modifier le groupe ${group.name}`;
+        button.appendChild(editBtn);
         container.appendChild(button);
     });
 
@@ -299,6 +305,12 @@ function addGroupButtonListeners() {
     document.querySelectorAll('.group-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             toggleGroup(btn.dataset.groupId);
+        });
+    });
+    document.querySelectorAll('.edit-group-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent toggling the group when clicking edit
+            openGroupModalForEdit(btn.parentElement.dataset.groupId);
         });
     });
 }
@@ -582,9 +594,9 @@ function setupGroupModal() {
     const cancelGroupBtn = document.getElementById('cancelGroupBtn');
     const saveGroupBtn = document.getElementById('saveGroupBtn');
 
-    addGroupBtn?.addEventListener('click', openGroupModal);
+    addGroupBtn?.addEventListener('click', openGroupModalForCreate);
     cancelGroupBtn?.addEventListener('click', closeGroupModal);
-    saveGroupBtn?.addEventListener('click', saveNewGroup);
+    saveGroupBtn?.addEventListener('click', saveGroup);
     modalOverlay?.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
             closeGroupModal();
@@ -610,18 +622,53 @@ function openGroupModal() {
     modalOverlay.style.display = 'flex';
 }
 
+function openGroupModalForCreate() {
+    const modal = document.getElementById('groupModal');
+    modal.dataset.editingGroupId = ''; // Clear editing state
+
+    // Reset form fields
+    document.getElementById('groupModalTitle').textContent = 'Créer un groupe';
+    document.getElementById('groupName').value = '';
+    document.getElementById('groupIcon').value = 'layer-group';
+    document.getElementById('groupColor').value = '#64ffda';
+    document.getElementById('groupSensors').selectedIndex = -1;
+    document.getElementById('saveGroupBtn').textContent = 'Créer';
+
+    openGroupModal();
+}
+
+function openGroupModalForEdit(groupId) {
+    const group = groups.find(g => g.id === groupId);
+    if (!group) return;
+
+    const modal = document.getElementById('groupModal');
+    modal.dataset.editingGroupId = groupId;
+
+    // Pre-fill form fields
+    document.getElementById('groupModalTitle').textContent = 'Modifier le groupe';
+    document.getElementById('groupName').value = group.name;
+    document.getElementById('groupIcon').value = group.icon;
+    document.getElementById('groupColor').value = group.color;
+    document.getElementById('saveGroupBtn').textContent = 'Enregistrer';
+
+    openGroupModal(); // This will populate the sensor list
+
+    // Select the sensors that are part of the group
+    const sensorsSelect = document.getElementById('groupSensors');
+    Array.from(sensorsSelect.options).forEach(option => {
+        option.selected = group.sensors.includes(option.value);
+    });
+}
+
 function closeGroupModal() {
     const modalOverlay = document.getElementById('groupModalOverlay');
     if (modalOverlay) {
         modalOverlay.style.display = 'none';
-        // Optionally reset form fields
-        document.getElementById('groupName').value = '';
-        document.getElementById('groupIcon').value = '';
-        document.getElementById('groupSensors').selectedIndex = -1;
+        document.getElementById('groupModal').dataset.editingGroupId = '';
     }
 }
 
-function saveNewGroup() {
+function saveGroup() {
     const name = document.getElementById('groupName').value.trim();
     const selectedSensors = Array.from(document.getElementById('groupSensors').selectedOptions).map(opt => opt.value);
     const icon = document.getElementById('groupIcon').value.trim() || 'fa-layer-group';
@@ -632,17 +679,39 @@ function saveNewGroup() {
         return;
     }
 
-    const newGroup = { id: `group_${Date.now()}`, name, sensors: selectedSensors, icon, color };
-    groups.push(newGroup);
-    saveGroups();
+    const editingGroupId = document.getElementById('groupModal').dataset.editingGroupId;
 
-    // Dynamically add to chart and UI
-    const groupData = calculateGroupAverageData(newGroup, originalData);
-    const newDataset = { label: newGroup.name, data: groupData, borderColor: newGroup.color, backgroundColor: newGroup.color, borderWidth: 2.5, pointRadius: 1, pointHoverRadius: 3, pointBorderWidth: 2, fill: false, tension: 0.6, hidden: true, isGroup: true, groupId: newGroup.id };
-    temperatureChart.data.datasets.push(newDataset);
-    groupVisibility.set(newGroup.id, true);
+    if (editingGroupId) {
+        // --- EDIT LOGIC ---
+        const group = groups.find(g => g.id === editingGroupId);
+        if (group) {
+            group.name = name;
+            group.sensors = selectedSensors;
+            group.icon = icon;
+            group.color = color;
+
+            const dataset = temperatureChart.data.datasets.find(d => d.groupId === editingGroupId);
+            if (dataset) {
+                dataset.label = name;
+                dataset.borderColor = color;
+                dataset.backgroundColor = color;
+                dataset.data = calculateGroupAverageData(group, originalData);
+            }
+        }
+    } else {
+        // --- CREATE LOGIC ---
+        const newGroup = { id: `group_${Date.now()}`, name, sensors: selectedSensors, icon, color };
+        groups.push(newGroup);
+        groupVisibility.set(newGroup.id, true); // Default to hidden
+        const groupData = calculateGroupAverageData(newGroup, originalData);
+        const newDataset = { label: newGroup.name, data: groupData, borderColor: color, backgroundColor: color, borderWidth: 2.5, pointRadius: 1, pointHoverRadius: 3, pointBorderWidth: 2, fill: false, tension: 0.6, hidden: true, isGroup: true, groupId: newGroup.id };
+        temperatureChart.data.datasets.push(newDataset);
+    }
+
+    saveGroups();
     createGroupButtons();
     temperatureChart.update();
+    updateInfoBoxes();
     closeGroupModal();
 }
 

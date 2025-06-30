@@ -49,7 +49,8 @@
             <div class="sensor-buttons"></div>
         </div>
         <div class="controls-section">
-            <div class="controls-title">Groupes
+            <div class="controls-title">
+                <span>Groupes</span>
                 <button class="add-group-btn" id="addGroupBtn" aria-label="Ajouter un groupe">+</button>
             </div>
             <div class="group-buttons"></div>
@@ -69,9 +70,9 @@
         </div>
     </div>
     <!-- Group Creation Modal (hidden by default) -->
-    <div class="group-modal-overlay" id="groupModalOverlay" style="display:none;">
-        <div class="group-modal">
-            <h2>Créer un groupe</h2>
+    <div class="group-modal-overlay" id="groupModalOverlay" style="display:none;" >
+        <div class="group-modal" data-editing-group-id="">
+            <h2 id="groupModalTitle">Créer un groupe</h2>
             <label for="groupName">Nom du groupe</label>
             <input type="text" id="groupName" placeholder="Nom du groupe">
             <label for="groupSensors">Capteurs à inclure</label>

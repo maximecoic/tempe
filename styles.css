@@ -347,6 +347,9 @@ body {
 .controls-title {
     color: var(--accent-color);
     font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-weight: 600;
     margin-bottom: 0.7rem;
     letter-spacing: 0.02em;
@@ -359,6 +362,7 @@ body {
 }
 
 .group-btn {
+    position: relative; /* For positioning the edit button */
     background: var(--range-btn-hover-bg);
     color: var(--range-btn-text);
     border: 2px solid transparent;
@@ -385,19 +389,37 @@ body {
 }
 
 .add-group-btn {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--accent-color);
     color: var(--accent-color-text);
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 0.5rem;
     cursor: pointer;
     transition: background 0.2s;
+}
+
+.edit-group-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 24px;
+    height: 24px;
+    background: var(--accent-color);
+    color: var(--accent-color-text);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 .add-group-btn:active {
@@ -413,6 +435,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.group-btn:hover .edit-group-btn {
+    opacity: 1; /* Show on hover */
+    transform: scale(1.1);
 }
 
 .group-modal {
