@@ -2,6 +2,9 @@
 let temperatureChart;
 let originalData = null; // Store the original data globally
 const sensorVisibility = new Map();
+let groups = [];
+const groupVisibility = new Map();
+const GROUP_STORAGE_KEY = 'sensorGroups';
 
 // Sensor icon mapping
 const sensorIcons = {
@@ -139,6 +142,85 @@ function updateYAxis(chart = temperatureChart) {
     chart.options.scales.yAxes[0].ticks.max = paddedMax;
 }
 
+// --- Group Management Functions ---
+
+function loadGroups() {
+    const storedGroups = localStorage.getItem(GROUP_STORAGE_KEY);
+    if (storedGroups) {
+        groups = JSON.parse(storedGroups);
+    }
+}
+
+function saveGroups() {
+    localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(groups));
+}
+
+function calculateGroupAverageData(group, allData) {
+    if (!group || !Array.isArray(group.sensors) || !Array.isArray(allData)) {
+        return [];
+    }
+
+    return allData.map(dataPoint => {
+        let sum = 0;
+        let count = 0;
+        group.sensors.forEach(sensorName => {
+            const value = parseFloat(dataPoint[sensorName]);
+            if (dataPoint.hasOwnProperty(sensorName) && !isNaN(value)) {
+                sum += value;
+                count++;
+            }
+        });
+
+        if (count > 0) {
+            return {
+                x: new Date(dataPoint.Heure),
+                y: parseFloat((sum / count).toFixed(2)) // Average with 2 decimal places
+            };
+        }
+        return null;
+    }).filter(point => point !== null);
+}
+
+function createGroupButtons() {
+    const container = document.querySelector('.group-buttons');
+    if (!container) return;
+    container.innerHTML = ''; // Clear old buttons
+
+    groups.forEach(group => {
+        const isHidden = groupVisibility.get(group.id);
+        const button = document.createElement('button');
+        button.className = `group-btn ${!isHidden ? 'active' : ''}`;
+        button.dataset.groupId = group.id;
+        button.style.setProperty('--group-color', group.color);
+        button.innerHTML = `<i class="fas ${group.icon}"></i> ${group.name}`;
+        container.appendChild(button);
+    });
+
+    addGroupButtonListeners();
+}
+
+function addGroupButtonListeners() {
+    document.querySelectorAll('.group-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleGroup(btn.dataset.groupId);
+        });
+    });
+}
+
+function toggleGroup(groupId) {
+    if (!temperatureChart) return;
+    const newHiddenState = !groupVisibility.get(groupId);
+    groupVisibility.set(groupId, newHiddenState);
+
+    const dataset = temperatureChart.data.datasets.find(d => d.groupId === groupId);
+    if (dataset) dataset.hidden = newHiddenState;
+
+    document.querySelector(`.group-btn[data-group-id="${groupId}"]`)?.classList.toggle('active', !newHiddenState);
+    updateYAxis();
+    temperatureChart.update();
+}
+
+
 // Initialize chart
 function initChart(data) {
     if (!Array.isArray(data) || data.length === 0) {
@@ -187,9 +269,34 @@ function initChart(data) {
         hidden: sensorVisibility.get(sensor) || false
     }));
     
+    // --- 3. Prepare group datasets ---
+    const groupDatasets = groups.map(group => {
+        const groupData = calculateGroupAverageData(group, originalData);
+        if (!groupVisibility.has(group.id)) {
+            groupVisibility.set(group.id, true); // Default to hidden
+        }
+        return {
+            label: group.name,
+            data: groupData,
+            borderColor: group.color,
+            backgroundColor: group.color,
+            borderWidth: 2.5,
+            pointRadius: 1,
+            pointHoverRadius: 3,
+            pointBorderWidth: 2,
+            fill: false,
+            tension: 0.6,
+            hidden: groupVisibility.get(group.id),
+            isGroup: true,
+            groupId: group.id
+        };
+    });
+
+
     // On first load, create the sensor buttons
     if (!temperatureChart) { // A bit of a hack to detect first run
         createSensorButtons(sensorNames);
+        createGroupButtons();
     }
 
     // --- 3. Calculate Y-axis scale from VISIBLE datasets ---
@@ -211,7 +318,7 @@ function initChart(data) {
     const themeColors = themes[theme];
     temperatureChart = new Chart(ctx, {
         type: 'line',
-        data: { datasets: datasets },
+        data: { datasets: [...datasets, ...groupDatasets] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -367,6 +474,77 @@ function setDateRangeBySelector(range) {
     applyDateRangeToChart();
 }
 
+function setupGroupModal() {
+    const modalOverlay = document.getElementById('groupModalOverlay');
+    const addGroupBtn = document.getElementById('addGroupBtn');
+    const cancelGroupBtn = document.getElementById('cancelGroupBtn');
+    const saveGroupBtn = document.getElementById('saveGroupBtn');
+
+    addGroupBtn?.addEventListener('click', openGroupModal);
+    cancelGroupBtn?.addEventListener('click', closeGroupModal);
+    saveGroupBtn?.addEventListener('click', saveNewGroup);
+    modalOverlay?.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            closeGroupModal();
+        }
+    });
+}
+
+function openGroupModal() {
+    const modalOverlay = document.getElementById('groupModalOverlay');
+    const sensorsSelect = document.getElementById('groupSensors');
+    if (!modalOverlay || !sensorsSelect) return;
+
+    // Populate sensor list
+    sensorsSelect.innerHTML = '';
+    const sensorNames = Object.keys(originalData[0]).filter(key => key !== 'Heure');
+    sensorNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        sensorsSelect.appendChild(option);
+    });
+
+    modalOverlay.style.display = 'flex';
+}
+
+function closeGroupModal() {
+    const modalOverlay = document.getElementById('groupModalOverlay');
+    if (modalOverlay) {
+        modalOverlay.style.display = 'none';
+        // Optionally reset form fields
+        document.getElementById('groupName').value = '';
+        document.getElementById('groupIcon').value = '';
+        document.getElementById('groupSensors').selectedIndex = -1;
+    }
+}
+
+function saveNewGroup() {
+    const name = document.getElementById('groupName').value.trim();
+    const selectedSensors = Array.from(document.getElementById('groupSensors').selectedOptions).map(opt => opt.value);
+    const icon = document.getElementById('groupIcon').value.trim() || 'fa-layer-group';
+    const color = document.getElementById('groupColor').value;
+
+    if (!name || selectedSensors.length < 1) {
+        alert('Please provide a group name and select at least one sensor.');
+        return;
+    }
+
+    const newGroup = { id: `group_${Date.now()}`, name, sensors: selectedSensors, icon, color };
+    groups.push(newGroup);
+    saveGroups();
+
+    // Dynamically add to chart and UI
+    const groupData = calculateGroupAverageData(newGroup, originalData);
+    const newDataset = { label: newGroup.name, data: groupData, borderColor: newGroup.color, backgroundColor: newGroup.color, borderWidth: 2.5, pointRadius: 1, pointHoverRadius: 3, pointBorderWidth: 2, fill: false, tension: 0.6, hidden: true, isGroup: true, groupId: newGroup.id };
+    temperatureChart.data.datasets.push(newDataset);
+    groupVisibility.set(newGroup.id, true);
+    createGroupButtons();
+    temperatureChart.update();
+    closeGroupModal();
+}
+
+
 function applyDateRangeToChart() {
     if (!temperatureChart) return;
     const startDate = document.getElementById('startDate').value;
@@ -414,6 +592,9 @@ async function init() {
         console.error('Failed to initialize: No data available');
         return;
     }
+
+    loadGroups();
+    setupGroupModal();
 
     // Initialize visibility state for all sensors
     const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');

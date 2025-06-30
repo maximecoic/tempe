@@ -351,28 +351,35 @@ body {
     letter-spacing: 0.02em;
 }
 
+.group-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
 .group-btn {
     background: var(--range-btn-hover-bg);
     color: var(--range-btn-text);
-    border: none;
+    border: 2px solid transparent;
     border-radius: 1.2rem;
-    padding: 0.3rem 0.9rem;
+    padding: 0.4rem 1rem;
     font-size: 1rem;
     font-weight: 500;
     margin: 0.2rem 0.2rem 0.2rem 0;
     opacity: 0.8;
-    transition: background 0.2s, color 0.2s, opacity 0.2s;
+    transition: all 0.2s;
 }
 
 .group-btn.active {
-    background: var(--accent-color);
-    color: var(--accent-color-text);
+    background: var(--group-color, var(--accent-color));
+    color: #fff;
+    border-color: #fff;
     opacity: 1;
 }
 
 .group-btn:focus, .group-btn:hover {
-    background: var(--accent-color);
-    color: var(--accent-color-text);
+    background: var(--group-color, var(--accent-color));
+    color: #fff;
     opacity: 1;
 }
 
