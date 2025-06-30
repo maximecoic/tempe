@@ -541,11 +541,11 @@ body {
     text-overflow: ellipsis;
 }
 
-.info-list .sensor-readings {
+.info-list .sensor-info-live {
     display: flex;
     align-items: center;
     gap: 1rem;
-    flex-shrink: 0;
+    min-width: 0; /* Allow sensor-info to shrink and truncate */
 }
 
 .info-list .temp-values {
@@ -577,7 +577,7 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
     .info-box {
         padding: 0.7rem 0.5rem;
     }
-    .info-list .sensor-readings {
+    .info-list .sensor-info-live {
         gap: 0.5rem;
     }
     .info-list .temp-values {

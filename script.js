@@ -197,9 +197,9 @@ function updateInfoBoxes() {
             `<span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
             `<span class="temp-values">N/A</span>`;
 
-        const readingsHTML = `<div class="sensor-readings">${liveValueHTML}${minMaxHTML}</div>`;
+        const leftSideHTML = `<div class="sensor-info-live">${sensorInfoHTML}${liveValueHTML}</div>`;
 
-        li.innerHTML = sensorInfoHTML + readingsHTML;
+        li.innerHTML = leftSideHTML + minMaxHTML;
         statsList.appendChild(li);
     });
 }
