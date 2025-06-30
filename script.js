@@ -1,5 +1,6 @@
 // Chart configuration
 let temperatureChart;
+let originalData = null; // Store the original data globally
 const sensorVisibility = new Map();
 
 // Sensor icon mapping
@@ -177,7 +178,6 @@ function initChart(data) {
     temperatureChart = new Chart(ctx, {
         type: 'line',
         data: { datasets: datasets },
-        config: { data: { originalData: data } },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -242,7 +242,6 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 function toggleSensor(sensorName) {
     if (!temperatureChart) return;
     // Defensive: check if originalData exists and is valid
-    const originalData = temperatureChart.config?.data?.originalData;
     if (!Array.isArray(originalData) || originalData.length === 0) {
         console.error('toggleSensor: originalData is not a valid array', originalData);
         return;
@@ -365,7 +364,7 @@ function applyTheme(theme) {
         // Redraw chart with new theme colors
         const sensorNames = Object.keys(temperatureChart.data.datasets).map(i => temperatureChart.data.datasets[i].label);
         createSensorButtons(sensorNames);
-        initChart(temperatureChart.config.data.originalData); 
+        initChart(originalData); 
     }
 }
 
@@ -383,7 +382,8 @@ async function init() {
         if (!sensorVisibility.has(name)) sensorVisibility.set(name, false);
     });
 
-    initChart(data);
+    originalData = data; // Store globally for toggling
+    initChart(originalData);
     setDefaultTimeRange();
     setRangeSelectorHandlers();
 
