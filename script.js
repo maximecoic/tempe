@@ -778,10 +778,28 @@ const themes = {
 function applyTheme(theme) {
     document.body.dataset.theme = theme;
     if (temperatureChart) {
-        // Redraw chart with new theme colors
-        const sensorNames = Object.keys(temperatureChart.data.datasets).map(i => temperatureChart.data.datasets[i].label);
-        createSensorButtons(sensorNames);
-        initChart(originalData); 
+        const themeColors = themes[theme];
+
+        // Update chart options dynamically
+        temperatureChart.options.scales.xAxes[0].gridLines.color = themeColors.gridColor;
+        temperatureChart.options.scales.xAxes[0].ticks.fontColor = themeColors.textColor;
+        temperatureChart.options.scales.yAxes[0].gridLines.color = themeColors.gridColor;
+        temperatureChart.options.scales.yAxes[0].ticks.fontColor = themeColors.textColor;
+
+        // Update dataset colors
+        const sensorDatasets = temperatureChart.data.datasets.filter(d => !d.isGroup);
+        const colors = generateColors(sensorDatasets.length, theme);
+        
+        sensorDatasets.forEach((dataset, index) => {
+            dataset.borderColor = colors[index];
+            dataset.backgroundColor = colors[index];
+        });
+
+        temperatureChart.update({ duration: 0 }); // Update without animation
+
+        // Update sensor button colors
+        const sensorNames = sensorDatasets.map(d => d.label);
+        createSensorButtons(sensorNames); 
     }
 }
 
