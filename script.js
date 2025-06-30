@@ -106,6 +106,10 @@ function addSensorButtonListeners() {
 
 // Initialize chart
 function initChart(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error('initChart: data is not a valid array', data);
+        return;
+    }
     const ctx = document.getElementById('temperatureChart');
     if (!ctx) {
         console.error('Chart canvas not found');
@@ -237,20 +241,22 @@ function updateChartDateRange(startDate, startTime, endDate, endTime) {
 // Toggle sensor visibility
 function toggleSensor(sensorName) {
     if (!temperatureChart) return;
-    
+    // Defensive: check if originalData exists and is valid
+    const originalData = temperatureChart.config?.data?.originalData;
+    if (!Array.isArray(originalData) || originalData.length === 0) {
+        console.error('toggleSensor: originalData is not a valid array', originalData);
+        return;
+    }
     // 1. Update state model
     const isCurrentlyHidden = sensorVisibility.get(sensorName);
     sensorVisibility.set(sensorName, !isCurrentlyHidden);
 
-    // 2. Update button appearance
-    document.querySelectorAll('.sensor-btn').forEach(btn => {
-        if (btn.dataset.sensor === sensorName) {
-            btn.classList.toggle('active', !isCurrentlyHidden);
-        }
-    });
+    // 2. Update all button appearances
+    const sensorNames = Object.keys(originalData[0]).filter(key => key !== 'Heure');
+    createSensorButtons(sensorNames);
     
     // 3. Re-initialize the chart to recalculate everything
-    initChart(temperatureChart.config.data.originalData);
+    initChart(originalData);
 }
 
 // Set default time range to last 6 hours (as requested)
