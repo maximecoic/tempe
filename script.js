@@ -151,23 +151,33 @@ function updateInfoBoxes() {
 
     statsList.innerHTML = '';
 
-    const visibleDatasets = temperatureChart.data.datasets.filter(d => !d.hidden);
+    const allDatasets = [...temperatureChart.data.datasets];
 
-    // Custom sort: Paris, then Chambre, then alphabetically
+    // New sort: 1. Visible first. 2. Custom order. 3. Alphabetical.
     const sortOrder = { 'Paris': 1, 'Chambre': 2 };
-    visibleDatasets.sort((a, b) => {
-        const aOrder = sortOrder[a.label] || 3;
-        const bOrder = sortOrder[b.label] || 3;
-        if (aOrder !== bOrder) {
-            return aOrder - bOrder;
+    allDatasets.sort((a, b) => {
+        // 1. Primary sort: hidden status (visible items first)
+        if (a.hidden !== b.hidden) {
+            return a.hidden ? 1 : -1;
         }
-        return a.label.localeCompare(b.label); // Alphabetical for others
+
+        // 2. Secondary sort for visible items: custom order
+        if (!a.hidden) {
+            const aOrder = sortOrder[a.label] || 3;
+            const bOrder = sortOrder[b.label] || 3;
+            if (aOrder !== bOrder) {
+                return aOrder - bOrder;
+            }
+        }
+
+        // 3. Tertiary sort: alphabetical for all items within their group (visible/hidden)
+        return a.label.localeCompare(b.label);
     });
 
     const chartMin = temperatureChart.scales['x-axis-0'].min;
     const chartMax = temperatureChart.scales['x-axis-0'].max;
 
-    visibleDatasets.forEach(dataset => {
+    allDatasets.forEach(dataset => {
         // --- Calculate Stats ---
         let minTemp = Infinity;
         let maxTemp = -Infinity;
@@ -185,9 +195,12 @@ function updateInfoBoxes() {
 
         // --- Build HTML ---
         const li = document.createElement('li');
+        if (dataset.hidden) {
+            li.classList.add('is-hidden');
+        }
         const datasetColor = dataset.borderColor;
 
-        const sensorInfoHTML = `<div class="sensor-info"><span class="color-dot" style="background-color: ${datasetColor};"></span><span class="sensor-name-text">${dataset.label}</span></div>`;
+        const sensorInfoHTML = `<div class="sensor-info"><button class="color-dot" data-sensor-toggle="${dataset.label}" style="background-color: ${datasetColor};" aria-label="Toggle ${dataset.label}"></button><span class="sensor-name-text">${dataset.label}</span></div>`;
 
         const liveValueHTML = lastPoint ?
             `<span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
@@ -200,6 +213,21 @@ function updateInfoBoxes() {
         // The three elements for the list item, to be laid out by CSS Grid
         li.innerHTML = sensorInfoHTML + liveValueHTML + minMaxHTML;
         statsList.appendChild(li);
+    });
+
+    // Add event listeners to the new toggle dots
+    statsList.querySelectorAll('.color-dot').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sensorLabel = e.currentTarget.dataset.sensorToggle;
+            const dataset = temperatureChart.data.datasets.find(d => d.label === sensorLabel);
+            if (!dataset) return;
+
+            if (dataset.isGroup) {
+                toggleGroup(dataset.groupId);
+            } else {
+                toggleSensor(dataset.label);
+            }
+        });
     });
 }
 
