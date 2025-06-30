@@ -127,6 +127,10 @@ function initChart(data) {
     const theme = document.body.dataset.theme || 'dark';
     const colors = generateColors(sensorNames.length, theme);
     
+    sensorNames.forEach(name => {
+        if (!sensorVisibility.has(name)) sensorVisibility.set(name, false);
+    });
+    
     const datasets = sensorNames.map((sensor, index) => ({
         label: sensor,
         data: data.map(point => ({
@@ -241,7 +245,7 @@ function toggleSensor(sensorName) {
     // 2. Update button appearance
     document.querySelectorAll('.sensor-btn').forEach(btn => {
         if (btn.dataset.sensor === sensorName) {
-            btn.classList.toggle('active', isCurrentlyHidden); // Becomes active if it WAS hidden
+            btn.classList.toggle('active', !isCurrentlyHidden);
         }
     });
     
@@ -369,7 +373,9 @@ async function init() {
 
     // Initialize visibility state for all sensors
     const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
-    sensorNames.forEach(name => sensorVisibility.set(name, false));
+    sensorNames.forEach(name => {
+        if (!sensorVisibility.has(name)) sensorVisibility.set(name, false);
+    });
 
     initChart(data);
     setDefaultTimeRange();
