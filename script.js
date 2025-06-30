@@ -197,9 +197,8 @@ function updateInfoBoxes() {
             `<span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
             `<span class="temp-values">N/A</span>`;
 
-        const leftSideHTML = `<div class="sensor-info-live">${sensorInfoHTML}${liveValueHTML}</div>`;
-
-        li.innerHTML = leftSideHTML + minMaxHTML;
+        // The three elements for the list item, to be laid out by CSS Grid
+        li.innerHTML = sensorInfoHTML + liveValueHTML + minMaxHTML;
         statsList.appendChild(li);
     });
 }
