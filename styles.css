@@ -579,11 +579,16 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
         font-size: 0.85rem;
     }
     .info-box {
-        padding: 0.7rem;
+        padding: 0.7rem 0.5rem;
+    }
+    .info-container .info-box:first-child {
+        flex: 1.5; /* Give more space to Averages */
+    }
+    .info-container .info-box:last-child {
+        flex: 1; /* Give less space to Live */
     }
     .info-list .temp-values {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0.1rem;
+        /* Keep on one line on mobile */
+        gap: 0.4rem;
     }
 }
