@@ -184,18 +184,22 @@ function updateInfoBoxes() {
             }
         });
 
+        const datasetColor = dataset.borderColor;
         const avgLi = document.createElement('li');
-        avgLi.innerHTML = hasVisiblePoints ?
-            `<span class="sensor-name">${dataset.label}</span><span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
-            `<span class="sensor-name">${dataset.label}</span><span class="temp-values">N/A</span>`;
+        const avgValuesHTML = hasVisiblePoints ?
+            `<span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
+            `<span class="temp-values">N/A</span>`;
+        avgLi.innerHTML = `<div class="sensor-info"><span class="color-dot" style="background-color: ${datasetColor};"></span><span class="sensor-name-text">${dataset.label}</span></div>${avgValuesHTML}`;
         averagesList.appendChild(avgLi);
 
         // --- Live Box Logic ---
         const liveLi = document.createElement('li');
         const lastPoint = dataset.data.length > 0 ? dataset.data[dataset.data.length - 1] : null;
-        liveLi.innerHTML = lastPoint ?
-            `<span class="sensor-name">${dataset.label}</span><span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
-            `<span class="sensor-name">${dataset.label}</span><span class="live-temp">N/A</span>`;
+        const liveValueHTML = lastPoint ?
+            `<span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
+            `<span class="live-temp">N/A</span>`;
+        // Use a placeholder for the dot to keep names aligned between the two boxes.
+        liveLi.innerHTML = `<div class="sensor-info"><span class="color-dot-placeholder"></span><span class="sensor-name-text">${dataset.label}</span></div>${liveValueHTML}`;
         liveList.appendChild(liveLi);
     });
 }
