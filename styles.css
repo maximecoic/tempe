@@ -207,11 +207,12 @@ body {
     background: var(--tertiary-bg);
     border-radius: 1.2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    padding: 0.7rem 1.2rem;
+    padding: 0.7rem 0.5rem;
     margin-bottom: 0.7rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .range-selector {
@@ -487,7 +488,6 @@ body {
 
 .info-container {
     display: flex;
-    gap: 0.7rem;
     width: 100%;
     padding: 0 0.5rem;
     margin-bottom: 0.7rem;
@@ -498,16 +498,6 @@ body {
     background: var(--secondary-bg);
     border-radius: 1.2rem;
     padding: 0.8rem 1rem;
-    min-height: 100px;
-}
-
-.info-title {
-    color: var(--accent-color);
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid var(--tertiary-bg);
-    padding-bottom: 0.4rem;
 }
 
 .info-list {
@@ -535,7 +525,7 @@ body {
     min-width: 0; /* Crucial for text-overflow to work in flexbox */
 }
 
-.info-list .color-dot, .info-list .color-dot-placeholder {
+.info-list .color-dot {
     display: inline-block;
     width: 9px;
     height: 9px;
@@ -551,9 +541,16 @@ body {
     text-overflow: ellipsis;
 }
 
+.info-list .sensor-readings {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
 .info-list .temp-values {
     display: flex;
-    gap: 0.8rem;
+    gap: 0.6rem;
     flex-shrink: 0;
 }
 
@@ -575,20 +572,15 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
 
 @media (max-width: 600px) {
     .info-list {
-        max-height: none;
         font-size: 0.85rem;
     }
     .info-box {
         padding: 0.7rem 0.5rem;
     }
-    .info-container .info-box:first-child {
-        flex: 1.5; /* Give more space to Averages */
-    }
-    .info-container .info-box:last-child {
-        flex: 1; /* Give less space to Live */
+    .info-list .sensor-readings {
+        gap: 0.5rem;
     }
     .info-list .temp-values {
-        /* Keep on one line on mobile */
         gap: 0.4rem;
     }
 }

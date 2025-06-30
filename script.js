@@ -146,16 +146,13 @@ function updateYAxis(chart = temperatureChart) {
 function updateInfoBoxes() {
     if (!temperatureChart) return;
 
-    const averagesList = document.getElementById('averages-list');
-    const liveList = document.getElementById('live-list');
+    const statsList = document.getElementById('sensor-stats-list');
+    if (!statsList) return;
 
-    if (!averagesList || !liveList) return;
-
-    averagesList.innerHTML = '';
-    liveList.innerHTML = '';
+    statsList.innerHTML = '';
 
     const visibleDatasets = temperatureChart.data.datasets.filter(d => !d.hidden);
-    
+
     // Custom sort: Paris, then Chambre, then alphabetically
     const sortOrder = { 'Paris': 1, 'Chambre': 2 };
     visibleDatasets.sort((a, b) => {
@@ -171,7 +168,7 @@ function updateInfoBoxes() {
     const chartMax = temperatureChart.scales['x-axis-0'].max;
 
     visibleDatasets.forEach(dataset => {
-        // --- Averages Box Logic ---
+        // --- Calculate Stats ---
         let minTemp = Infinity;
         let maxTemp = -Infinity;
         let hasVisiblePoints = false;
@@ -184,23 +181,26 @@ function updateInfoBoxes() {
             }
         });
 
-        const datasetColor = dataset.borderColor;
-        const avgLi = document.createElement('li');
-        const avgValuesHTML = hasVisiblePoints ?
-            `<span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
-            `<span class="temp-values">N/A</span>`;
-        avgLi.innerHTML = `<div class="sensor-info"><span class="color-dot" style="background-color: ${datasetColor};"></span><span class="sensor-name-text">${dataset.label}</span></div>${avgValuesHTML}`;
-        averagesList.appendChild(avgLi);
-
-        // --- Live Box Logic ---
-        const liveLi = document.createElement('li');
         const lastPoint = dataset.data.length > 0 ? dataset.data[dataset.data.length - 1] : null;
+
+        // --- Build HTML ---
+        const li = document.createElement('li');
+        const datasetColor = dataset.borderColor;
+
+        const sensorInfoHTML = `<div class="sensor-info"><span class="color-dot" style="background-color: ${datasetColor};"></span><span class="sensor-name-text">${dataset.label}</span></div>`;
+
         const liveValueHTML = lastPoint ?
             `<span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
             `<span class="live-temp">N/A</span>`;
-        // Use a placeholder for the dot to keep names aligned between the two boxes.
-        liveLi.innerHTML = `<div class="sensor-info"><span class="color-dot-placeholder"></span><span class="sensor-name-text">${dataset.label}</span></div>${liveValueHTML}`;
-        liveList.appendChild(liveLi);
+
+        const minMaxHTML = hasVisiblePoints ?
+            `<span class="temp-values"><span class="min-temp"><i class="fas fa-arrow-down"></i> ${minTemp.toFixed(1)}°</span><span class="max-temp"><i class="fas fa-arrow-up"></i> ${maxTemp.toFixed(1)}°</span></span>` :
+            `<span class="temp-values">N/A</span>`;
+
+        const readingsHTML = `<div class="sensor-readings">${liveValueHTML}${minMaxHTML}</div>`;
+
+        li.innerHTML = sensorInfoHTML + readingsHTML;
+        statsList.appendChild(li);
     });
 }
 
