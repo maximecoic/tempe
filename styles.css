@@ -524,22 +524,21 @@ body {
     min-width: 0; /* Crucial for text-overflow to work in flexbox */
 }
 
-.info-list .color-dot {
+.info-list .sensor-toggle-btn {
     /* Reset button styles */
     border: none;
     background: none;
     padding: 0;
     margin: 0;
-    /* Visuals */
-    display: inline-block;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    flex-shrink: 0; /* Prevent dot from shrinking */
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    line-height: 1;
 }
 
+.info-list .sensor-toggle-btn i {
+    font-size: 1.6em;
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+    vertical-align: middle;
+}
 .info-list .sensor-name-text {
     font-weight: 500;
     color: var(--text-color);
@@ -548,13 +547,12 @@ body {
     text-overflow: ellipsis;
 }
 
-.info-list .color-dot:hover {
-    transform: scale(1.25);
+.info-list .sensor-toggle-btn:hover i {
+    transform: scale(1.1);
 }
 
-.info-list li.is-hidden .color-dot {
-    background-color: transparent !important; /* Override inline style */
-    border: 2px solid var(--text-color-secondary);
+.info-list li.is-hidden .sensor-toggle-btn i {
+    color: var(--text-color-secondary) !important; /* Override inline style for the off state */
 }
 
 .info-list li.is-hidden .live-temp,

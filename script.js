@@ -200,7 +200,14 @@ function updateInfoBoxes() {
         }
         const datasetColor = dataset.borderColor;
 
-        const sensorInfoHTML = `<div class="sensor-info"><button class="color-dot" data-sensor-toggle="${dataset.label}" style="background-color: ${datasetColor};" aria-label="Toggle ${dataset.label}"></button><span class="sensor-name-text">${dataset.label}</span></div>`;
+        const toggleIconClass = dataset.hidden ? 'fa-toggle-off' : 'fa-toggle-on';
+        const sensorInfoHTML = `
+            <div class="sensor-info">
+                <button class="sensor-toggle-btn" data-sensor-toggle="${dataset.label}" aria-label="Toggle ${dataset.label}">
+                    <i class="fas ${toggleIconClass}" style="color: ${datasetColor};"></i>
+                </button>
+                <span class="sensor-name-text">${dataset.label}</span>
+            </div>`;
 
         const liveValueHTML = lastPoint ?
             `<span class="live-temp">${lastPoint.y.toFixed(1)}°C</span>` :
@@ -216,7 +223,7 @@ function updateInfoBoxes() {
     });
 
     // Add event listeners to the new toggle dots
-    statsList.querySelectorAll('.color-dot').forEach(button => {
+    statsList.querySelectorAll('.sensor-toggle-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const sensorLabel = e.currentTarget.dataset.sensorToggle;
             const dataset = temperatureChart.data.datasets.find(d => d.label === sensorLabel);
