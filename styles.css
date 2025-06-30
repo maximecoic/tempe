@@ -491,6 +491,23 @@ body {
     transition: background 0.2s;
 }
 
+.group-modal .modal-actions .delete-btn {
+    background: #e03131;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: auto; /* Pushes it to the far left */
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
 .group-modal .modal-actions button:active {
     background: var(--range-btn-hover-bg);
     color: var(--accent-color);

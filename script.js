@@ -593,10 +593,12 @@ function setupGroupModal() {
     const addGroupBtn = document.getElementById('addGroupBtn');
     const cancelGroupBtn = document.getElementById('cancelGroupBtn');
     const saveGroupBtn = document.getElementById('saveGroupBtn');
+    const deleteGroupBtn = document.getElementById('deleteGroupBtn');
 
     addGroupBtn?.addEventListener('click', openGroupModalForCreate);
     cancelGroupBtn?.addEventListener('click', closeGroupModal);
     saveGroupBtn?.addEventListener('click', saveGroup);
+    deleteGroupBtn?.addEventListener('click', deleteGroup);
     modalOverlay?.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
             closeGroupModal();
@@ -633,6 +635,7 @@ function openGroupModalForCreate() {
     document.getElementById('groupColor').value = '#64ffda';
     document.getElementById('groupSensors').selectedIndex = -1;
     document.getElementById('saveGroupBtn').textContent = 'Créer';
+    document.getElementById('deleteGroupBtn').style.display = 'none';
 
     openGroupModal();
 }
@@ -650,6 +653,7 @@ function openGroupModalForEdit(groupId) {
     document.getElementById('groupIcon').value = group.icon;
     document.getElementById('groupColor').value = group.color;
     document.getElementById('saveGroupBtn').textContent = 'Enregistrer';
+    document.getElementById('deleteGroupBtn').style.display = 'flex';
 
     openGroupModal(); // This will populate the sensor list
 
@@ -715,6 +719,31 @@ function saveGroup() {
     closeGroupModal();
 }
 
+function deleteGroup() {
+    const editingGroupId = document.getElementById('groupModal').dataset.editingGroupId;
+    if (!editingGroupId) return;
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce groupe ? Cette action est irréversible.')) {
+        // 1. Remove from groups array
+        groups = groups.filter(g => g.id !== editingGroupId);
+
+        // 2. Remove from chart datasets
+        const datasetIndex = temperatureChart.data.datasets.findIndex(d => d.groupId === editingGroupId);
+        if (datasetIndex > -1) {
+            temperatureChart.data.datasets.splice(datasetIndex, 1);
+        }
+
+        // 3. Remove from visibility map
+        groupVisibility.delete(editingGroupId);
+
+        // 4. Save, update UI, and close
+        saveGroups();
+        createGroupButtons();
+        temperatureChart.update({ duration: 0 });
+        updateInfoBoxes();
+        closeGroupModal();
+    }
+}
 
 function applyDateRangeToChart() {
     if (!temperatureChart) return;
