@@ -5,6 +5,8 @@ const sensorVisibility = new Map();
 let groups = [];
 const groupVisibility = new Map();
 const GROUP_STORAGE_KEY = 'sensorGroups';
+const SENSOR_VISIBILITY_KEY = 'sensorVisibility';
+const GROUP_VISIBILITY_KEY = 'groupVisibility';
 
 // Sensor icon mapping
 const sensorIcons = {
@@ -247,6 +249,28 @@ function loadGroups() {
     }
 }
 
+function saveSensorVisibility() {
+    localStorage.setItem(SENSOR_VISIBILITY_KEY, JSON.stringify(Array.from(sensorVisibility.entries())));
+}
+
+function saveGroupVisibility() {
+    localStorage.setItem(GROUP_VISIBILITY_KEY, JSON.stringify(Array.from(groupVisibility.entries())));
+}
+
+function loadSensorVisibility() {
+    const stored = localStorage.getItem(SENSOR_VISIBILITY_KEY);
+    if (stored) {
+        new Map(JSON.parse(stored)).forEach((value, key) => sensorVisibility.set(key, value));
+    }
+}
+
+function loadGroupVisibility() {
+    const stored = localStorage.getItem(GROUP_VISIBILITY_KEY);
+    if (stored) {
+        new Map(JSON.parse(stored)).forEach((value, key) => groupVisibility.set(key, value));
+    }
+}
+
 function saveGroups() {
     localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(groups));
 }
@@ -319,6 +343,7 @@ function toggleGroup(groupId) {
     if (!temperatureChart) return;
     const newHiddenState = !groupVisibility.get(groupId);
     groupVisibility.set(groupId, newHiddenState);
+    saveGroupVisibility();
 
     const dataset = temperatureChart.data.datasets.find(d => d.groupId === groupId);
     if (dataset) dataset.hidden = newHiddenState;
@@ -518,6 +543,7 @@ function toggleSensor(sensorName) {
     // 1. Update visibility state
     const newHiddenState = !sensorVisibility.get(sensorName);
     sensorVisibility.set(sensorName, newHiddenState);
+    saveSensorVisibility();
 
     // 2. Update chart dataset visibility
     const dataset = temperatureChart.data.datasets.find(d => d.label === sensorName);
@@ -707,6 +733,7 @@ function saveGroup() {
         const newGroup = { id: `group_${Date.now()}`, name, sensors: selectedSensors, icon, color };
         groups.push(newGroup);
         groupVisibility.set(newGroup.id, true); // Default to hidden
+        saveGroupVisibility();
         const groupData = calculateGroupAverageData(newGroup, originalData);
         const newDataset = { label: newGroup.name, data: groupData, borderColor: color, backgroundColor: color, borderWidth: 2.5, pointRadius: 1, pointHoverRadius: 3, pointBorderWidth: 2, fill: false, tension: 0.6, hidden: true, isGroup: true, groupId: newGroup.id };
         temperatureChart.data.datasets.push(newDataset);
@@ -735,6 +762,7 @@ function deleteGroup() {
 
         // 3. Remove from visibility map
         groupVisibility.delete(editingGroupId);
+        saveGroupVisibility();
 
         // 4. Save, update UI, and close
         saveGroups();
@@ -812,6 +840,8 @@ async function init() {
     }
 
     loadGroups();
+    loadSensorVisibility();
+    loadGroupVisibility();
     setupGroupModal();
 
     // Initialize visibility state for all sensors
