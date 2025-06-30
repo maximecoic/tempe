@@ -511,8 +511,8 @@ body {
 .info-list li {
     display: grid;
     grid-template-columns: 1fr auto auto; /* #1 name | #2 live | #3 min-max */
-    gap: 0.8rem;
     padding: 0.3rem 0;
+    align-items: center;
     font-size: 0.9rem;
     color: var(--text-color-secondary);
 }
@@ -559,7 +559,7 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
 
 .info-list .live-temp {
     font-weight: bold;
-    justify-self: center; /* Center this in its grid column */
+    margin: 0 1.5rem; /* Add space on both sides to create gaps */
 }
 
 @media (max-width: 600px) {
@@ -567,10 +567,13 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
         font-size: 0.85rem;
     }
     .info-list li {
-        gap: 0.5rem;
+        /* Grid handles spacing via margins on children now */
     }
     .info-box {
         padding: 0.7rem 0.5rem;
+    }
+    .info-list .live-temp {
+        margin: 0 0.7rem;
     }
     .info-list .temp-values {
         gap: 0.4rem;
