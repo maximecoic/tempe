@@ -26404,5 +26404,32 @@
     "Chambre": 23.9,
     "SdB": 24.3,
     "Cuisine": 23.8
+  },
+  {
+    "Heure": "2025-09-05T23:34:48.000Z",
+    "Paris": 18.5,
+    "Bureau 1": "",
+    "Bureau": 24,
+    "Chambre": 24,
+    "SdB": 24.2,
+    "Cuisine": 24
+  },
+  {
+    "Heure": "2025-09-06T00:04:50.000Z",
+    "Paris": 18.1,
+    "Bureau 1": "",
+    "Bureau": 24,
+    "Chambre": 23.9,
+    "SdB": 24.3,
+    "Cuisine": 24.1
+  },
+  {
+    "Heure": "2025-09-06T00:34:50.000Z",
+    "Paris": 17.6,
+    "Bureau 1": "",
+    "Bureau": 23.9,
+    "Chambre": 23.8,
+    "SdB": 24.2,
+    "Cuisine": 23.9
   }
 ]
