@@ -38032,5 +38032,23 @@
     "Chambre": 21.8,
     "SdB": 22,
     "Cuisine": 22
+  },
+  {
+    "Heure": "2025-10-03T02:35:04.000Z",
+    "Paris": 13.7,
+    "Bureau 1": "",
+    "Bureau": 22,
+    "Chambre": 21.8,
+    "SdB": 22,
+    "Cuisine": 22.7
+  },
+  {
+    "Heure": "2025-10-03T03:05:01.000Z",
+    "Paris": 13.7,
+    "Bureau 1": "",
+    "Bureau": 22,
+    "Chambre": 21.8,
+    "SdB": 22,
+    "Cuisine": 22.4
   }
 ]
