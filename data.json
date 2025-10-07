@@ -40093,5 +40093,14 @@
     "Chambre": 21.1,
     "SdB": 22.8,
     "Cuisine": 22.7
+  },
+  {
+    "Heure": "2025-10-07T21:05:02.000Z",
+    "Paris": 15.7,
+    "Bureau 1": "",
+    "Bureau": 22.1,
+    "Chambre": 21.4,
+    "SdB": 22.6,
+    "Cuisine": 22.6
   }
 ]
