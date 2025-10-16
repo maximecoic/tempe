@@ -43900,5 +43900,14 @@
     "Chambre": 20.6,
     "SdB": 21.5,
     "Cuisine": 21.8
+  },
+  {
+    "Heure": "2025-10-16T18:42:37.000Z",
+    "Paris": 14.6,
+    "Bureau 1": "",
+    "Bureau": 21.6,
+    "Chambre": 21.1,
+    "SdB": 21.5,
+    "Cuisine": 22
   }
 ]
