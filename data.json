@@ -48328,5 +48328,41 @@
     "Chambre": 19.9,
     "SdB": 21.5,
     "Cuisine": 20.5
+  },
+  {
+    "Heure": "2025-10-27T01:12:40.000Z",
+    "Paris": 10.1,
+    "Bureau 1": "",
+    "Bureau": 20.7,
+    "Chambre": 19.9,
+    "SdB": 21.4,
+    "Cuisine": 20.4
+  },
+  {
+    "Heure": "2025-10-27T01:42:41.000Z",
+    "Paris": 10.3,
+    "Bureau 1": "",
+    "Bureau": 20.7,
+    "Chambre": 20,
+    "SdB": 21.6,
+    "Cuisine": 20.3
+  },
+  {
+    "Heure": "2025-10-27T02:12:40.000Z",
+    "Paris": 10.6,
+    "Bureau 1": "",
+    "Bureau": 20.7,
+    "Chambre": 20,
+    "SdB": 21.6,
+    "Cuisine": 20.2
+  },
+  {
+    "Heure": "2025-10-27T02:42:40.000Z",
+    "Paris": 11.1,
+    "Bureau 1": "",
+    "Bureau": 20.5,
+    "Chambre": 19.9,
+    "SdB": 21.5,
+    "Cuisine": 20.3
   }
 ]
