@@ -48670,5 +48670,14 @@
     "Chambre": 20.5,
     "SdB": 21.4,
     "Cuisine": 20.7
+  },
+  {
+    "Heure": "2025-10-27T20:12:40.000Z",
+    "Paris": 12.5,
+    "Bureau 1": "",
+    "Bureau": 20.9,
+    "Chambre": 20.6,
+    "SdB": 21.4,
+    "Cuisine": 20.5
   }
 ]
