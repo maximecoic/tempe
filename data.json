@@ -51514,5 +51514,23 @@
     "Chambre": 20.1,
     "SdB": 21.7,
     "Cuisine": 21.7
+  },
+  {
+    "Heure": "2025-11-03T15:42:44.000Z",
+    "Paris": 15.4,
+    "Bureau 1": "",
+    "Bureau": 21.3,
+    "Chambre": 20.1,
+    "SdB": 21.6,
+    "Cuisine": 21.2
+  },
+  {
+    "Heure": "2025-11-03T16:12:44.000Z",
+    "Paris": 15.4,
+    "Bureau 1": "",
+    "Bureau": 20.9,
+    "Chambre": 19.7,
+    "SdB": 21.7,
+    "Cuisine": 20.9
   }
 ]
