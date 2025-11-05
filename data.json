@@ -52495,5 +52495,14 @@
     "Chambre": 21.4,
     "SdB": 21.9,
     "Cuisine": 21.1
+  },
+  {
+    "Heure": "2025-11-05T22:12:44.000Z",
+    "Paris": 15.1,
+    "Bureau 1": "",
+    "Bureau": 21.9,
+    "Chambre": 21.4,
+    "SdB": 22.1,
+    "Cuisine": 21.1
   }
 ]
