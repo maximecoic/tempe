@@ -53800,5 +53800,23 @@
     "Chambre": 21.3,
     "SdB": 21.7,
     "Cuisine": 20.4
+  },
+  {
+    "Heure": "2025-11-09T05:42:46.000Z",
+    "Paris": 9.3,
+    "Bureau 1": "",
+    "Bureau": 21.6,
+    "Chambre": 21.4,
+    "SdB": 21.7,
+    "Cuisine": 20.3
+  },
+  {
+    "Heure": "2025-11-09T06:12:46.000Z",
+    "Paris": 9.2,
+    "Bureau 1": "",
+    "Bureau": 21.6,
+    "Chambre": 21.3,
+    "SdB": 21.7,
+    "Cuisine": 20.3
   }
 ]
