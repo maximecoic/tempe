@@ -55879,5 +55879,32 @@
     "Chambre": 21.5,
     "SdB": 21.7,
     "Cuisine": 20.9
+  },
+  {
+    "Heure": "2025-11-14T01:12:48.000Z",
+    "Paris": 16.7,
+    "Bureau 1": "",
+    "Bureau": 21.5,
+    "Chambre": 21.5,
+    "SdB": 21.7,
+    "Cuisine": 20.9
+  },
+  {
+    "Heure": "2025-11-14T01:42:48.000Z",
+    "Paris": 16.7,
+    "Bureau 1": "",
+    "Bureau": 21.5,
+    "Chambre": 21.5,
+    "SdB": 21.6,
+    "Cuisine": 20.7
+  },
+  {
+    "Heure": "2025-11-14T02:12:48.000Z",
+    "Paris": 16.7,
+    "Bureau 1": "",
+    "Bureau": 21.5,
+    "Chambre": 21.4,
+    "SdB": 21.7,
+    "Cuisine": 20.7
   }
 ]
