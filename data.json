@@ -60307,5 +60307,23 @@
     "Chambre": 21.4,
     "SdB": 22.2,
     "Cuisine": 22
+  },
+  {
+    "Heure": "2025-11-24T07:42:53.000Z",
+    "Paris": 7.8,
+    "Bureau 1": "",
+    "Bureau": 22,
+    "Chambre": 21.6,
+    "SdB": 22.2,
+    "Cuisine": 21.9
+  },
+  {
+    "Heure": "2025-11-24T08:12:53.000Z",
+    "Paris": 7.9,
+    "Bureau 1": "",
+    "Bureau": 21.9,
+    "Chambre": 21.6,
+    "SdB": 22.5,
+    "Cuisine": 22.4
   }
 ]
