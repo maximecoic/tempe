@@ -60433,5 +60433,14 @@
     "Chambre": 19.5,
     "SdB": 22.2,
     "Cuisine": 23.4
+  },
+  {
+    "Heure": "2025-11-24T14:42:53.000Z",
+    "Paris": 11,
+    "Bureau 1": "",
+    "Bureau": 21.8,
+    "Chambre": 19.4,
+    "SdB": 22.2,
+    "Cuisine": 23.2
   }
 ]
