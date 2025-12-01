@@ -63205,5 +63205,50 @@
     "Chambre": 21.6,
     "SdB": 21.9,
     "Cuisine": 20.7
+  },
+  {
+    "Heure": "2025-12-01T01:12:56.000Z",
+    "Paris": 5,
+    "Bureau 1": "",
+    "Bureau": 21.3,
+    "Chambre": 21.6,
+    "SdB": 22,
+    "Cuisine": 20.6
+  },
+  {
+    "Heure": "2025-12-01T01:42:56.000Z",
+    "Paris": 4.7,
+    "Bureau 1": "",
+    "Bureau": 21.5,
+    "Chambre": 21.8,
+    "SdB": 21.9,
+    "Cuisine": 20.6
+  },
+  {
+    "Heure": "2025-12-01T02:12:55.000Z",
+    "Paris": 4.3,
+    "Bureau 1": "",
+    "Bureau": 21.5,
+    "Chambre": 21.5,
+    "SdB": 21.9,
+    "Cuisine": 20.6
+  },
+  {
+    "Heure": "2025-12-01T02:42:56.000Z",
+    "Paris": 3.9,
+    "Bureau 1": "",
+    "Bureau": 21.4,
+    "Chambre": 21.5,
+    "SdB": 21.8,
+    "Cuisine": 20.5
+  },
+  {
+    "Heure": "2025-12-01T03:12:55.000Z",
+    "Paris": 3.8,
+    "Bureau 1": "",
+    "Bureau": 21.3,
+    "Chambre": 21.5,
+    "SdB": 21.8,
+    "Cuisine": 20.4
   }
 ]
