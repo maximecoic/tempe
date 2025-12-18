@@ -70495,5 +70495,41 @@
     "Chambre": 21.8,
     "SdB": 22,
     "Cuisine": 22.8
+  },
+  {
+    "Heure": "2025-12-18T01:13:03.000Z",
+    "Paris": 8.1,
+    "Bureau 1": "",
+    "Bureau": 21.4,
+    "Chambre": 21.8,
+    "SdB": 22,
+    "Cuisine": 22.1
+  },
+  {
+    "Heure": "2025-12-18T01:43:02.000Z",
+    "Paris": 8.3,
+    "Bureau 1": "",
+    "Bureau": 21.3,
+    "Chambre": 21.9,
+    "SdB": 21.9,
+    "Cuisine": 21.5
+  },
+  {
+    "Heure": "2025-12-18T02:13:03.000Z",
+    "Paris": 8.4,
+    "Bureau 1": "",
+    "Bureau": 21.3,
+    "Chambre": 21.4,
+    "SdB": 21.9,
+    "Cuisine": 21.2
+  },
+  {
+    "Heure": "2025-12-18T02:43:02.000Z",
+    "Paris": 8.5,
+    "Bureau 1": "",
+    "Bureau": 21.4,
+    "Chambre": 21.3,
+    "SdB": 21.8,
+    "Cuisine": 21.2
   }
 ]
