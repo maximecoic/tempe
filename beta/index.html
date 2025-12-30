@@ -1,248 +1,234 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Brush } from 'recharts';
-import { 
-  Thermometer, Home, CloudSun, Clock, ArrowUpRight, ArrowDownRight, 
-  Activity, Calendar, RefreshCw, AlertCircle, Eye, EyeOff, 
-  Laptop, Bed, Bath, ChefHat, Baby, Sofa, MapPin
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beta Dashboard - Mon Climat</title>
+    <!-- Moteur de rendu Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bibliothèques React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel pour transformer le code React dans le navigateur -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Recharts pour les graphiques -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <!-- Lucide pour les icônes -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root"></div>
 
-const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
+    <!-- Script de type text/babel pour que le navigateur sache qu'il doit le transformer -->
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+        const { 
+            LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
+            ResponsiveContainer, Brush 
+        } = Recharts;
+        
+        const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
 
-// Configuration des couleurs et logos cohérents
-const ROOM_CONFIG = {
-  Paris: { color: '#f59e0b', label: 'Extérieur', icon: MapPin },
-  Bureau: { color: '#3b82f6', label: 'Bureau', icon: Laptop },
-  Chambre: { color: '#8b5cf6', label: 'Chambre', icon: Bed },
-  SdB: { color: '#06b6d4', label: 'SdB', icon: Bath },
-  Cuisine: { color: '#ef4444', label: 'Cuisine', icon: ChefHat },
-  "Chambre de Lilou": { color: '#ec4899', label: 'Ch. Lilou', icon: Baby },
-  Salon: { color: '#10b981', label: 'Salon', icon: Sofa },
-};
+        const ROOM_CONFIG = {
+            Paris: { color: '#f59e0b', label: 'Extérieur', icon: 'MapPin' },
+            Bureau: { color: '#3b82f6', label: 'Bureau', icon: 'Laptop' },
+            Chambre: { color: '#8b5cf6', label: 'Chambre', icon: 'Bed' },
+            SdB: { color: '#06b6d4', label: 'SdB', icon: 'Bath' },
+            Cuisine: { color: '#ef4444', label: 'Cuisine', icon: 'ChefHat' },
+            "Chambre de Lilou": { color: '#ec4899', label: 'Ch. Lilou', icon: 'Baby' },
+            Salon: { color: '#10b981', label: 'Salon', icon: 'Sofa' },
+        };
 
-// Options de plages horaires
-const TIME_RANGES = [
-  { label: '2h', ms: 2 * 60 * 60 * 1000 },
-  { label: '6h', ms: 6 * 60 * 60 * 1000 },
-  { label: '24h', ms: 24 * 60 * 60 * 1000 },
-  { label: '2j', ms: 2 * 24 * 60 * 60 * 1000 },
-  { label: '1 sem', ms: 7 * 24 * 60 * 60 * 1000 },
-  { label: 'Tout', ms: 0 },
-];
+        const TIME_RANGES = [
+            { label: '2h', ms: 2 * 60 * 60 * 1000 },
+            { label: '6h', ms: 6 * 60 * 60 * 1000 },
+            { label: '24h', ms: 24 * 60 * 60 * 1000 },
+            { label: '2j', ms: 2 * 24 * 60 * 60 * 1000 },
+            { label: '1 sem', ms: 7 * 24 * 60 * 60 * 1000 },
+            { label: 'Tout', ms: 0 },
+        ];
 
-// Composant Tooltip Personnalisé avec Tri Décroissant
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    // Trier les données par valeur décroissante
-    const sortedPayload = [...payload].sort((a, b) => b.value - a.value);
+        const DynamicIcon = ({ name, size = 20, className = "" }) => {
+            const IconComponent = lucide[name] || lucide.Home;
+            return <IconComponent size={size} className={className} />;
+        };
 
-    return (
-      <div className="bg-white p-3 rounded-xl shadow-xl border border-slate-100 min-w-[140px]">
-        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 border-b pb-1">{label}</p>
-        <div className="space-y-1.5">
-          {sortedPayload.map((entry, index) => (
-            <div key={index} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-xs text-slate-600 font-medium">{entry.name}</span>
-              </div>
-              <span className="text-xs font-bold text-slate-800">{entry.value.toFixed(1)}°</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
-
-const StatCard = ({ title, value, icon: Icon, trend, color, subLabel }) => (
-  <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-    <div>
-      <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-1">{title}</p>
-      <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-bold text-slate-800">
-          {value !== null && value !== "" && value !== undefined ? `${value}°` : '--'}
-        </span>
-        {trend !== null && trend !== undefined && (
-          <span className={`text-xs font-medium flex items-center ${trend > 0 ? 'text-orange-500' : 'text-emerald-500'}`}>
-            {trend > 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-            {Math.abs(trend).toFixed(1)}°
-          </span>
-        )}
-      </div>
-      {subLabel && <p className="text-xs text-slate-400 mt-1">{subLabel}</p>}
-    </div>
-    <div className={`p-3 rounded-xl`} style={{ backgroundColor: color ? `${color}15` : '#f8fafc' }}>
-      <Icon size={24} style={{ color: color || '#64748b' }} />
-    </div>
-  </div>
-);
-
-export default function App() {
-  const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedRange, setSelectedRange] = useState(TIME_RANGES[2]);
-  const [hiddenKeys, setHiddenKeys] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error("Erreur réseau");
-        const data = await response.json();
-        setLogs(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const processedData = useMemo(() => {
-    return logs.map(log => {
-      const date = new Date(log.Heure);
-      const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      const cleanLog = { 
-        ...log, 
-        formattedTime: timeStr, 
-        fullDate: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + timeStr,
-        timestamp: date.getTime() 
-      };
-      Object.keys(ROOM_CONFIG).forEach(key => {
-        if (cleanLog[key] === "") cleanLog[key] = null;
-        else if (cleanLog[key] !== null) cleanLog[key] = Number(cleanLog[key]);
-      });
-      return cleanLog;
-    });
-  }, [logs]);
-
-  const latestLog = processedData[processedData.length - 1];
-  const previousLog = processedData[processedData.length - 2];
-
-  const chartData = useMemo(() => {
-    if (!latestLog) return [];
-    if (selectedRange.ms === 0) return processedData;
-    return processedData.filter(d => d.timestamp >= (latestLog.timestamp - selectedRange.ms));
-  }, [processedData, selectedRange, latestLog]);
-
-  const toggleLine = (key) => {
-    setHiddenKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
-  };
-
-  const currentIndoorAvg = useMemo(() => {
-    if (!latestLog) return 0;
-    const keys = Object.keys(latestLog).filter(k => ROOM_CONFIG[k] && k !== 'Paris' && typeof latestLog[k] === 'number');
-    if (!keys.length) return 0;
-    return (keys.reduce((acc, k) => acc + latestLog[k], 0) / keys.length).toFixed(1);
-  }, [latestLog]);
-
-  if (loading && !logs.length) return <div className="min-h-screen flex items-center justify-center text-slate-400"><RefreshCw className="animate-spin mr-2"/> Chargement...</div>;
-
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-10">
-      <header className="bg-white px-6 py-6 border-b border-slate-100 sticky top-0 z-10">
-        <div className="flex justify-between items-center max-w-md mx-auto">
-          <div>
-            <h1 className="text-xl font-bold text-slate-800">Mon Climat</h1>
-            <p className="text-xs text-slate-500 flex items-center gap-1"><Clock size={12} /> {latestLog?.fullDate}</p>
-          </div>
-          <div className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</div>
-        </div>
-      </header>
-
-      <main className="p-4 space-y-6 max-w-md mx-auto">
-        <div className="grid grid-cols-2 gap-4">
-          <StatCard title="Extérieur" value={latestLog?.Paris} icon={MapPin} color={ROOM_CONFIG.Paris.color} trend={latestLog?.Paris - previousLog?.Paris} subLabel="Paris" />
-          <StatCard title="Moyenne Int." value={currentIndoorAvg} icon={Home} color="#6366f1" subLabel="Maison" />
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex flex-col gap-4 mb-4">
-            <h3 className="font-semibold text-slate-800 flex items-center gap-2"><Activity size={18} className="text-slate-400"/> Graphique</h3>
-            
-            {/* Sélecteur de Durée */}
-            <div className="bg-slate-100 p-1 rounded-lg flex">
-              {TIME_RANGES.map(r => (
-                <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${selectedRange.label === r.label ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>{r.label}</button>
-              ))}
-            </div>
-
-            {/* Boutons d'affichage/masquage rapides */}
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(ROOM_CONFIG).map(([key, config]) => {
-                const isHidden = hiddenKeys.includes(key);
-                // On n'affiche le bouton que si la pièce a des données
-                const hasData = latestLog?.[key] !== null;
-                if (!hasData) return null;
-
+        const CustomTooltip = ({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+                const sorted = [...payload].sort((a, b) => b.value - a.value);
                 return (
-                  <button
-                    key={key}
-                    onClick={() => toggleLine(key)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-semibold transition-all ${
-                      isHidden 
-                        ? 'bg-slate-50 border-slate-200 text-slate-400 grayscale' 
-                        : 'bg-white border-slate-200 text-slate-700 shadow-sm'
-                    }`}
-                  >
-                    <span 
-                      className="w-2 h-2 rounded-full" 
-                      style={{ backgroundColor: isHidden ? '#cbd5e1' : config.color }} 
-                    />
-                    {config.label}
-                    {isHidden ? <EyeOff size={10} /> : <Eye size={10} />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="h-72 w-full -ml-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="formattedTime" stroke="#94a3b8" tick={{fontSize: 10}} axisLine={false} tickLine={false} minTickGap={30} />
-                <YAxis domain={['auto', 'auto']} stroke="#94a3b8" tick={{fontSize: 10}} axisLine={false} tickLine={false} width={25} />
-                <Tooltip content={<CustomTooltip />} />
-                {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
-                  <Line key={key} type="monotone" dataKey={key} stroke={config.color} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
-                ))}
-                <Brush dataKey="formattedTime" height={30} stroke="#cbd5e1" fill="#f8fafc" tickFormatter={() => ''} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="font-semibold text-slate-800 px-1">Détails par pièce</h3>
-          <div className="grid gap-3">
-            {Object.entries(ROOM_CONFIG)
-              .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
-              .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0)) 
-              .map(([key, config]) => {
-                const val = latestLog?.[key];
-                const isHidden = hiddenKeys.includes(key);
-                return (
-                  <button key={key} onClick={() => toggleLine(key)} className={`flex items-center justify-between bg-white p-4 rounded-xl border transition-all active:scale-[0.98] ${isHidden ? 'opacity-50 grayscale border-slate-100' : 'border-slate-100 shadow-sm'}`}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-slate-50" style={{color: config.color}}><config.icon size={20} /></div>
-                      <span className="font-medium text-slate-700">{config.label}</span>
+                    <div className="bg-white p-3 rounded-xl shadow-xl border border-slate-100 min-w-[150px]">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 border-b pb-1">{label}</p>
+                        <div className="space-y-1.5">
+                            {sorted.map((entry, index) => (
+                                <div key={index} className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                        <span className="text-xs text-slate-600 font-medium">{entry.name}</span>
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">{entry.value.toFixed(1)}°</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      {!isHidden && <span className="text-xl font-bold text-slate-800">{val}°</span>}
-                      {isHidden ? <EyeOff size={16} className="text-slate-300"/> : <Eye size={16} className="text-slate-300"/>}
-                    </div>
-                  </button>
                 );
-              })}
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
+            }
+            return null;
+        };
+
+        const App = () => {
+            const [logs, setLogs] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [selectedRange, setSelectedRange] = useState(TIME_RANGES[2]);
+            const [hiddenKeys, setHiddenKeys] = useState([]);
+
+            useEffect(() => {
+                fetch(DATA_URL)
+                    .then(res => res.json())
+                    .then(data => {
+                        setLogs(Array.isArray(data) ? data : []);
+                        setLoading(false);
+                    })
+                    .catch(() => setLoading(false));
+            }, []);
+
+            const processedData = useMemo(() => {
+                return logs.map(log => {
+                    const date = new Date(log.Heure);
+                    const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                    const cleanLog = { 
+                        ...log, 
+                        formattedTime: timeStr, 
+                        fullDate: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + timeStr,
+                        timestamp: date.getTime() 
+                    };
+                    Object.keys(ROOM_CONFIG).forEach(key => {
+                        if (cleanLog[key] === "" || cleanLog[key] === undefined) cleanLog[key] = null;
+                        else cleanLog[key] = Number(cleanLog[key]);
+                    });
+                    return cleanLog;
+                });
+            }, [logs]);
+
+            const latestLog = processedData[processedData.length - 1];
+            const previousLog = processedData[processedData.length - 2];
+
+            const chartData = useMemo(() => {
+                if (!latestLog) return [];
+                if (selectedRange.ms === 0) return processedData;
+                return processedData.filter(d => d.timestamp >= (latestLog.timestamp - selectedRange.ms));
+            }, [processedData, selectedRange, latestLog]);
+
+            const currentIndoorAvg = useMemo(() => {
+                if (!latestLog) return 0;
+                const keys = Object.keys(latestLog).filter(k => ROOM_CONFIG[k] && k !== 'Paris' && typeof latestLog[k] === 'number');
+                if (!keys.length) return 0;
+                return (keys.reduce((acc, k) => acc + latestLog[k], 0) / keys.length).toFixed(1);
+            }, [latestLog]);
+
+            if (loading) return <div className="h-screen flex items-center justify-center text-slate-400 font-medium">Initialisation du dashboard beta...</div>;
+
+            return (
+                <div className="min-h-screen bg-slate-50 pb-10">
+                    <header className="bg-white px-6 py-6 border-b border-slate-100 sticky top-0 z-10">
+                        <div className="flex justify-between items-center max-w-md mx-auto">
+                            <div>
+                                <h1 className="text-xl font-black text-slate-800 tracking-tighter">METEO <span className="text-blue-500">BETA</span></h1>
+                                <p className="text-[10px] text-slate-400 flex items-center gap-1 uppercase font-bold tracking-widest"><DynamicIcon name="Clock" size={10} /> {latestLog?.fullDate}</p>
+                            </div>
+                            <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black shadow-lg shadow-blue-200">V2.0</div>
+                        </div>
+                    </header>
+
+                    <main className="p-4 space-y-6 max-w-md mx-auto">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Extérieur</p>
+                                <div className="flex justify-between items-end">
+                                    <span className="text-3xl font-black text-slate-800">{latestLog?.Paris}°</span>
+                                    <div className="p-2 bg-amber-50 rounded-lg"><DynamicIcon name="MapPin" className="text-amber-500" size={20} /></div>
+                                </div>
+                            </div>
+                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Moyenne Int.</p>
+                                <div className="flex justify-between items-end">
+                                    <span className="text-3xl font-black text-slate-800">{currentIndoorAvg}°</span>
+                                    <div className="p-2 bg-indigo-50 rounded-lg"><DynamicIcon name="Home" className="text-indigo-500" size={20} /></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex flex-col gap-4 mb-4">
+                                <div className="bg-slate-100 p-1 rounded-xl flex">
+                                    {TIME_RANGES.map(r => (
+                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${selectedRange.label === r.label ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'}`}>{r.label}</button>
+                                    ))}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {Object.entries(ROOM_CONFIG).map(([key, config]) => {
+                                        const isHidden = hiddenKeys.includes(key);
+                                        if (latestLog?.[key] === null) return null;
+                                        return (
+                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-bold transition-all ${isHidden ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-white border-slate-200 text-slate-600 shadow-sm'}`}>
+                                                <div className="w-2 h-2 rounded-full" style={{backgroundColor: isHidden ? '#cbd5e1' : config.color}} />
+                                                {config.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="h-64 w-full -ml-2">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                        <XAxis dataKey="formattedTime" hide />
+                                        <YAxis domain={['auto', 'auto']} hide />
+                                        <Tooltip content={<CustomTooltip />} />
+                                        {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
+                                            <Line key={key} type="monotone" dataKey={key} stroke={config.color} strokeWidth={3} dot={false} connectNulls isAnimationActive={false} />
+                                        ))}
+                                        <Brush dataKey="formattedTime" height={30} stroke="#e2e8f0" fill="#f8fafc" tickFormatter={() => ''} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-1">Pièces (Tri chaud → froid)</h3>
+                            {Object.entries(ROOM_CONFIG)
+                                .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
+                                .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
+                                .map(([key, config]) => {
+                                    const val = latestLog?.[key];
+                                    const isHidden = hiddenKeys.includes(key);
+                                    return (
+                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white p-4 rounded-2xl border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-100' : 'border-slate-100 shadow-sm'}`}>
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-3 rounded-xl" style={{backgroundColor: config.color + '15', color: config.color}}><DynamicIcon name={config.icon} size={22} /></div>
+                                                <span className="font-bold text-slate-700">{config.label}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl font-black text-slate-800">{val}°</span>
+                                                <DynamicIcon name={isHidden ? 'EyeOff' : 'Eye'} size={16} className="text-slate-300" />
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
 
