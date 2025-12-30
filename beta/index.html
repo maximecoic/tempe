@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beta Dashboard - Mon Climat</title>
-    <!-- Moteur de rendu Tailwind CSS -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bibliothèques React -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel pour transformer le code React dans le navigateur -->
+    <!-- React & ReactDOM (Versions stables et compatibles) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Recharts pour les graphiques -->
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-    <!-- Lucide pour les icônes -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Prop-Types (Requis par Recharts) -->
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <!-- Recharts (Version spécifique pour éviter les bugs de compatibilité) -->
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.344.0"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -23,8 +25,8 @@
 <body class="bg-slate-50 text-slate-900">
     <div id="root"></div>
 
-    <!-- Script de type text/babel pour que le navigateur sache qu'il doit le transformer -->
     <script type="text/babel">
+        // Accès aux composants via les objets globaux chargés par les scripts
         const { useState, useMemo, useEffect } = React;
         const { 
             LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -52,9 +54,22 @@
             { label: 'Tout', ms: 0 },
         ];
 
+        // Composant Icône utilisant Lucide chargé globalement
         const DynamicIcon = ({ name, size = 20, className = "" }) => {
-            const IconComponent = lucide[name] || lucide.Home;
-            return <IconComponent size={size} className={className} />;
+            const iconName = name.charAt(0).toUpperCase() + name.slice(1);
+            // Conversion du nom (ex: MapPin -> map-pin) si nécessaire, mais lucide expose les noms CamelCase
+            const SvgIcon = lucide[name] || lucide.Home;
+            
+            // Création manuelle de l'icône via Lucide
+            const [iconHtml, setIconHtml] = useState("");
+
+            useEffect(() => {
+                const icon = lucide.createIcons({
+                    icons: { [name]: lucide[name] }
+                });
+            }, [name]);
+
+            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
         };
 
         const CustomTooltip = ({ active, payload, label }) => {
@@ -96,6 +111,13 @@
                     .catch(() => setLoading(false));
             }, []);
 
+            // Déclencher le rendu des icônes Lucide après chaque mise à jour du DOM
+            useEffect(() => {
+                if (!loading) {
+                    lucide.createIcons();
+                }
+            });
+
             const processedData = useMemo(() => {
                 return logs.map(log => {
                     const date = new Date(log.Heure);
@@ -130,43 +152,51 @@
                 return (keys.reduce((acc, k) => acc + latestLog[k], 0) / keys.length).toFixed(1);
             }, [latestLog]);
 
-            if (loading) return <div className="h-screen flex items-center justify-center text-slate-400 font-medium">Initialisation du dashboard beta...</div>;
+            if (loading) return <div className="h-screen flex items-center justify-center text-slate-400 font-medium tracking-tight">Chargement du dashboard beta...</div>;
 
             return (
                 <div className="min-h-screen bg-slate-50 pb-10">
-                    <header className="bg-white px-6 py-6 border-b border-slate-100 sticky top-0 z-10">
+                    <header className="bg-white px-6 py-6 border-b border-slate-100 sticky top-0 z-50">
                         <div className="flex justify-between items-center max-w-md mx-auto">
                             <div>
-                                <h1 className="text-xl font-black text-slate-800 tracking-tighter">METEO <span className="text-blue-500">BETA</span></h1>
-                                <p className="text-[10px] text-slate-400 flex items-center gap-1 uppercase font-bold tracking-widest"><DynamicIcon name="Clock" size={10} /> {latestLog?.fullDate}</p>
+                                <h1 className="text-xl font-black text-slate-800 tracking-tighter uppercase">Météo <span className="text-blue-600 italic">Beta</span></h1>
+                                <p className="text-[10px] text-slate-400 flex items-center gap-1 uppercase font-bold tracking-widest">
+                                    <i data-lucide="clock" className="w-2.5 h-2.5"></i> {latestLog?.fullDate}
+                                </p>
                             </div>
-                            <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black shadow-lg shadow-blue-200">V2.0</div>
+                            <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black shadow-lg shadow-blue-200">V2.1</div>
                         </div>
                     </header>
 
                     <main className="p-4 space-y-6 max-w-md mx-auto">
+                        {/* Stats rapides */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                                <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Extérieur</p>
-                                <div className="flex justify-between items-end">
-                                    <span className="text-3xl font-black text-slate-800">{latestLog?.Paris}°</span>
-                                    <div className="p-2 bg-amber-50 rounded-lg"><DynamicIcon name="MapPin" className="text-amber-500" size={20} /></div>
+                            <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                                <p className="text-slate-400 text-[10px] font-black uppercase mb-2 tracking-widest">Extérieur</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-3xl font-black text-slate-800 tracking-tighter">{latestLog?.Paris}°</span>
+                                    <div className="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center">
+                                        <i data-lucide="map-pin" className="text-amber-500 w-5 h-5"></i>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                                <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Moyenne Int.</p>
-                                <div className="flex justify-between items-end">
-                                    <span className="text-3xl font-black text-slate-800">{currentIndoorAvg}°</span>
-                                    <div className="p-2 bg-indigo-50 rounded-lg"><DynamicIcon name="Home" className="text-indigo-500" size={20} /></div>
+                            <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                                <p className="text-slate-400 text-[10px] font-black uppercase mb-2 tracking-widest">Moyenne Int.</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-3xl font-black text-slate-800 tracking-tighter">{currentIndoorAvg}°</span>
+                                    <div className="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center">
+                                        <i data-lucide="home" className="text-indigo-500 w-5 h-5"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                            <div className="flex flex-col gap-4 mb-4">
-                                <div className="bg-slate-100 p-1 rounded-xl flex">
+                        {/* Graphique */}
+                        <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                            <div className="flex flex-col gap-4 mb-6">
+                                <div className="bg-slate-100 p-1.5 rounded-2xl flex">
                                     {TIME_RANGES.map(r => (
-                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${selectedRange.label === r.label ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'}`}>{r.label}</button>
+                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${selectedRange.label === r.label ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'}`}>{r.label}</button>
                                     ))}
                                 </div>
                                 <div className="flex flex-wrap gap-2">
@@ -174,8 +204,8 @@
                                         const isHidden = hiddenKeys.includes(key);
                                         if (latestLog?.[key] === null) return null;
                                         return (
-                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-bold transition-all ${isHidden ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-white border-slate-200 text-slate-600 shadow-sm'}`}>
-                                                <div className="w-2 h-2 rounded-full" style={{backgroundColor: isHidden ? '#cbd5e1' : config.color}} />
+                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-2 px-3 py-2 rounded-full border text-[10px] font-black transition-all ${isHidden ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-white border-slate-200 text-slate-600 shadow-sm'}`}>
+                                                <div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: isHidden ? '#cbd5e1' : config.color}} />
                                                 {config.label}
                                             </button>
                                         );
@@ -183,7 +213,7 @@
                                 </div>
                             </div>
 
-                            <div className="h-64 w-full -ml-2">
+                            <div className="h-64 w-full -ml-4">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={chartData}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -199,8 +229,9 @@
                             </div>
                         </div>
 
+                        {/* Liste des pièces triée */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-1">Pièces (Tri chaud → froid)</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Pièces (Tri chaud → froid)</h3>
                             {Object.entries(ROOM_CONFIG)
                                 .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
                                 .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
@@ -208,14 +239,16 @@
                                     const val = latestLog?.[key];
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
-                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white p-4 rounded-2xl border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-100' : 'border-slate-100 shadow-sm'}`}>
+                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white p-4 rounded-[2rem] border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-100' : 'border-slate-100 shadow-sm'}`}>
                                             <div className="flex items-center gap-4">
-                                                <div className="p-3 rounded-xl" style={{backgroundColor: config.color + '15', color: config.color}}><DynamicIcon name={config.icon} size={22} /></div>
-                                                <span className="font-bold text-slate-700">{config.label}</span>
+                                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{backgroundColor: config.color + '15', color: config.color}}>
+                                                    <i data-lucide={config.icon.toLowerCase().replace(/chefhat/, 'utensils').replace(/babylou/, 'baby')} className="w-6 h-6"></i>
+                                                </div>
+                                                <span className="font-bold text-slate-700 tracking-tight">{config.label}</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-xl font-black text-slate-800">{val}°</span>
-                                                <DynamicIcon name={isHidden ? 'EyeOff' : 'Eye'} size={16} className="text-slate-300" />
+                                            <div className="flex items-center gap-4">
+                                                <span className="text-2xl font-black text-slate-800 tracking-tighter">{val}°</span>
+                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 w-5 h-5"></i>
                                             </div>
                                         </button>
                                     );
@@ -231,4 +264,3 @@
     </script>
 </body>
 </html>
-
