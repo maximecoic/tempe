@@ -4,29 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beta Dashboard - Mon Climat</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS avec configuration Dark Mode -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM (Versions stables et compatibles) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'media', // Mode automatique basé sur les préférences système
+        }
+    </script>
+    <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Prop-Types (Requis par Recharts) -->
+    <!-- Prop-Types -->
     <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    <!-- Recharts (Version spécifique pour éviter les bugs de compatibilité) -->
+    <!-- Recharts -->
     <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.344.0"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        
+        /* Styles spécifiques pour les axes du graphique */
+        .recharts-cartesian-axis-tick-value { 
+            font-size: 10px; 
+            font-weight: 600; 
+            fill: #94a3b8; 
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .recharts-cartesian-axis-tick-value { fill: #64748b; }
+            .recharts-cartesian-grid-line { stroke: #1e293b; }
+        }
+
+        /* Masquage de la scrollbar pour un look plus "app" */
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
     <div id="root"></div>
 
     <script type="text/babel">
-        // Accès aux composants via les objets globaux chargés par les scripts
         const { useState, useMemo, useEffect } = React;
         const { 
             LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -36,13 +55,13 @@
         const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
 
         const ROOM_CONFIG = {
-            Paris: { color: '#f59e0b', label: 'Extérieur', icon: 'MapPin' },
-            Bureau: { color: '#3b82f6', label: 'Bureau', icon: 'Laptop' },
-            Chambre: { color: '#8b5cf6', label: 'Chambre', icon: 'Bed' },
-            SdB: { color: '#06b6d4', label: 'SdB', icon: 'Bath' },
-            Cuisine: { color: '#ef4444', label: 'Cuisine', icon: 'ChefHat' },
-            "Chambre de Lilou": { color: '#ec4899', label: 'Ch. Lilou', icon: 'Baby' },
-            Salon: { color: '#10b981', label: 'Salon', icon: 'Sofa' },
+            Paris: { color: '#f59e0b', label: 'Extérieur', icon: 'map-pin' },
+            Bureau: { color: '#3b82f6', label: 'Bureau', icon: 'laptop' },
+            Chambre: { color: '#8b5cf6', label: 'Chambre', icon: 'bed' },
+            SdB: { color: '#06b6d4', label: 'SdB', icon: 'bath' },
+            Cuisine: { color: '#ef4444', label: 'Cuisine', icon: 'utensils' },
+            "Chambre de Lilou": { color: '#ec4899', label: 'Ch. Lilou', icon: 'baby' },
+            Salon: { color: '#10b981', label: 'Salon', icon: 'sofa' },
         };
 
         const TIME_RANGES = [
@@ -54,38 +73,20 @@
             { label: 'Tout', ms: 0 },
         ];
 
-        // Composant Icône utilisant Lucide chargé globalement
-        const DynamicIcon = ({ name, size = 20, className = "" }) => {
-            const iconName = name.charAt(0).toUpperCase() + name.slice(1);
-            // Conversion du nom (ex: MapPin -> map-pin) si nécessaire, mais lucide expose les noms CamelCase
-            const SvgIcon = lucide[name] || lucide.Home;
-            
-            // Création manuelle de l'icône via Lucide
-            const [iconHtml, setIconHtml] = useState("");
-
-            useEffect(() => {
-                const icon = lucide.createIcons({
-                    icons: { [name]: lucide[name] }
-                });
-            }, [name]);
-
-            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
-        };
-
         const CustomTooltip = ({ active, payload, label }) => {
             if (active && payload && payload.length) {
                 const sorted = [...payload].sort((a, b) => b.value - a.value);
                 return (
-                    <div className="bg-white p-3 rounded-xl shadow-xl border border-slate-100 min-w-[150px]">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 border-b pb-1">{label}</p>
+                    <div className="bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 min-w-[150px]">
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2 border-b dark:border-slate-800 pb-1">{label}</p>
                         <div className="space-y-1.5">
                             {sorted.map((entry, index) => (
                                 <div key={index} className="flex items-center justify-between gap-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                        <span className="text-xs text-slate-600 font-medium">{entry.name}</span>
+                                        <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">{entry.name}</span>
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">{entry.value.toFixed(1)}°</span>
+                                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{entry.value.toFixed(1)}°</span>
                                 </div>
                             ))}
                         </div>
@@ -111,7 +112,6 @@
                     .catch(() => setLoading(false));
             }, []);
 
-            // Déclencher le rendu des icônes Lucide après chaque mise à jour du DOM
             useEffect(() => {
                 if (!loading) {
                     lucide.createIcons();
@@ -137,7 +137,6 @@
             }, [logs]);
 
             const latestLog = processedData[processedData.length - 1];
-            const previousLog = processedData[processedData.length - 2];
 
             const chartData = useMemo(() => {
                 if (!latestLog) return [];
@@ -152,60 +151,63 @@
                 return (keys.reduce((acc, k) => acc + latestLog[k], 0) / keys.length).toFixed(1);
             }, [latestLog]);
 
-            if (loading) return <div className="h-screen flex items-center justify-center text-slate-400 font-medium tracking-tight">Chargement du dashboard beta...</div>;
+            if (loading) return (
+                <div className="h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-slate-400 font-medium tracking-tight animate-pulse">Chargement...</p>
+                    </div>
+                </div>
+            );
 
             return (
-                <div className="min-h-screen bg-slate-50 pb-10">
-                    <header className="bg-white px-6 py-6 border-b border-slate-100 sticky top-0 z-50">
-                        <div className="flex justify-between items-center max-w-md mx-auto">
-                            <div>
-                                <h1 className="text-xl font-black text-slate-800 tracking-tighter uppercase">Météo <span className="text-blue-600 italic">Beta</span></h1>
-                                <p className="text-[10px] text-slate-400 flex items-center gap-1 uppercase font-bold tracking-widest">
-                                    <i data-lucide="clock" className="w-2.5 h-2.5"></i> {latestLog?.fullDate}
-                                </p>
-                            </div>
-                            <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black shadow-lg shadow-blue-200">V2.1</div>
+                <div className="min-h-screen pt-4 pb-12">
+                    <main className="px-4 space-y-6 max-w-md mx-auto">
+                        {/* Infos de temps discrètes */}
+                        <div className="flex justify-between items-center px-2">
+                             <p className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5 uppercase font-bold tracking-widest">
+                                <i data-lucide="clock" className="w-3 h-3"></i> {latestLog?.fullDate}
+                            </p>
+                            <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-tighter">V2.3-DARK</span>
                         </div>
-                    </header>
 
-                    <main className="p-4 space-y-6 max-w-md mx-auto">
                         {/* Stats rapides */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
-                                <p className="text-slate-400 text-[10px] font-black uppercase mb-2 tracking-widest">Extérieur</p>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-3xl font-black text-slate-800 tracking-tighter">{latestLog?.Paris}°</span>
-                                    <div className="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center">
-                                        <i data-lucide="map-pin" className="text-amber-500 w-5 h-5"></i>
+                            <div className="bg-white dark:bg-slate-900 p-5 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
+                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase mb-3 tracking-widest text-center">Extérieur</p>
+                                <div className="flex flex-col items-center gap-1">
+                                    <div className="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-2xl flex items-center justify-center mb-1">
+                                        <i data-lucide="map-pin" className="text-amber-500 w-6 h-6"></i>
                                     </div>
+                                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{latestLog?.Paris}°</span>
                                 </div>
                             </div>
-                            <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
-                                <p className="text-slate-400 text-[10px] font-black uppercase mb-2 tracking-widest">Moyenne Int.</p>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-3xl font-black text-slate-800 tracking-tighter">{currentIndoorAvg}°</span>
-                                    <div className="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                                        <i data-lucide="home" className="text-indigo-500 w-5 h-5"></i>
+                            <div className="bg-white dark:bg-slate-900 p-5 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
+                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase mb-3 tracking-widest text-center">Intérieur</p>
+                                <div className="flex flex-col items-center gap-1">
+                                    <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-1">
+                                        <i data-lucide="home" className="text-indigo-500 w-6 h-6"></i>
                                     </div>
+                                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{currentIndoorAvg}°</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Graphique */}
-                        <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
-                            <div className="flex flex-col gap-4 mb-6">
-                                <div className="bg-slate-100 p-1.5 rounded-2xl flex">
+                        <div className="bg-white dark:bg-slate-900 p-4 pt-6 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
+                            <div className="flex flex-col gap-5 mb-6">
+                                <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl flex">
                                     {TIME_RANGES.map(r => (
-                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${selectedRange.label === r.label ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'}`}>{r.label}</button>
+                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-2 text-[10px] font-black rounded-xl transition-all ${selectedRange.label === r.label ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-400 dark:text-slate-500'}`}>{r.label}</button>
                                     ))}
                                 </div>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-2 px-1">
                                     {Object.entries(ROOM_CONFIG).map(([key, config]) => {
                                         const isHidden = hiddenKeys.includes(key);
                                         if (latestLog?.[key] === null) return null;
                                         return (
-                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-2 px-3 py-2 rounded-full border text-[10px] font-black transition-all ${isHidden ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-white border-slate-200 text-slate-600 shadow-sm'}`}>
-                                                <div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: isHidden ? '#cbd5e1' : config.color}} />
+                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black transition-all ${isHidden ? 'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-900 text-slate-300 dark:text-slate-700' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-sm'}`}>
+                                                <div className="w-2 h-2 rounded-full" style={{backgroundColor: isHidden ? (document.documentElement.classList.contains('dark') ? '#1e293b' : '#cbd5e1') : config.color}} />
                                                 {config.label}
                                             </button>
                                         );
@@ -213,17 +215,35 @@
                                 </div>
                             </div>
 
-                            <div className="h-64 w-full -ml-4">
+                            <div className="h-72 w-full">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={chartData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis dataKey="formattedTime" hide />
-                                        <YAxis domain={['auto', 'auto']} hide />
+                                    <LineChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 20 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis 
+                                            dataKey="formattedTime" 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            interval="preserveStartEnd"
+                                            minTickGap={35}
+                                            dy={10}
+                                        />
+                                        <YAxis 
+                                            domain={['auto', 'auto']} 
+                                            axisLine={false} 
+                                            tickLine={false}
+                                            tickFormatter={(val) => `${val}°`}
+                                        />
                                         <Tooltip content={<CustomTooltip />} />
                                         {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
                                             <Line key={key} type="monotone" dataKey={key} stroke={config.color} strokeWidth={3} dot={false} connectNulls isAnimationActive={false} />
                                         ))}
-                                        <Brush dataKey="formattedTime" height={30} stroke="#e2e8f0" fill="#f8fafc" tickFormatter={() => ''} />
+                                        <Brush 
+                                            dataKey="formattedTime" 
+                                            height={30} 
+                                            stroke="#64748b" 
+                                            fill="transparent"
+                                            tickFormatter={() => ''} 
+                                        />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>
@@ -231,7 +251,7 @@
 
                         {/* Liste des pièces triée */}
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Pièces (Tri chaud → froid)</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-3">Détails par zone</h3>
                             {Object.entries(ROOM_CONFIG)
                                 .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
                                 .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
@@ -239,16 +259,16 @@
                                     const val = latestLog?.[key];
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
-                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white p-4 rounded-[2rem] border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-100' : 'border-slate-100 shadow-sm'}`}>
+                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-[2rem] border transition-all ${isHidden ? 'opacity-30 border-transparent bg-slate-100 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}>
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{backgroundColor: config.color + '15', color: config.color}}>
-                                                    <i data-lucide={config.icon.toLowerCase().replace(/chefhat/, 'utensils').replace(/babylou/, 'baby')} className="w-6 h-6"></i>
+                                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-colors" style={{backgroundColor: config.color + '15', color: config.color}}>
+                                                    <i data-lucide={config.icon} className="w-6 h-6"></i>
                                                 </div>
-                                                <span className="font-bold text-slate-700 tracking-tight">{config.label}</span>
+                                                <span className="font-bold text-slate-700 dark:text-slate-200 tracking-tight">{config.label}</span>
                                             </div>
                                             <div className="flex items-center gap-4">
-                                                <span className="text-2xl font-black text-slate-800 tracking-tighter">{val}°</span>
-                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 w-5 h-5"></i>
+                                                <span className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{val}°</span>
+                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 dark:text-slate-700 w-5 h-5"></i>
                                             </div>
                                         </button>
                                     );
