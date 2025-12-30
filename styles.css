@@ -631,4 +631,47 @@ body[data-theme="light"] .info-list .max-temp { color: #f6511d; }
     .info-list .temp-values {
         gap: 0.4rem;
     }
+    .beta-floating-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: #2563eb;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+}
+
+.beta-floating-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    background: #1d4ed8;
+    box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.5);
+}
+
+.beta-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-style: italic;
+    margin-left: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .beta-floating-button {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
 }
