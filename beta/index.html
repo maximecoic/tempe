@@ -3,30 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dashboard - Mon Climat</title>
-    <!-- Tailwind CSS avec configuration Dark Mode -->
+    <title>Dashboard - Mon Climat</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media', // Mode automatique basé sur les préférences système
+            darkMode: 'media', 
         }
     </script>
-    <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Prop-Types -->
+    
+    <!-- React & Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    <!-- Recharts -->
     <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.344.0"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
         
-        /* Styles spécifiques pour les axes du graphique */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
         .recharts-cartesian-axis-tick-value { 
             font-size: 10px; 
             font-weight: 600; 
@@ -35,22 +46,15 @@
         
         @media (prefers-color-scheme: dark) {
             .recharts-cartesian-axis-tick-value { fill: #64748b; }
-            .recharts-cartesian-grid-line { stroke: #1e293b; }
         }
-
-        /* Masquage de la scrollbar pour un look plus "app" */
-        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useMemo, useEffect } = React;
-        const { 
-            LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
-            ResponsiveContainer, Brush 
-        } = Recharts;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
         
         const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
 
@@ -73,20 +77,32 @@
             { label: 'Tout', ms: 0 },
         ];
 
+        const StatCard = ({ label, value, icon, colorClass, iconColorClass }) => (
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 ${colorClass} rounded-xl flex items-center justify-center`}>
+                        <i data-lucide={icon} className={`${iconColorClass} w-5 h-5`}></i>
+                    </div>
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
+                </div>
+                <span className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{value}°</span>
+            </div>
+        );
+
         const CustomTooltip = ({ active, payload, label }) => {
             if (active && payload && payload.length) {
                 const sorted = [...payload].sort((a, b) => b.value - a.value);
                 return (
-                    <div className="bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 min-w-[150px]">
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2 border-b dark:border-slate-800 pb-1">{label}</p>
-                        <div className="space-y-1.5">
+                    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 min-w-[140px] z-50">
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2 pb-1 border-b dark:border-slate-800">{label}</p>
+                        <div className="space-y-1">
                             {sorted.map((entry, index) => (
-                                <div key={index} className="flex items-center justify-between gap-4">
+                                <div key={index} className="flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                        <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">{entry.name}</span>
+                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                                        <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">{entry.name}</span>
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{entry.value.toFixed(1)}°</span>
+                                    <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100">{entry.value.toFixed(1)}°</span>
                                 </div>
                             ))}
                         </div>
@@ -99,8 +115,32 @@
         const App = () => {
             const [logs, setLogs] = useState([]);
             const [loading, setLoading] = useState(true);
-            const [selectedRange, setSelectedRange] = useState(TIME_RANGES[2]);
-            const [hiddenKeys, setHiddenKeys] = useState([]);
+
+            const [selectedRange, setSelectedRange] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('monclimat_range');
+                    if (saved) {
+                        const parsedLabel = JSON.parse(saved);
+                        return TIME_RANGES.find(r => r.label === parsedLabel) || TIME_RANGES[0];
+                    }
+                } catch (e) {}
+                return TIME_RANGES[0];
+            });
+
+            const [hiddenKeys, setHiddenKeys] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('monclimat_hidden');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) { return []; }
+            });
+
+            useEffect(() => {
+                localStorage.setItem('monclimat_range', JSON.stringify(selectedRange.label));
+            }, [selectedRange]);
+
+            useEffect(() => {
+                localStorage.setItem('monclimat_hidden', JSON.stringify(hiddenKeys));
+            }, [hiddenKeys]);
 
             useEffect(() => {
                 fetch(DATA_URL)
@@ -113,9 +153,7 @@
             }, []);
 
             useEffect(() => {
-                if (!loading) {
-                    lucide.createIcons();
-                }
+                if (!loading) lucide.createIcons();
             });
 
             const processedData = useMemo(() => {
@@ -125,7 +163,7 @@
                     const cleanLog = { 
                         ...log, 
                         formattedTime: timeStr, 
-                        fullDate: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + timeStr,
+                        fullDate: date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) + ' ' + timeStr,
                         timestamp: date.getTime() 
                     };
                     Object.keys(ROOM_CONFIG).forEach(key => {
@@ -151,107 +189,103 @@
                 return (keys.reduce((acc, k) => acc + latestLog[k], 0) / keys.length).toFixed(1);
             }, [latestLog]);
 
+            const toggleRoom = (key) => {
+                setHiddenKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+            };
+
             if (loading) return (
                 <div className="h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-slate-400 font-medium tracking-tight animate-pulse">Chargement...</p>
-                    </div>
+                    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             );
 
             return (
-                <div className="min-h-screen pt-4 pb-12">
-                    <main className="px-4 space-y-6 max-w-md mx-auto">
-                        {/* Infos de temps discrètes */}
-                        <div className="flex justify-between items-center px-2">
-                             <p className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5 uppercase font-bold tracking-widest">
-                                <i data-lucide="clock" className="w-3 h-3"></i> {latestLog?.fullDate}
-                            </p>
-                            <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-tighter">V2.3-DARK</span>
+                <div className="min-h-screen py-6">
+                    <main className="px-4 space-y-5 max-w-md mx-auto">
+                        <div className="flex justify-between items-end px-2 pb-1">
+                            <div>
+                                <h1 className="text-lg font-black tracking-tighter text-slate-800 dark:text-slate-100">Mon Climat</h1>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                                    <i data-lucide="clock" className="w-3 h-3"></i> {latestLog?.fullDate}
+                                </p>
+                            </div>
+                            <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[9px] font-black uppercase tracking-wide">v3.2 Fix</span>
                         </div>
 
-                        {/* Stats rapides */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white dark:bg-slate-900 p-5 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
-                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase mb-3 tracking-widest text-center">Extérieur</p>
-                                <div className="flex flex-col items-center gap-1">
-                                    <div className="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-2xl flex items-center justify-center mb-1">
-                                        <i data-lucide="map-pin" className="text-amber-500 w-6 h-6"></i>
-                                    </div>
-                                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{latestLog?.Paris}°</span>
-                                </div>
-                            </div>
-                            <div className="bg-white dark:bg-slate-900 p-5 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
-                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase mb-3 tracking-widest text-center">Intérieur</p>
-                                <div className="flex flex-col items-center gap-1">
-                                    <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-1">
-                                        <i data-lucide="home" className="text-indigo-500 w-6 h-6"></i>
-                                    </div>
-                                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{currentIndoorAvg}°</span>
-                                </div>
-                            </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            <StatCard 
+                                label="Extérieur" 
+                                value={latestLog?.Paris} 
+                                icon="map-pin" 
+                                colorClass="bg-amber-50 dark:bg-amber-500/10" 
+                                iconColorClass="text-amber-500" 
+                            />
+                            <StatCard 
+                                label="Moy. Int." 
+                                value={currentIndoorAvg} 
+                                icon="home" 
+                                colorClass="bg-indigo-50 dark:bg-indigo-500/10" 
+                                iconColorClass="text-indigo-500" 
+                            />
                         </div>
 
-                        {/* Graphique */}
-                        <div className="bg-white dark:bg-slate-900 p-4 pt-6 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 transition-colors">
-                            <div className="flex flex-col gap-5 mb-6">
-                                <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl flex">
-                                    {TIME_RANGES.map(r => (
-                                        <button key={r.label} onClick={() => setSelectedRange(r)} className={`flex-1 py-2 text-[10px] font-black rounded-xl transition-all ${selectedRange.label === r.label ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-400 dark:text-slate-500'}`}>{r.label}</button>
-                                    ))}
-                                </div>
-                                <div className="flex flex-wrap gap-2 px-1">
-                                    {Object.entries(ROOM_CONFIG).map(([key, config]) => {
-                                        const isHidden = hiddenKeys.includes(key);
-                                        if (latestLog?.[key] === null) return null;
-                                        return (
-                                            <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black transition-all ${isHidden ? 'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-900 text-slate-300 dark:text-slate-700' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-sm'}`}>
-                                                <div className="w-2 h-2 rounded-full" style={{backgroundColor: isHidden ? (document.documentElement.classList.contains('dark') ? '#1e293b' : '#cbd5e1') : config.color}} />
-                                                {config.label}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                        <div className="bg-white dark:bg-slate-900 p-4 pt-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800/50">
+                            <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex mb-4">
+                                {TIME_RANGES.map(r => (
+                                    <button 
+                                        key={r.label} 
+                                        onClick={() => setSelectedRange(r)} 
+                                        className={`flex-1 py-1.5 text-[10px] font-black rounded-lg transition-all ${selectedRange.label === r.label ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm scale-100' : 'text-slate-400 dark:text-slate-500 scale-95 hover:text-slate-600'}`}
+                                    >
+                                        {r.label}
+                                    </button>
+                                ))}
                             </div>
 
-                            <div className="h-72 w-full">
+                            <div className="flex flex-wrap gap-1.5 px-1 mb-4 max-h-16 overflow-y-auto scrollbar-hide">
+                                {Object.entries(ROOM_CONFIG).map(([key, config]) => {
+                                    if (latestLog?.[key] === null) return null;
+                                    const isHidden = hiddenKeys.includes(key);
+                                    return (
+                                        <button 
+                                            key={key} 
+                                            onClick={() => toggleRoom(key)} 
+                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-all ${isHidden ? 'bg-transparent border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-600' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-600 dark:text-slate-300'}`}
+                                        >
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{backgroundColor: isHidden ? 'gray' : config.color, opacity: isHidden ? 0.3 : 1}} />
+                                            <span className={isHidden ? 'line-through' : ''}>{config.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="h-64 w-full">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 20 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis 
-                                            dataKey="formattedTime" 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                            interval="preserveStartEnd"
-                                            minTickGap={35}
-                                            dy={10}
-                                        />
-                                        <YAxis 
-                                            domain={['auto', 'auto']} 
-                                            axisLine={false} 
-                                            tickLine={false}
-                                            tickFormatter={(val) => `${val}°`}
-                                        />
-                                        <Tooltip content={<CustomTooltip />} />
+                                    <LineChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={document.documentElement.classList.contains('dark') ? '#1e293b' : '#f1f5f9'} />
+                                        <XAxis dataKey="formattedTime" axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={30} dy={10} />
+                                        <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false} tickFormatter={(val) => `${val}°`} width={35} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4'}} />
                                         {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
-                                            <Line key={key} type="monotone" dataKey={key} stroke={config.color} strokeWidth={3} dot={false} connectNulls isAnimationActive={false} />
+                                            <Line 
+                                                key={key} 
+                                                type="monotone" 
+                                                dataKey={key} 
+                                                stroke={config.color} 
+                                                strokeWidth={2.5} 
+                                                dot={false} 
+                                                activeDot={{r: 4, strokeWidth: 0}}
+                                                connectNulls 
+                                                isAnimationActive={false} 
+                                            />
                                         ))}
-                                        <Brush 
-                                            dataKey="formattedTime" 
-                                            height={30} 
-                                            stroke="#64748b" 
-                                            fill="transparent"
-                                            tickFormatter={() => ''} 
-                                        />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>
                         </div>
 
-                        {/* Liste des pièces triée */}
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-3">Détails par zone</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-3">Zones</h3>
                             {Object.entries(ROOM_CONFIG)
                                 .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
                                 .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
@@ -259,16 +293,18 @@
                                     const val = latestLog?.[key];
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
-                                        <button key={key} onClick={() => setHiddenKeys(prev => isHidden ? prev.filter(k => k !== key) : [...prev, key])} className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-[2rem] border transition-all ${isHidden ? 'opacity-30 border-transparent bg-slate-100 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}>
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-colors" style={{backgroundColor: config.color + '15', color: config.color}}>
-                                                    <i data-lucide={config.icon} className="w-6 h-6"></i>
+                                        <button key={key} onClick={() => toggleRoom(key)} className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-3 px-4 rounded-[1.5rem] border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-50 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{backgroundColor: config.color + '15'}}>
+                                                    <i data-lucide={config.icon} className="w-5 h-5" style={{color: config.color}}></i>
                                                 </div>
-                                                <span className="font-bold text-slate-700 dark:text-slate-200 tracking-tight">{config.label}</span>
+                                                <div className="text-left">
+                                                    <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">{config.label}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
-                                                <span className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{val}°</span>
-                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 dark:text-slate-700 w-5 h-5"></i>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{val}°</span>
+                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 dark:text-slate-700 w-4 h-4"></i>
                                             </div>
                                         </button>
                                     );
