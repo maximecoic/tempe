@@ -85958,5 +85958,15 @@
     "Cuisine": 20.4,
     "Chambre de Lilou": 20.32,
     "Salon": 20.52
+  },
+  {
+    "Heure": "2026-01-02T21:13:09.000Z",
+    "Paris": 2.7,
+    "Bureau": 21.3,
+    "Chambre": 20,
+    "SdB": 22.1,
+    "Cuisine": 20.6,
+    "Chambre de Lilou": 20.14,
+    "Salon": 20.53
   }
 ]
