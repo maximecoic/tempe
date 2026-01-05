@@ -7,8 +7,6 @@
     <style>
         :root {
             --black: #000000;
-            --dark-gray: #444444;
-            --light-gray: #aaaaaa;
             --white: #ffffff;
         }
 
@@ -36,8 +34,8 @@
             justify-content: space-between;
             align-items: baseline;
         }
-        h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; }
-        .timestamp { font-size: 0.9rem; font-family: monospace; }
+        h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
+        .timestamp { font-size: 0.8rem; font-family: monospace; }
 
         .kpi-row {
             display: grid;
@@ -47,124 +45,84 @@
 
         .card {
             border: 2px solid var(--black);
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            background: var(--white);
         }
 
         .card-label {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
+            font-weight: bold;
             border-bottom: 1px solid var(--black);
             margin-bottom: 5px;
-            padding-bottom: 2px;
-            font-weight: bold;
         }
 
         .card-value {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            line-height: 1;
         }
 
         .chart-container {
             border: 2px solid var(--black);
-            padding: 10px;
-            height: 220px;
-            position: relative;
-            margin-top: 5px;
+            padding: 5px;
+            height: 200px;
         }
         
         svg {
             width: 100%;
-            height: 180px;
+            height: 160px;
             overflow: visible;
         }
         
-        /* Style des lignes : Intérieur en gras, Extérieur en fin */
-        .line-indoor {
-            fill: none;
-            stroke: var(--black);
-            stroke-width: 4;
-            stroke-linejoin: round;
-        }
-        
-        .line-outdoor {
-            fill: none;
-            stroke: var(--black);
-            stroke-width: 1.5;
-            stroke-dasharray: 4;
-            stroke-linejoin: round;
-        }
-        
-        .grid-line {
-            stroke: var(--light-gray);
-            stroke-width: 1;
-            stroke-dasharray: 2;
-        }
-
-        .chart-label {
-            font-size: 11px;
-            font-family: monospace;
-            fill: var(--black);
-            font-weight: bold;
-        }
-
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            font-size: 10px;
-            margin-top: 10px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
+        .line-indoor { fill: none; stroke: var(--black); stroke-width: 4; }
+        .line-outdoor { fill: none; stroke: var(--black); stroke-width: 1; stroke-dasharray: 4; }
+        .grid-line { stroke: #ccc; stroke-width: 1; stroke-dasharray: 2; }
+        .chart-label { font-size: 10px; fill: var(--black); font-weight: bold; }
 
         .room-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 5px;
         }
 
         .room-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             border-bottom: 1px dotted var(--black);
-            padding: 4px 0;
-            font-size: 1.1rem;
+            padding: 2px 0;
+            font-size: 1rem;
         }
         
-        .room-name { font-weight: normal; }
-        .room-temp { font-weight: bold; font-family: sans-serif; }
+        .room-temp { font-weight: bold; }
 
         .refresh-btn {
             display: block;
             width: 100%;
-            padding: 12px;
-            margin-top: 10px;
+            padding: 15px;
             background: var(--black);
             color: var(--white);
             text-align: center;
-            text-decoration: none;
             font-weight: bold;
             text-transform: uppercase;
             border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
+            margin-top: 10px;
         }
 
-        #loading { text-align: center; padding: 50px; font-size: 1.5rem; }
+        #status-msg { text-align: center; padding: 40px; font-size: 1.2rem; }
+        #error-details { font-size: 0.7rem; margin-top: 10px; color: #666; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loading">Mise à jour liseuse...</div>
+    <div id="status-msg">
+        Connexion au capteur...
+        <div id="error-details"></div>
+    </div>
 
     <div id="app" class="container" style="display: none;">
         <header>
-            <h1>Mon Climat</h1>
+            <h1>Climat</h1>
             <span id="last-update" class="timestamp">--:--</span>
         </header>
 
@@ -174,159 +132,148 @@
                 <span id="temp-paris" class="card-value">--</span>
             </div>
             <div class="card">
-                <span class="card-label">Moy. Intérieur</span>
+                <span class="card-label">Moy. Int.</span>
                 <span id="temp-indoor" class="card-value">--</span>
             </div>
         </div>
 
         <div class="chart-container">
             <svg id="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-            <div class="chart-legend">
-                <span><span style="border-bottom: 3px solid black; width: 15px; display: inline-block; margin-bottom: 3px;"></span> Intérieur</span>
-                <span><span style="border-bottom: 1px dashed black; width: 15px; display: inline-block; margin-bottom: 3px;"></span> Extérieur</span>
-            </div>
         </div>
 
         <div id="room-list" class="room-list"></div>
 
-        <button onclick="window.location.reload()" class="refresh-btn">Rafraîchir</button>
+        <button onclick="window.location.reload()" class="refresh-btn">Mettre à jour</button>
     </div>
 
     <script>
-        const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
+        // Utilisation de variables 'var' pour compatibilité vieux navigateurs Kindle
+        var DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
         
-        const ROOMS = {
-            'Paris': { label: 'EXTÉRIEUR', isIndoor: false },
+        var ROOMS = {
+            'Paris': { label: 'EXT', isIndoor: false },
             'Salon': { label: 'Salon', isIndoor: true },
             'Bureau': { label: 'Bureau', isIndoor: true },
             'Chambre': { label: 'Chambre', isIndoor: true },
-            'Chambre de Lilou': { label: 'Ch. Lilou', isIndoor: true },
+            'Chambre de Lilou': { label: 'Lilou', isIndoor: true },
             'Cuisine': { label: 'Cuisine', isIndoor: true },
-            'SdB': { label: 'Bain', isIndoor: true },
+            'SdB': { label: 'Bain', isIndoor: true }
         };
 
-        async function init() {
-            try {
-                const response = await fetch(DATA_URL);
-                const data = await response.json();
-                render(data);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-            } catch (e) {
-                document.getElementById('loading').innerText = "Erreur de chargement";
-            }
-        }
-
         function getIndoorAvg(log) {
-            let sum = 0, count = 0;
-            Object.keys(ROOMS).forEach(key => {
+            var sum = 0, count = 0;
+            for (var key in ROOMS) {
                 if (ROOMS[key].isIndoor && log[key] !== "" && log[key] !== undefined) {
                     sum += Number(log[key]);
                     count++;
                 }
-            });
+            }
             return count > 0 ? sum / count : null;
         }
 
+        function init() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", DATA_URL, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            render(data);
+                            document.getElementById('status-msg').style.display = 'none';
+                            document.getElementById('app').style.display = 'flex';
+                        } catch (e) {
+                            showError("Erreur JSON: " + e.message);
+                        }
+                    } else {
+                        showError("Erreur HTTP: " + xhr.status);
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                showError("Erreur réseau (CORS ou SSL)");
+            };
+            xhr.send();
+        }
+
+        function showError(msg) {
+            document.getElementById('status-msg').innerHTML = "Erreur de mise à jour";
+            var details = document.getElementById('error-details');
+            details.innerText = msg;
+            details.style.display = 'block';
+        }
+
         function render(logs) {
-            // On affiche les 48 derniers points (env. 12-24h selon fréquence)
-            const recentLogs = logs.slice(-48); 
-            const latest = logs[logs.length - 1];
+            var recentLogs = logs.slice(-40); 
+            var latest = logs[logs.length - 1];
 
-            // Header & KPIs
-            document.getElementById('last-update').innerText = new Date(latest.Heure).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('temp-paris').innerText = `${Number(latest.Paris).toFixed(1)}°`;
-            document.getElementById('temp-indoor').innerText = `${getIndoorAvg(latest).toFixed(1)}°`;
+            document.getElementById('last-update').innerText = latest.Heure.split('T')[1].substring(0, 5);
+            document.getElementById('temp-paris').innerText = Number(latest.Paris).toFixed(1) + "°";
+            document.getElementById('temp-indoor').innerText = getIndoorAvg(latest).toFixed(1) + "°";
 
-            // Liste des pièces
-            const listContainer = document.getElementById('room-list');
+            var listContainer = document.getElementById('room-list');
             listContainer.innerHTML = '';
-            Object.keys(ROOMS).forEach(key => {
-                if (key === 'Paris' || latest[key] === "") return;
-                const div = document.createElement('div');
+            for (var key in ROOMS) {
+                if (key === 'Paris' || !latest[key]) continue;
+                var div = document.createElement('div');
                 div.className = 'room-item';
-                div.innerHTML = `<span class="room-name">${ROOMS[key].label}</span><span class="room-temp">${Number(latest[key]).toFixed(1)}°</span>`;
+                div.innerHTML = '<span>' + ROOMS[key].label + '</span><span class="room-temp">' + Number(latest[key]).toFixed(1) + '°</span>';
                 listContainer.appendChild(div);
-            });
+            }
 
             drawChart(recentLogs);
         }
 
         function drawChart(data) {
-            const svg = document.getElementById('chart-svg');
-            svg.innerHTML = ''; // Nettoyage
+            var svg = document.getElementById('chart-svg');
+            svg.innerHTML = ''; 
             
-            // Préparation des séries
-            const outdoorSeries = data.map(d => Number(d.Paris));
-            const indoorSeries = data.map(d => getIndoorAvg(d));
+            var outdoorSeries = [];
+            var indoorSeries = [];
+            for (var i = 0; i < data.length; i++) {
+                outdoorSeries.push(Number(data[i].Paris));
+                indoorSeries.push(getIndoorAvg(data[i]));
+            }
 
-            // Calcul échelles Y
-            const allValues = [...outdoorSeries, ...indoorSeries].filter(v => v !== null);
-            let min = Math.floor(Math.min(...allValues) - 1);
-            let max = Math.ceil(Math.max(...allValues) + 1);
-            const range = max - min;
+            var allValues = outdoorSeries.concat(indoorSeries);
+            var min = Math.floor(Math.min.apply(null, allValues) - 1);
+            var max = Math.ceil(Math.max.apply(null, allValues) + 1);
+            var range = max - min;
 
             function getPath(series) {
-                let path = "M";
-                series.forEach((val, i) => {
-                    if (val === null) return;
-                    const x = (i / (series.length - 1)) * 100;
-                    const y = 100 - ((val - min) / range) * 100;
-                    path += ` ${x.toFixed(1)},${y.toFixed(1)}`;
+                var path = "M";
+                for (var i = 0; i < series.length; i++) {
+                    var x = (i / (series.length - 1)) * 100;
+                    var y = 100 - ((series[i] - min) / range) * 100;
+                    path += " " + x.toFixed(1) + "," + y.toFixed(1);
                     if (i < series.length - 1) path += " L";
-                });
+                }
                 return path;
             }
 
-            // Dessiner axes et grille
-            for (let i = 0; i <= 4; i++) {
-                const yVal = min + (range * i / 4);
-                const yPos = 100 - (i * 25);
-                
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            // Grille
+            for (var j = 0; j <= 2; j++) {
+                var yPos = j * 50;
+                var val = max - (j * (range/2));
+                var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 line.setAttribute("x1", 0); line.setAttribute("x2", 100);
                 line.setAttribute("y1", yPos); line.setAttribute("y2", yPos);
                 line.setAttribute("class", "grid-line");
                 svg.appendChild(line);
-
-                const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                label.setAttribute("x", 0); label.setAttribute("y", yPos - 2);
-                label.setAttribute("class", "chart-label");
-                label.textContent = `${yVal.toFixed(0)}°`;
-                svg.appendChild(label);
             }
 
-            // Ligne Extérieure (pointillée)
-            const outPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            var outPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
             outPath.setAttribute("d", getPath(outdoorSeries));
             outPath.setAttribute("class", "line-outdoor");
             svg.appendChild(outPath);
 
-            // Ligne Intérieure (épaisse)
-            const inPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            var inPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
             inPath.setAttribute("d", getPath(indoorSeries));
             inPath.setAttribute("class", "line-indoor");
             svg.appendChild(inPath);
-
-            // Labels Axe X (Heures)
-            const startTime = new Date(data[0].Heure).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-            const endTime = new Date(data[data.length-1].Heure).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-
-            const startText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            startText.setAttribute("x", 0); startText.setAttribute("y", 115);
-            startText.setAttribute("class", "chart-label");
-            startText.textContent = startTime;
-            svg.appendChild(startText);
-
-            const endText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            endText.setAttribute("x", 85); endText.setAttribute("y", 115);
-            endText.setAttribute("class", "chart-label");
-            endText.textContent = endTime;
-            svg.appendChild(endText);
         }
 
         init();
-        setInterval(init, 15 * 60 * 1000);
     </script>
 </body>
 </html>
