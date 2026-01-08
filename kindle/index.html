@@ -2,278 +2,356 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kindle - Mon Climat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Climat Kindle</title>
     <style>
-        :root {
-            --black: #000000;
-            --white: #ffffff;
-        }
-
+        /* RESET & BASE */
+        * { box-sizing: border-box; }
         body {
-            font-family: "Bookerly", "Georgia", serif;
-            background-color: var(--white);
-            color: var(--black);
             margin: 0;
-            padding: 10px;
-            -webkit-font-smoothing: none;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        header {
-            border-bottom: 4px solid var(--black);
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-        h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
-        .timestamp { font-size: 0.8rem; font-family: monospace; }
-
-        .kpi-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .card {
-            border: 2px solid var(--black);
             padding: 8px;
-            text-align: center;
+            font-family: "Bookerly", serif; /* Police native Kindle */
+            background-color: white;
+            color: black;
+            font-size: 16px;
         }
 
-        .card-label {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            border-bottom: 1px solid var(--black);
-            margin-bottom: 5px;
-        }
-
-        .card-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        .chart-container {
-            border: 2px solid var(--black);
-            padding: 5px;
-            height: 200px;
-        }
-        
-        svg {
-            width: 100%;
-            height: 160px;
-            overflow: visible;
-        }
-        
-        .line-indoor { fill: none; stroke: var(--black); stroke-width: 4; }
-        .line-outdoor { fill: none; stroke: var(--black); stroke-width: 1; stroke-dasharray: 4; }
-        .grid-line { stroke: #ccc; stroke-width: 1; stroke-dasharray: 2; }
-        .chart-label { font-size: 10px; fill: var(--black); font-weight: bold; }
-
-        .room-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-        }
-
-        .room-item {
-            display: flex;
+        /* UTILITAIRES FLEXBOX (Plus compatible que Grid) */
+        .row {
+            display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+            display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+            display: -ms-flexbox;      /* TWEENER - IE 10 */
+            display: -webkit-flex;     /* NEW - Chrome */
+            display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
             justify-content: space-between;
-            border-bottom: 1px dotted var(--black);
-            padding: 2px 0;
-            font-size: 1rem;
+            width: 100%;
         }
         
-        .room-temp { font-weight: bold; }
+        .col-half { width: 48%; }
 
-        .refresh-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background: var(--black);
-            color: var(--white);
+        /* COMPOSANTS */
+        header {
+            border-bottom: 3px solid black;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
+        .date-display { font-size: 14px; font-family: monospace; text-align: right; }
+
+        /* CARTES KPI */
+        .card {
+            border: 2px solid black;
+            padding: 10px;
             text-align: center;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            display: block;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
-            border: none;
-            margin-top: 10px;
+            border-bottom: 1px solid black;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+        }
+        .card-value {
+            font-size: 36px;
+            font-weight: bold;
+            display: block;
         }
 
-        #status-msg { text-align: center; padding: 40px; font-size: 1.2rem; }
-        #error-details { font-size: 0.7rem; margin-top: 10px; color: #666; display: none; }
+        /* GRAPHIQUE SVG */
+        .chart-box {
+            border: 2px solid black;
+            height: 200px;
+            margin-bottom: 15px;
+            padding: 5px;
+            position: relative;
+        }
+        svg { width: 100%; height: 100%; overflow: hidden; }
+        
+        /* Styles SVG */
+        .line-out { fill: none; stroke: black; stroke-width: 1; stroke-dasharray: 4,4; }
+        .line-in { fill: none; stroke: black; stroke-width: 4; }
+        .grid-line { stroke: #999; stroke-width: 1; }
+        .chart-txt { font-size: 10px; font-family: monospace; }
+
+        /* LISTE PIECES */
+        .room-row {
+            border-bottom: 1px dotted black;
+            padding: 6px 0;
+            font-size: 16px;
+        }
+        .room-val { font-weight: bold; font-family: sans-serif; }
+
+        /* BOUTON */
+        #btn-refresh {
+            display: block;
+            width: 100%;
+            background: black;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* DEBUG CONSOLE (Essentiel pour Kindle) */
+        #console-log {
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 10px;
+            color: #555;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
 
-    <div id="status-msg">
-        Connexion au capteur...
-        <div id="error-details"></div>
+    <header class="row">
+        <h1>Mon Climat</h1>
+        <div id="last-update" class="date-display">Chargement...</div>
+    </header>
+
+    <!-- KPIs -->
+    <div class="row">
+        <div class="col-half card">
+            <span class="card-title">Extérieur</span>
+            <span id="val-paris" class="card-value">--</span>
+        </div>
+        <div class="col-half card">
+            <span class="card-title">Intérieur</span>
+            <span id="val-indoor" class="card-value">--</span>
+        </div>
     </div>
 
-    <div id="app" class="container" style="display: none;">
-        <header>
-            <h1>Climat</h1>
-            <span id="last-update" class="timestamp">--:--</span>
-        </header>
-
-        <div class="kpi-row">
-            <div class="card">
-                <span class="card-label">Extérieur</span>
-                <span id="temp-paris" class="card-value">--</span>
-            </div>
-            <div class="card">
-                <span class="card-label">Moy. Int.</span>
-                <span id="temp-indoor" class="card-value">--</span>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <svg id="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-        </div>
-
-        <div id="room-list" class="room-list"></div>
-
-        <button onclick="window.location.reload()" class="refresh-btn">Mettre à jour</button>
+    <!-- Graphique -->
+    <div class="chart-box">
+        <svg id="svg-graph" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <!-- Le contenu sera injecté par JS -->
+        </svg>
     </div>
+    <!-- Légende simple -->
+    <div style="text-align:center; font-size: 10px; margin-top:-10px; margin-bottom: 15px;">
+        <span style="font-weight:bold">Trait épais:</span> Intérieur &nbsp;|&nbsp; 
+        <span style="font-style:italic">Pointillés:</span> Extérieur
+    </div>
+
+    <!-- Liste -->
+    <div id="list-container"></div>
+
+    <button id="btn-refresh" onclick="appInit()">Rafraîchir</button>
+
+    <!-- Zone de debug pour comprendre les erreurs Kindle -->
+    <div id="console-log">Logs système:</div>
 
     <script>
-        // Utilisation de variables 'var' pour compatibilité vieux navigateurs Kindle
-        var DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
-        
-        var ROOMS = {
-            'Paris': { label: 'EXT', isIndoor: false },
-            'Salon': { label: 'Salon', isIndoor: true },
-            'Bureau': { label: 'Bureau', isIndoor: true },
-            'Chambre': { label: 'Chambre', isIndoor: true },
-            'Chambre de Lilou': { label: 'Lilou', isIndoor: true },
-            'Cuisine': { label: 'Cuisine', isIndoor: true },
-            'SdB': { label: 'Bain', isIndoor: true }
-        };
-
-        function getIndoorAvg(log) {
-            var sum = 0, count = 0;
-            for (var key in ROOMS) {
-                if (ROOMS[key].isIndoor && log[key] !== "" && log[key] !== undefined) {
-                    sum += Number(log[key]);
-                    count++;
-                }
+        /**
+         * LOGGGER COMPATIBLE KINDLE
+         * Affiche les erreurs directement sur l'écran car pas de console développeur.
+         */
+        function log(msg) {
+            var el = document.getElementById('console-log');
+            if (el) {
+                var time = new Date().toLocaleTimeString();
+                el.innerHTML += "\n[" + time + "] " + msg;
             }
-            return count > 0 ? sum / count : null;
         }
 
-        function init() {
+        // Catch global errors
+        window.onerror = function(message, source, lineno, colno, error) {
+            log("ERREUR CRITIQUE: " + message + " ligne " + lineno);
+        };
+
+        // VARIABLES GLOBALES (Pas de const/let)
+        var DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
+        
+        var CONFIG = {
+            'Paris': { label: 'Extérieur', indoor: false },
+            'Salon': { label: 'Salon', indoor: true },
+            'Bureau': { label: 'Bureau', indoor: true },
+            'Chambre': { label: 'Chambre', indoor: true },
+            'Chambre de Lilou': { label: 'Ch. Lilou', indoor: true },
+            'SdB': { label: 'Bain', indoor: true },
+            'Cuisine': { label: 'Cuisine', indoor: true }
+        };
+
+        function appInit() {
+            log("Démarrage de la récupération...");
+            document.getElementById('last-update').innerHTML = "Chargement...";
+            
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", DATA_URL, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            render(data);
-                            document.getElementById('status-msg').style.display = 'none';
-                            document.getElementById('app').style.display = 'flex';
-                        } catch (e) {
-                            showError("Erreur JSON: " + e.message);
-                        }
-                    } else {
-                        showError("Erreur HTTP: " + xhr.status);
+            // Le paramètre timestamp évite le cache agressif du Kindle
+            var cleanUrl = DATA_URL + "?t=" + new Date().getTime();
+            
+            xhr.open('GET', cleanUrl, true);
+            
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    log("Données reçues (Taille: " + xhr.responseText.length + ")");
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        renderApp(data);
+                    } catch (e) {
+                        log("Erreur Parsing JSON: " + e.message);
                     }
+                } else {
+                    log("Erreur Serveur: " + xhr.status);
                 }
             };
+
             xhr.onerror = function() {
-                showError("Erreur réseau (CORS ou SSL)");
+                log("Erreur Réseau (CORS/SSL). Vérifiez le Wifi.");
             };
+
             xhr.send();
         }
 
-        function showError(msg) {
-            document.getElementById('status-msg').innerHTML = "Erreur de mise à jour";
-            var details = document.getElementById('error-details');
-            details.innerText = msg;
-            details.style.display = 'block';
-        }
-
-        function render(logs) {
-            var recentLogs = logs.slice(-40); 
-            var latest = logs[logs.length - 1];
-
-            document.getElementById('last-update').innerText = latest.Heure.split('T')[1].substring(0, 5);
-            document.getElementById('temp-paris').innerText = Number(latest.Paris).toFixed(1) + "°";
-            document.getElementById('temp-indoor').innerText = getIndoorAvg(latest).toFixed(1) + "°";
-
-            var listContainer = document.getElementById('room-list');
-            listContainer.innerHTML = '';
-            for (var key in ROOMS) {
-                if (key === 'Paris' || !latest[key]) continue;
-                var div = document.createElement('div');
-                div.className = 'room-item';
-                div.innerHTML = '<span>' + ROOMS[key].label + '</span><span class="room-temp">' + Number(latest[key]).toFixed(1) + '°</span>';
-                listContainer.appendChild(div);
-            }
-
-            drawChart(recentLogs);
-        }
-
-        function drawChart(data) {
-            var svg = document.getElementById('chart-svg');
-            svg.innerHTML = ''; 
-            
-            var outdoorSeries = [];
-            var indoorSeries = [];
-            for (var i = 0; i < data.length; i++) {
-                outdoorSeries.push(Number(data[i].Paris));
-                indoorSeries.push(getIndoorAvg(data[i]));
-            }
-
-            var allValues = outdoorSeries.concat(indoorSeries);
-            var min = Math.floor(Math.min.apply(null, allValues) - 1);
-            var max = Math.ceil(Math.max.apply(null, allValues) + 1);
-            var range = max - min;
-
-            function getPath(series) {
-                var path = "M";
-                for (var i = 0; i < series.length; i++) {
-                    var x = (i / (series.length - 1)) * 100;
-                    var y = 100 - ((series[i] - min) / range) * 100;
-                    path += " " + x.toFixed(1) + "," + y.toFixed(1);
-                    if (i < series.length - 1) path += " L";
+        function getMoyenneInterieure(entry) {
+            var total = 0;
+            var count = 0;
+            for (var key in CONFIG) {
+                if (CONFIG[key].indoor && entry[key] !== "" && entry[key] !== null && entry[key] !== undefined) {
+                    var val = parseFloat(entry[key]);
+                    if (!isNaN(val)) {
+                        total += val;
+                        count++;
+                    }
                 }
-                return path;
             }
-
-            // Grille
-            for (var j = 0; j <= 2; j++) {
-                var yPos = j * 50;
-                var val = max - (j * (range/2));
-                var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", 0); line.setAttribute("x2", 100);
-                line.setAttribute("y1", yPos); line.setAttribute("y2", yPos);
-                line.setAttribute("class", "grid-line");
-                svg.appendChild(line);
-            }
-
-            var outPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            outPath.setAttribute("d", getPath(outdoorSeries));
-            outPath.setAttribute("class", "line-outdoor");
-            svg.appendChild(outPath);
-
-            var inPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            inPath.setAttribute("d", getPath(indoorSeries));
-            inPath.setAttribute("class", "line-indoor");
-            svg.appendChild(inPath);
+            return count > 0 ? (total / count) : null;
         }
 
-        init();
+        function renderApp(data) {
+            if (!data || data.length === 0) {
+                log("Données vides");
+                return;
+            }
+
+            // Prendre le dernier point
+            var last = data[data.length - 1];
+            log("Dernier point: " + last.Heure);
+
+            // Mise à jour date
+            // Parsing manuel de la date pour éviter les bugs de locale sur vieux navigateurs
+            // Format supposé: "2023-10-27T10:00:00..."
+            var timePart = "--:--";
+            try {
+                if(last.Heure.indexOf('T') > -1) {
+                    timePart = last.Heure.split('T')[1].substring(0, 5);
+                }
+            } catch(e) {}
+            document.getElementById('last-update').innerHTML = timePart;
+
+            // KPIs
+            var tempParis = parseFloat(last.Paris).toFixed(1);
+            var tempIn = getMoyenneInterieure(last);
+            
+            document.getElementById('val-paris').innerHTML = tempParis + "°";
+            document.getElementById('val-indoor').innerHTML = tempIn !== null ? tempIn.toFixed(1) + "°" : "--";
+
+            // Liste
+            var listHtml = "";
+            for (var k in CONFIG) {
+                if (k === 'Paris') continue; // On ne met pas Paris dans la liste
+                var val = last[k];
+                if (val !== "" && val !== null && val !== undefined) {
+                    var numVal = parseFloat(val).toFixed(1);
+                    listHtml += '<div class="row room-row">';
+                    listHtml += '<span>' + CONFIG[k].label + '</span>';
+                    listHtml += '<span class="room-val">' + numVal + '°</span>';
+                    listHtml += '</div>';
+                }
+            }
+            document.getElementById('list-container').innerHTML = listHtml;
+
+            // Graphique (40 derniers points)
+            renderChart(data.slice(-40));
+            log("Affichage terminé.");
+        }
+
+        function renderChart(subset) {
+            var svg = document.getElementById('svg-graph');
+            var svgContent = "";
+
+            // Préparer les tableaux
+            var arrOut = [];
+            var arrIn = [];
+            var min = 100; 
+            var max = -100;
+
+            for (var i = 0; i < subset.length; i++) {
+                var p = parseFloat(subset[i].Paris);
+                var inn = getMoyenneInterieure(subset[i]);
+
+                arrOut.push(p);
+                arrIn.push(inn);
+
+                if (!isNaN(p)) {
+                    if (p < min) min = p;
+                    if (p > max) max = p;
+                }
+                if (inn !== null) {
+                    if (inn < min) min = inn;
+                    if (inn > max) max = inn;
+                }
+            }
+
+            // Marges
+            min = Math.floor(min - 1);
+            max = Math.ceil(max + 1);
+            var range = max - min;
+            if (range === 0) range = 10; // Sécurité
+
+            // Fonction helper pour coord Y
+            function getY(val) {
+                return 100 - ((val - min) / range * 100);
+            }
+
+            // Grille horizontale (3 lignes)
+            for (var j = 1; j < 4; j++) {
+                var lineY = j * 25;
+                svgContent += '<line x1="0" y1="' + lineY + '" x2="100" y2="' + lineY + '" class="grid-line" />';
+            }
+
+            // Tracer Ligne Extérieure
+            var pathOut = "M";
+            var hasStarted = false;
+            for (var i = 0; i < arrOut.length; i++) {
+                if (isNaN(arrOut[i])) continue;
+                var x = (i / (arrOut.length - 1)) * 100;
+                var y = getY(arrOut[i]);
+                pathOut += (hasStarted ? " L " : " ") + x.toFixed(1) + "," + y.toFixed(1);
+                hasStarted = true;
+            }
+            svgContent += '<path d="' + pathOut + '" class="line-out" />';
+
+            // Tracer Ligne Intérieure
+            var pathIn = "M";
+            hasStarted = false;
+            for (var i = 0; i < arrIn.length; i++) {
+                if (arrIn[i] === null) continue;
+                var x = (i / (arrIn.length - 1)) * 100;
+                var y = getY(arrIn[i]);
+                pathIn += (hasStarted ? " L " : " ") + x.toFixed(1) + "," + y.toFixed(1);
+                hasStarted = true;
+            }
+            svgContent += '<path d="' + pathIn + '" class="line-in" />';
+
+            // Labels Max/Min
+            svgContent += '<text x="2" y="10" class="chart-txt">' + max + '°</text>';
+            svgContent += '<text x="2" y="98" class="chart-txt">' + min + '°</text>';
+
+            svg.innerHTML = svgContent;
+        }
+
+        // Lancement auto
+        appInit();
+
     </script>
 </body>
 </html>
