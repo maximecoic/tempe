@@ -107088,5 +107088,35 @@
     "Cuisine": 20.9,
     "Chambre de Lilou": 19.94,
     "Salon": 20.22
+  },
+  {
+    "Heure": "2026-02-17T06:14:49.000Z",
+    "Paris": 7.3,
+    "Bureau": 21.3,
+    "Chambre": 19.7,
+    "SdB": 21.4,
+    "Cuisine": 20.9,
+    "Chambre de Lilou": 19.86,
+    "Salon": 20.17
+  },
+  {
+    "Heure": "2026-02-17T06:44:49.000Z",
+    "Paris": 7.3,
+    "Bureau": 21.2,
+    "Chambre": 20.2,
+    "SdB": 21.6,
+    "Cuisine": 20.8,
+    "Chambre de Lilou": 19.72,
+    "Salon": 20.1
+  },
+  {
+    "Heure": "2026-02-17T07:14:49.000Z",
+    "Paris": 7.2,
+    "Bureau": 21.2,
+    "Chambre": 20.3,
+    "SdB": 22,
+    "Cuisine": 20.7,
+    "Chambre de Lilou": 19.64,
+    "Salon": 20.07
   }
 ]
