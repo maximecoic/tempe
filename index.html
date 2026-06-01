@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -13,6 +13,11 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a192f'/%3E%3Cpath d='M16 6a2 2 0 0 1 2 2v10.09a5 5 0 1 1-4 0V8a2 2 0 0 1 2-2zm0 20a3 3 0 0 0 3-3c0-1.31-.84-2.42-2-2.83V8a1 1 0 0 0-2 0v12.17A3.001 3.001 0 0 0 16 26z' fill='%23fff'/%3E%3Ccircle cx='16' cy='23' r='2' fill='%2364ffda'/%3E%3C/svg%3E">
 </head>
 <body>
+    <div id="appStatus" class="app-status loading" role="status" aria-live="polite">Chargement des donnees...</div>
+    <div id="appError" class="app-error is-hidden" role="alert" aria-live="assertive">
+        <p>Impossible de charger les donnees pour le moment.</p>
+        <button id="retryBtn" type="button">Reessayer</button>
+    </div>
     <div class="container">
         <div class="box">
             <div class="range-selector">
@@ -39,11 +44,12 @@
         </div>
     </div>
     <!-- Floating Controls Toggle Button -->
-    <button class="toggle-controls-btn" id="toggleControlsBtn" aria-label="Afficher/Masquer les contrôles">
-        <span id="toggleChevron">&#x25BC;</span> <!-- ▼ Down chevron when hidden -->
+    <button class="toggle-controls-btn" id="toggleControlsBtn" aria-label="Afficher/Masquer les controles" aria-controls="floatingControls" aria-expanded="false" type="button">
+        <span class="toggle-controls-label">Controles</span>
+        <span id="toggleChevron">&#x25BC;</span>
     </button>
     <!-- Floating Controls Box -->
-    <div class="floating-controls hidden" id="floatingControls">
+    <div class="floating-controls hidden" id="floatingControls" aria-hidden="true">
         <div class="controls-section">
             <div class="controls-title">Capteurs</div>
             <div class="sensor-buttons"></div>
@@ -51,7 +57,7 @@
         <div class="controls-section">
             <div class="controls-title">
                 <span>Groupes</span>
-                <button class="add-group-btn" id="addGroupBtn" aria-label="Ajouter un groupe">+</button>
+                <button class="add-group-btn" id="addGroupBtn" aria-label="Ajouter un groupe" type="button">+</button>
             </div>
             <div class="group-buttons"></div>
         </div>
@@ -86,9 +92,9 @@
             <label for="groupColor">Couleur</label>
             <input type="color" id="groupColor" value="#64ffda">
             <div class="modal-actions">
-                <button id="deleteGroupBtn" class="delete-btn" style="display: none;" aria-label="Supprimer le groupe"><i class="fas fa-trash"></i></button>
-                <button id="cancelGroupBtn">Annuler</button>
-                <button id="saveGroupBtn">Créer</button>
+                <button id="deleteGroupBtn" class="delete-btn" style="display: none;" aria-label="Supprimer le groupe" type="button"><i class="fas fa-trash"></i></button>
+                <button id="cancelGroupBtn" type="button">Annuler</button>
+                <button id="saveGroupBtn" type="button">Creer</button>
             </div>
         </div>
     </div>

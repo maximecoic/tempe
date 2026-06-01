@@ -7,6 +7,32 @@ const groupVisibility = new Map();
 const GROUP_STORAGE_KEY = 'sensorGroups';
 const SENSOR_VISIBILITY_KEY = 'sensorVisibility';
 const GROUP_VISIBILITY_KEY = 'groupVisibility';
+const CONTROLS_VISIBILITY_KEY = 'controlsVisible';
+
+let staticHandlersBound = false;
+
+function setLoadingStatus(message) {
+    const statusElement = document.getElementById('appStatus');
+    if (!statusElement) return;
+    statusElement.textContent = message;
+    statusElement.classList.remove('is-hidden');
+}
+
+function hideLoadingStatus() {
+    document.getElementById('appStatus')?.classList.add('is-hidden');
+}
+
+function showErrorState(message) {
+    const errorElement = document.getElementById('appError');
+    if (!errorElement) return;
+    const textNode = errorElement.querySelector('p');
+    if (textNode) textNode.textContent = message;
+    errorElement.classList.remove('is-hidden');
+}
+
+function hideErrorState() {
+    document.getElementById('appError')?.classList.add('is-hidden');
+}
 
 // Sensor icon mapping
 const sensorIcons = {
@@ -54,6 +80,9 @@ function getSensorIcon(sensorName) {
 async function fetchData() {
     try {
         const response = await fetch('https://raw.githubusercontent.com/maximecoic/tempe/main/data.json');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
         const data = await response.json();
         
         if (!Array.isArray(data) || data.length === 0) {
@@ -90,6 +119,9 @@ function createSensorButtons(sensorNames) {
 
         button.className = `sensor-btn ${!isHidden ? 'active' : ''} ${hasIcon ? 'icon-btn' : ''}`;
         button.dataset.sensor = sensorName;
+        button.type = 'button';
+        button.ariaLabel = `Afficher ou masquer ${sensorName}`;
+        button.setAttribute('aria-pressed', String(!isHidden));
         button.innerHTML = getSensorIcon(sensorName);
         button.style.backgroundColor = colors[index];
         button.style.color = '#ffffff';
@@ -205,7 +237,7 @@ function updateInfoBoxes() {
         const toggleIconClass = dataset.hidden ? 'fa-toggle-off' : 'fa-toggle-on';
         const sensorInfoHTML = `
             <div class="sensor-info">
-                <button class="sensor-toggle-btn" data-sensor-toggle="${dataset.label}" aria-label="Toggle ${dataset.label}">
+                <button class="sensor-toggle-btn" data-sensor-toggle="${dataset.label}" aria-label="Afficher ou masquer ${dataset.label}" aria-pressed="${String(!dataset.hidden)}" type="button">
                     <i class="fas ${toggleIconClass}" style="color: ${datasetColor};"></i>
                 </button>
                 <span class="sensor-name-text">${dataset.label}</span>
@@ -311,11 +343,15 @@ function createGroupButtons() {
         const button = document.createElement('button');
         button.className = `group-btn ${!isHidden ? 'active' : ''}`;
         button.dataset.groupId = group.id;
+        button.type = 'button';
+        button.ariaLabel = `Afficher ou masquer le groupe ${group.name}`;
+        button.setAttribute('aria-pressed', String(!isHidden));
         button.style.setProperty('--group-color', group.color);
         button.innerHTML = `<i class="fas ${group.icon}"></i> ${group.name}`;
 
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-group-btn';
+        editBtn.type = 'button';
         editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
         editBtn.ariaLabel = `Modifier le groupe ${group.name}`;
         button.appendChild(editBtn);
@@ -348,7 +384,9 @@ function toggleGroup(groupId) {
     const dataset = temperatureChart.data.datasets.find(d => d.groupId === groupId);
     if (dataset) dataset.hidden = newHiddenState;
 
-    document.querySelector(`.group-btn[data-group-id="${groupId}"]`)?.classList.toggle('active', !newHiddenState);
+    const groupButton = document.querySelector(`.group-btn[data-group-id="${groupId}"]`);
+    groupButton?.classList.toggle('active', !newHiddenState);
+    groupButton?.setAttribute('aria-pressed', String(!newHiddenState));
     updateYAxis();
     temperatureChart.update();
     updateInfoBoxes();
@@ -555,6 +593,7 @@ function toggleSensor(sensorName) {
     const button = document.querySelector(`.sensor-btn[data-sensor="${sensorName}"]`);
     if (button) {
         button.classList.toggle('active', !newHiddenState);
+        button.setAttribute('aria-pressed', String(!newHiddenState));
     }
 
     // 4. Recalculate Y-axis and update chart
@@ -567,9 +606,17 @@ function toggleSensor(sensorName) {
 function setRangeSelectorHandlers() {
     const rangeButtons = document.querySelectorAll('.range-btn');
     rangeButtons.forEach(btn => {
+        btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
+    });
+
+    rangeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            rangeButtons.forEach(b => b.classList.remove('active'));
+            rangeButtons.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
             setDateRangeBySelector(btn.dataset.range);
         });
     });
@@ -833,16 +880,33 @@ function applyTheme(theme) {
 
 // Initialize the application
 async function init() {
+    setLoadingStatus('Chargement des donnees...');
+    hideErrorState();
+
     const data = await fetchData();
     if (!data) {
         console.error('Failed to initialize: No data available');
-        return;
+        hideLoadingStatus();
+        showErrorState('Impossible de charger les donnees. Verifiez la connexion puis reessayez.');
+        return false;
     }
 
     loadGroups();
     loadSensorVisibility();
     loadGroupVisibility();
-    setupGroupModal();
+
+    if (!staticHandlersBound) {
+        setupGroupModal();
+
+        const dateTimeInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
+        dateTimeInputs.forEach(id => {
+            const element = document.getElementById(id);
+            element?.addEventListener('change', applyDateRangeToChart);
+        });
+
+        setRangeSelectorHandlers();
+        staticHandlersBound = true;
+    }
 
     // Initialize visibility state for all sensors
     const sensorNames = Object.keys(data[0]).filter(key => key !== 'Heure');
@@ -852,17 +916,13 @@ async function init() {
 
     originalData = data; // Store globally for toggling
     initChart(originalData);
-    setRangeSelectorHandlers();
-
-    // Add event listeners for date and time inputs
-    const dateTimeInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
-    dateTimeInputs.forEach(id => {
-        const element = document.getElementById(id);
-        element?.addEventListener('change', applyDateRangeToChart);
-    });
 
     // Set initial range by simulating a click on the default active button.
     document.querySelector('.range-btn.active')?.click();
+
+    hideLoadingStatus();
+    hideErrorState();
+    return true;
 }
 
 // Start the application
@@ -878,23 +938,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         applyTheme(event.matches ? 'light' : 'dark');
     });
 
+    const retryBtn = document.getElementById('retryBtn');
+    retryBtn?.addEventListener('click', () => {
+        window.location.reload();
+    });
+
     await init();
 
     // Toggle floating controls
     const floatingControls = document.getElementById('floatingControls');
     const toggleBtn = document.getElementById('toggleControlsBtn');
     const toggleChevron = document.getElementById('toggleChevron');
-    let controlsVisible = false; // Start hidden
+    const savedVisibility = localStorage.getItem(CONTROLS_VISIBILITY_KEY);
+    let controlsVisible = savedVisibility === null ? true : savedVisibility === 'true';
+
+    const applyControlsVisibility = () => {
+        if (floatingControls) {
+            floatingControls.classList.toggle('hidden', !controlsVisible);
+            floatingControls.setAttribute('aria-hidden', String(!controlsVisible));
+        }
+        document.body.classList.toggle('controls-collapsed', !controlsVisible);
+        if (toggleChevron) {
+            toggleChevron.textContent = controlsVisible ? '▲' : '▼';
+        }
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', String(controlsVisible));
+        }
+        localStorage.setItem(CONTROLS_VISIBILITY_KEY, String(controlsVisible));
+    };
+
+    applyControlsVisibility();
 
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             controlsVisible = !controlsVisible;
-            if (floatingControls) {
-                floatingControls.classList.toggle('hidden', !controlsVisible);
-            }
-            if (toggleChevron) {
-                toggleChevron.innerHTML = controlsVisible ? '&#x25B2;' : '&#x25BC;';
-            }
+            applyControlsVisibility();
         });
     }
 });
