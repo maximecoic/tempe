@@ -53,7 +53,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useMemo, useEffect } = React;
+        const { useState, useMemo, useEffect, useCallback } = React;
         const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
         
         const DATA_URL = "https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json";
@@ -115,6 +115,8 @@
         const App = () => {
             const [logs, setLogs] = useState([]);
             const [loading, setLoading] = useState(true);
+            const [errorMessage, setErrorMessage] = useState('');
+            const [isDarkMode, setIsDarkMode] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
 
             const [selectedRange, setSelectedRange] = useState(() => {
                 try {
@@ -142,19 +144,40 @@
                 localStorage.setItem('monclimat_hidden', JSON.stringify(hiddenKeys));
             }, [hiddenKeys]);
 
-            useEffect(() => {
-                fetch(DATA_URL)
-                    .then(res => res.json())
+            const loadData = useCallback(() => {
+                setLoading(true);
+                setErrorMessage('');
+                fetch(DATA_URL, { cache: 'no-store' })
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        return res.json();
+                    })
                     .then(data => {
-                        setLogs(Array.isArray(data) ? data : []);
+                        if (!Array.isArray(data)) throw new Error('INVALID_DATA');
+                        setLogs(data);
                         setLoading(false);
                     })
-                    .catch(() => setLoading(false));
+                    .catch(() => {
+                        setErrorMessage('Impossible de charger les donnees pour le moment.');
+                        setLogs([]);
+                        setLoading(false);
+                    });
+            }, []);
+
+            useEffect(() => {
+                loadData();
+            }, [loadData]);
+
+            useEffect(() => {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const onThemeChange = (event) => setIsDarkMode(event.matches);
+                mediaQuery.addEventListener('change', onThemeChange);
+                return () => mediaQuery.removeEventListener('change', onThemeChange);
             }, []);
 
             useEffect(() => {
                 if (!loading) lucide.createIcons();
-            });
+            }, [loading, hiddenKeys, selectedRange, logs.length]);
 
             const processedData = useMemo(() => {
                 return logs.map(log => {
@@ -163,6 +186,7 @@
                     const cleanLog = { 
                         ...log, 
                         formattedTime: timeStr, 
+                        axisDayTime: date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' ' + timeStr,
                         fullDate: date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) + ' ' + timeStr,
                         timestamp: date.getTime() 
                     };
@@ -176,11 +200,24 @@
 
             const latestLog = processedData[processedData.length - 1];
 
+            const isDataStale = useMemo(() => {
+                if (!latestLog) return false;
+                return (Date.now() - latestLog.timestamp) > (90 * 60 * 1000);
+            }, [latestLog]);
+
+            const chartUsesDateLabels = selectedRange.ms === 0 || selectedRange.ms > (24 * 60 * 60 * 1000);
+
             const chartData = useMemo(() => {
                 if (!latestLog) return [];
-                if (selectedRange.ms === 0) return processedData;
-                return processedData.filter(d => d.timestamp >= (latestLog.timestamp - selectedRange.ms));
-            }, [processedData, selectedRange, latestLog]);
+                const filtered = selectedRange.ms === 0
+                    ? processedData
+                    : processedData.filter(d => d.timestamp >= (latestLog.timestamp - selectedRange.ms));
+
+                return filtered.map(d => ({
+                    ...d,
+                    chartLabel: chartUsesDateLabels ? d.axisDayTime : d.formattedTime,
+                }));
+            }, [processedData, selectedRange, latestLog, chartUsesDateLabels]);
 
             const currentIndoorAvg = useMemo(() => {
                 if (!latestLog) return 0;
@@ -193,24 +230,59 @@
                 setHiddenKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
             };
 
+            const availableRooms = useMemo(() => (
+                Object.entries(ROOM_CONFIG).filter(([key]) => latestLog?.[key] !== null)
+            ), [latestLog]);
+
             if (loading) return (
-                <div className="h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+                <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-950" role="status" aria-live="polite">
                     <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Chargement des donnees...</p>
+                </div>
+            );
+
+            if (errorMessage) return (
+                <div className="min-h-[60vh] flex items-center justify-center px-4">
+                    <div className="w-full max-w-md rounded-3xl border border-rose-200 dark:border-rose-900/70 bg-rose-50/80 dark:bg-rose-950/40 p-5 text-center space-y-4" role="alert" aria-live="assertive">
+                        <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">{errorMessage}</p>
+                        <button
+                            type="button"
+                            onClick={loadData}
+                            className="inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                        >
+                            Reessayer
+                        </button>
+                    </div>
+                </div>
+            );
+
+            if (!processedData.length) return (
+                <div className="min-h-[60vh] flex items-center justify-center px-4">
+                    <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 text-center" role="status" aria-live="polite">
+                        <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Aucune donnee disponible pour le moment.</p>
+                    </div>
                 </div>
             );
 
             return (
                 <div className="min-h-screen py-6">
-                    <main className="px-4 space-y-5 max-w-md mx-auto">
+                    <main className="px-4 space-y-5 max-w-lg mx-auto">
                         <div className="flex justify-between items-end px-2 pb-1">
                             <div>
                                 <h1 className="text-lg font-black tracking-tighter text-slate-800 dark:text-slate-100">Mon Climat</h1>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
                                     <i data-lucide="clock" className="w-3 h-3"></i> {latestLog?.fullDate}
                                 </p>
                             </div>
-                            <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[9px] font-black uppercase tracking-wide">v3.2 Fix</span>
+                            <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-black uppercase tracking-wide">v3.2 Fix</span>
                         </div>
+
+                        {isDataStale && (
+                            <div className="rounded-2xl border border-amber-300/80 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-900/20 p-3">
+                                <p className="text-xs font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">Donnees potentiellement anciennes</p>
+                                <p className="text-sm text-amber-700/90 dark:text-amber-200/90">Dernier point recu il y a plus de 90 minutes.</p>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-2 gap-3">
                             <StatCard 
@@ -234,36 +306,47 @@
                                 {TIME_RANGES.map(r => (
                                     <button 
                                         key={r.label} 
+                                        type="button"
                                         onClick={() => setSelectedRange(r)} 
-                                        className={`flex-1 py-1.5 text-[10px] font-black rounded-lg transition-all ${selectedRange.label === r.label ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm scale-100' : 'text-slate-400 dark:text-slate-500 scale-95 hover:text-slate-600'}`}
+                                        aria-pressed={selectedRange.label === r.label}
+                                        className={`flex-1 py-2 text-xs font-black rounded-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${selectedRange.label === r.label ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm scale-100' : 'text-slate-500 dark:text-slate-400 scale-95 hover:text-slate-700 dark:hover:text-slate-200'}`}
                                     >
                                         {r.label}
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="flex flex-wrap gap-1.5 px-1 mb-4 max-h-16 overflow-y-auto scrollbar-hide">
-                                {Object.entries(ROOM_CONFIG).map(([key, config]) => {
-                                    if (latestLog?.[key] === null) return null;
+                            <div className="px-1 mb-4">
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Capteurs</p>
+                                    {availableRooms.length > 6 && <p className="text-[11px] text-slate-400 dark:text-slate-500">Faites defiler</p>}
+                                </div>
+                                <div className="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto pr-1">
+                                {availableRooms.map(([key, config]) => {
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
                                         <button 
                                             key={key} 
+                                            type="button"
                                             onClick={() => toggleRoom(key)} 
-                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-all ${isHidden ? 'bg-transparent border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-600' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-600 dark:text-slate-300'}`}
+                                            aria-label={`${isHidden ? 'Afficher' : 'Masquer'} ${config.label}`}
+                                            aria-pressed={!isHidden}
+                                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[11px] font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isHidden ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-700 dark:text-slate-200'}`}
                                         >
-                                            <div className="w-1.5 h-1.5 rounded-full" style={{backgroundColor: isHidden ? 'gray' : config.color, opacity: isHidden ? 0.3 : 1}} />
-                                            <span className={isHidden ? 'line-through' : ''}>{config.label}</span>
+                                            <div className="w-2 h-2 rounded-full" style={{backgroundColor: isHidden ? '#64748b' : config.color, opacity: isHidden ? 0.9 : 1}} />
+                                            <span>{config.label}</span>
+                                            {isHidden && <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">Masque</span>}
                                         </button>
                                     );
                                 })}
+                                </div>
                             </div>
 
                             <div className="h-64 w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={document.documentElement.classList.contains('dark') ? '#1e293b' : '#f1f5f9'} />
-                                        <XAxis dataKey="formattedTime" axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={30} dy={10} />
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#1e293b' : '#f1f5f9'} />
+                                        <XAxis dataKey="chartLabel" axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={chartUsesDateLabels ? 44 : 30} dy={10} tick={{ fontSize: 11 }} />
                                         <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false} tickFormatter={(val) => `${val}°`} width={35} />
                                         <Tooltip content={<CustomTooltip />} cursor={{stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4'}} />
                                         {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
@@ -285,7 +368,7 @@
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-3">Zones</h3>
+                            <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] px-3">Zones</h3>
                             {Object.entries(ROOM_CONFIG)
                                 .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
                                 .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
@@ -293,7 +376,14 @@
                                     const val = latestLog?.[key];
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
-                                        <button key={key} onClick={() => toggleRoom(key)} className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-3 px-4 rounded-[1.5rem] border transition-all ${isHidden ? 'opacity-40 border-transparent bg-slate-50 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}>
+                                        <button
+                                            key={key}
+                                            type="button"
+                                            onClick={() => toggleRoom(key)}
+                                            aria-label={`${isHidden ? 'Afficher' : 'Masquer'} ${config.label}`}
+                                            aria-pressed={!isHidden}
+                                            className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-3 px-4 rounded-[1.5rem] border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isHidden ? 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}
+                                        >
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{backgroundColor: config.color + '15'}}>
                                                     <i data-lucide={config.icon} className="w-5 h-5" style={{color: config.color}}></i>
@@ -304,7 +394,10 @@
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{val}°</span>
-                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-300 dark:text-slate-700 w-4 h-4"></i>
+                                                <span className={`text-[11px] font-bold uppercase tracking-wide ${isHidden ? 'text-slate-500 dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                    {isHidden ? 'Masque' : 'Visible'}
+                                                </span>
+                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-400 dark:text-slate-500 w-4 h-4"></i>
                                             </div>
                                         </button>
                                     );
