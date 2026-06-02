@@ -154428,5 +154428,65 @@
     "Cuisine": 25.2,
     "Chambre de Lilou": "",
     "Salon": 25.55
+  },
+  {
+    "Heure": "2026-06-02T12:04:05.000Z",
+    "Paris": 18.2,
+    "Bureau": 24.8,
+    "Chambre": 25.8,
+    "SdB": 26.5,
+    "Cuisine": 25.5,
+    "Chambre de Lilou": "",
+    "Salon": 25.68
+  },
+  {
+    "Heure": "2026-06-02T12:34:05.000Z",
+    "Paris": 19,
+    "Bureau": 24.8,
+    "Chambre": 25.8,
+    "SdB": 26.5,
+    "Cuisine": 25.8,
+    "Chambre de Lilou": "",
+    "Salon": 25.72
+  },
+  {
+    "Heure": "2026-06-02T13:04:05.000Z",
+    "Paris": 20.4,
+    "Bureau": 24.6,
+    "Chambre": 25.8,
+    "SdB": 26.6,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 25.71
+  },
+  {
+    "Heure": "2026-06-02T13:34:03.000Z",
+    "Paris": 20.8,
+    "Bureau": 24.4,
+    "Chambre": 25.8,
+    "SdB": 26.8,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 25.65
+  },
+  {
+    "Heure": "2026-06-02T13:52:21.000Z",
+    "Paris": 18.7,
+    "Bureau": 24.4,
+    "Chambre": 25.7,
+    "SdB": 26.7,
+    "Cuisine": 26.2,
+    "Chambre de Lilou": "",
+    "Salon": 25.62
+  },
+  {
+    "Heure": "2026-06-02T14:04:04.000Z",
+    "Paris": 18.7,
+    "Bureau": 24.4,
+    "Chambre": 25.7,
+    "SdB": 26.9,
+    "Cuisine": 26.2,
+    "Chambre de Lilou": "",
+    "Salon": 25.64
   }
 ]
