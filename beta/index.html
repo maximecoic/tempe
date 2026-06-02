@@ -77,17 +77,82 @@
             { label: 'Tout', ms: 0 },
         ];
 
-        const StatCard = ({ label, value, icon, colorClass, iconColorClass }) => (
-            <div className="bg-white dark:bg-slate-900 p-4 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
+        // --- Bandes de confort par pièce (°C). Ajustables : ce sont des défauts. ---
+        const COMFORT = {
+            Bureau: { min: 19, max: 24 },
+            Chambre: { min: 16, max: 19 },
+            SdB: { min: 22, max: 25 },
+            Cuisine: { min: 18, max: 23 },
+            "Chambre de Lilou": { min: 18, max: 21 }, // chambre bébé : éviter la surchauffe
+            Salon: { min: 19, max: 24 },
+        };
+        const COMFORT_DEFAULT = { min: 19, max: 24 }; // pièces non configurées
+        const COMFORT_TOLERANCE = 2; // °C hors bande avant de passer en rouge
+
+        const COMFORT_STYLES = {
+            ok:   { label: 'Confort',     color: '#16a34a', text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
+            warm: { label: 'Un peu chaud', color: '#d97706', text: 'text-amber-600 dark:text-amber-400',   dot: 'bg-amber-500' },
+            cool: { label: 'Un peu frais', color: '#0ea5e9', text: 'text-sky-600 dark:text-sky-400',       dot: 'bg-sky-500' },
+            hot:  { label: 'Trop chaud',   color: '#dc2626', text: 'text-rose-600 dark:text-rose-400',      dot: 'bg-rose-500' },
+            cold: { label: 'Trop froid',   color: '#2563eb', text: 'text-blue-600 dark:text-blue-400',      dot: 'bg-blue-500' },
+        };
+
+        // Renvoie l'état de confort d'une pièce pour une température donnée.
+        const comfortStatus = (key, t) => {
+            if (t === null || t === undefined || isNaN(Number(t))) return null;
+            const band = COMFORT[key] || COMFORT_DEFAULT;
+            const val = Number(t);
+            if (val >= band.min && val <= band.max) return { tone: 'ok', severity: 0, ...COMFORT_STYLES.ok };
+            if (val > band.max) {
+                const over = val - band.max;
+                return over <= COMFORT_TOLERANCE
+                    ? { tone: 'warm', severity: 1, ...COMFORT_STYLES.warm }
+                    : { tone: 'hot', severity: 2, ...COMFORT_STYLES.hot };
+            }
+            const under = band.min - val;
+            return under <= COMFORT_TOLERANCE
+                ? { tone: 'cool', severity: 1, ...COMFORT_STYLES.cool }
+                : { tone: 'cold', severity: 2, ...COMFORT_STYLES.cold };
+        };
+
+        // Formatage français à 1 décimale (virgule), partout identique.
+        const fmt = (n) => (n === null || n === undefined || isNaN(Number(n)))
+            ? '—'
+            : Number(n).toFixed(1).replace('.', ',');
+
+        const StatCard = ({ label, value, icon, colorClass, iconColorClass, subtitle, subtitleClass }) => (
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800/50 flex flex-col gap-3">
                 <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 ${colorClass} rounded-xl flex items-center justify-center`}>
                         <i data-lucide={icon} className={`${iconColorClass} w-5 h-5`}></i>
                     </div>
                     <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
                 </div>
-                <span className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{value}°</span>
+                <div>
+                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{fmt(value)}°</span>
+                    {subtitle && <p className={`text-[11px] font-semibold mt-1 ${subtitleClass || 'text-slate-400 dark:text-slate-500'}`}>{subtitle}</p>}
+                </div>
             </div>
         );
+
+        // Flèche de tendance (delta °C sur la dernière heure).
+        const TrendBadge = ({ delta }) => {
+            if (delta === null || delta === undefined) return null;
+            if (Math.abs(delta) < 0.1) {
+                return (
+                    <span className="flex items-center gap-0.5 text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                        <i data-lucide="minus" className="w-3 h-3"></i>stable
+                    </span>
+                );
+            }
+            const up = delta > 0;
+            return (
+                <span className={`flex items-center gap-0.5 text-[11px] font-bold ${up ? 'text-rose-500' : 'text-blue-500'}`}>
+                    <i data-lucide={up ? 'trending-up' : 'trending-down'} className="w-3 h-3"></i>
+                    {up ? '+' : '−'}{fmt(Math.abs(delta))}°
+                </span>
+            );
+        };
 
         const CustomTooltip = ({ active, payload, label }) => {
             if (active && payload && payload.length) {
@@ -234,6 +299,83 @@
                 Object.entries(ROOM_CONFIG).filter(([key]) => latestLog?.[key] !== null)
             ), [latestLog]);
 
+            // Tendance par pièce : variation (°C) sur la dernière heure.
+            const trendByKey = useMemo(() => {
+                const out = {};
+                if (!latestLog) return out;
+                const start = latestLog.timestamp - (60 * 60 * 1000);
+                Object.keys(ROOM_CONFIG).forEach(key => {
+                    const pts = processedData.filter(d => d.timestamp >= start && typeof d[key] === 'number');
+                    out[key] = pts.length >= 2 ? (pts[pts.length - 1][key] - pts[0][key]) : null;
+                });
+                return out;
+            }, [processedData, latestLog]);
+
+            // État de confort de chaque pièce intérieure.
+            const indoorStatuses = useMemo(() => {
+                if (!latestLog) return [];
+                return Object.entries(ROOM_CONFIG)
+                    .filter(([key]) => key !== 'Paris' && latestLog[key] !== null && latestLog[key] !== undefined)
+                    .map(([key, config]) => ({
+                        key,
+                        label: config.label,
+                        val: latestLog[key],
+                        status: comfortStatus(key, latestLog[key]),
+                        trend: trendByKey[key],
+                    }));
+            }, [latestLog, trendByKey]);
+
+            // Bandeau de synthèse : résume les anomalies de confort.
+            const comfortBanner = useMemo(() => {
+                if (!indoorStatuses.length) return null;
+                const names = (arr) => arr.map(s => s.label).join(', ');
+                const hot = indoorStatuses.filter(s => s.status && s.status.tone === 'hot');
+                const cold = indoorStatuses.filter(s => s.status && s.status.tone === 'cold');
+                const warn = indoorStatuses.filter(s => s.status && s.status.severity === 1);
+                if (hot.length || cold.length) {
+                    const parts = [];
+                    if (hot.length) parts.push(`${hot.length} pièce${hot.length > 1 ? 's' : ''} trop chaude${hot.length > 1 ? 's' : ''} (${names(hot)})`);
+                    if (cold.length) parts.push(`${cold.length} pièce${cold.length > 1 ? 's' : ''} trop froide${cold.length > 1 ? 's' : ''} (${names(cold)})`);
+                    return { tone: 'bad', icon: 'alert-triangle', message: parts.join(' · ') };
+                }
+                if (warn.length) {
+                    return { tone: 'warn', icon: 'alert-circle', message: `${warn.length} pièce${warn.length > 1 ? 's' : ''} en limite de confort (${names(warn)}).` };
+                }
+                return { tone: 'ok', icon: 'check-circle-2', message: 'Toutes les pièces sont dans la zone de confort.' };
+            }, [indoorStatuses]);
+
+            // Confort de la moyenne intérieure (sous-titre de la carte).
+            const avgStatus = useMemo(() => {
+                const v = Number(currentIndoorAvg);
+                if (!v) return null;
+                if (v >= COMFORT_DEFAULT.min && v <= COMFORT_DEFAULT.max)
+                    return { text: 'Dans la zone de confort', cls: 'text-emerald-600 dark:text-emerald-400' };
+                if (v > COMFORT_DEFAULT.max)
+                    return { text: `+${fmt(v - COMFORT_DEFAULT.max)}° au-dessus du confort`, cls: 'text-amber-600 dark:text-amber-400' };
+                return { text: `−${fmt(COMFORT_DEFAULT.min - v)}° sous le confort`, cls: 'text-blue-600 dark:text-blue-400' };
+            }, [currentIndoorAvg]);
+
+            // Axe Y : domaine et graduations sur des valeurs entières rondes.
+            const yAxis = useMemo(() => {
+                const visibleKeys = Object.keys(ROOM_CONFIG).filter(k => !hiddenKeys.includes(k));
+                let lo = Infinity, hi = -Infinity;
+                chartData.forEach(d => visibleKeys.forEach(k => {
+                    if (typeof d[k] === 'number') {
+                        if (d[k] < lo) lo = d[k];
+                        if (d[k] > hi) hi = d[k];
+                    }
+                }));
+                if (!isFinite(lo) || !isFinite(hi)) return { domain: ['auto', 'auto'], ticks: undefined };
+                let min = Math.floor(lo), max = Math.ceil(hi);
+                if (max - min < 2) max = min + 2;
+                const span = max - min;
+                const step = span > 12 ? 3 : span > 6 ? 2 : 1;
+                const ticks = [];
+                for (let t = min; t <= max; t += step) ticks.push(t);
+                if (ticks[ticks.length - 1] !== max) ticks.push(max);
+                return { domain: [min, max], ticks };
+            }, [chartData, hiddenKeys]);
+
             if (loading) return (
                 <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-950" role="status" aria-live="polite">
                     <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -284,6 +426,33 @@
                             </div>
                         )}
 
+                        {comfortBanner && (
+                            <div
+                                role="status"
+                                className={`rounded-2xl border p-3 flex items-start gap-2.5 ${
+                                    comfortBanner.tone === 'bad'
+                                        ? 'border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40'
+                                        : comfortBanner.tone === 'warn'
+                                        ? 'border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30'
+                                        : 'border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/30'
+                                }`}
+                            >
+                                <i
+                                    data-lucide={comfortBanner.icon}
+                                    className={`w-5 h-5 mt-0.5 shrink-0 ${
+                                        comfortBanner.tone === 'bad' ? 'text-rose-500'
+                                        : comfortBanner.tone === 'warn' ? 'text-amber-500'
+                                        : 'text-emerald-500'
+                                    }`}
+                                ></i>
+                                <p className={`text-sm font-medium leading-snug ${
+                                    comfortBanner.tone === 'bad' ? 'text-rose-800 dark:text-rose-200'
+                                    : comfortBanner.tone === 'warn' ? 'text-amber-800 dark:text-amber-200'
+                                    : 'text-emerald-800 dark:text-emerald-200'
+                                }`}>{comfortBanner.message}</p>
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-3">
                             <StatCard 
                                 label="Ext." 
@@ -291,6 +460,7 @@
                                 icon="map-pin" 
                                 colorClass="bg-amber-50 dark:bg-amber-500/10" 
                                 iconColorClass="text-amber-500" 
+                                subtitle="Référence météo"
                             />
                             <StatCard 
                                 label="Moy. Int." 
@@ -298,6 +468,8 @@
                                 icon="home" 
                                 colorClass="bg-indigo-50 dark:bg-indigo-500/10" 
                                 iconColorClass="text-indigo-500" 
+                                subtitle={avgStatus?.text}
+                                subtitleClass={avgStatus?.cls}
                             />
                         </div>
 
@@ -346,7 +518,7 @@
                                     <LineChart data={chartData} margin={{ top: 5, right: 8, left: 28, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#1e293b' : '#f1f5f9'} />
                                         <XAxis dataKey="chartLabel" axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={chartUsesDateLabels ? 44 : 30} dy={10} tick={{ fontSize: 11 }} />
-                                        <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false} tickFormatter={(val) => `${val}°`} width={56} tickMargin={8} tick={{ fontSize: 11 }} />
+                                        <YAxis domain={yAxis.domain} ticks={yAxis.ticks} allowDecimals={false} axisLine={false} tickLine={false} tickFormatter={(val) => `${val}°`} width={56} tickMargin={8} tick={{ fontSize: 11 }} />
                                         <Tooltip content={<CustomTooltip />} cursor={{stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4'}} />
                                         {Object.entries(ROOM_CONFIG).map(([key, config]) => !hiddenKeys.includes(key) && (
                                             <Line 
@@ -367,33 +539,45 @@
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] px-3">Zones</h3>
-                            {Object.entries(ROOM_CONFIG)
-                                .filter(([key]) => key !== 'Paris' && latestLog?.[key] !== null)
-                                .sort((a, b) => (latestLog?.[b[0]] || 0) - (latestLog?.[a[0]] || 0))
-                                .map(([key, config]) => {
-                                    const val = latestLog?.[key];
+                            <div className="flex items-center justify-between px-3">
+                                <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Zones</h3>
+                                <div className="flex items-center gap-2.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Confort</span>
+                                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span>Vigilance</span>
+                                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span>Hors zone</span>
+                                </div>
+                            </div>
+                            {indoorStatuses
+                                .slice()
+                                .sort((a, b) => (b.val || 0) - (a.val || 0))
+                                .map(({ key, val, status, trend }) => {
+                                    const config = ROOM_CONFIG[key];
                                     const isHidden = hiddenKeys.includes(key);
                                     return (
                                         <button
                                             key={key}
                                             type="button"
                                             onClick={() => toggleRoom(key)}
-                                            aria-label={`${isHidden ? 'Afficher' : 'Masquer'} ${config.label}`}
+                                            aria-label={`${config.label} : ${fmt(val)} degrés${status ? ', ' + status.label : ''}. ${isHidden ? 'Afficher' : 'Masquer'} sur le graphique.`}
                                             aria-pressed={!isHidden}
-                                            className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-3 px-4 rounded-[1.5rem] border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isHidden ? 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}
+                                            style={status ? { borderLeftColor: status.color, borderLeftWidth: '4px' } : undefined}
+                                            className={`w-full flex items-center justify-between bg-white dark:bg-slate-900 p-3 px-4 rounded-[1.5rem] border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isHidden ? 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 opacity-70' : 'border-slate-100 dark:border-slate-800 shadow-sm'}`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{backgroundColor: config.color + '15'}}>
+                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{backgroundColor: config.color + '15'}}>
                                                     <i data-lucide={config.icon} className="w-5 h-5" style={{color: config.color}}></i>
                                                 </div>
                                                 <div className="text-left">
                                                     <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">{config.label}</span>
+                                                    {status && <span className={`block text-[11px] font-semibold ${status.text}`}>{status.label}</span>}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{val}°</span>
-                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-400 dark:text-slate-500 w-4 h-4"></i>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{fmt(val)}°</span>
+                                                    <TrendBadge delta={trend} />
+                                                </div>
+                                                <i data-lucide={isHidden ? 'eye-off' : 'eye'} className="text-slate-400 dark:text-slate-500 w-4 h-4 shrink-0"></i>
                                             </div>
                                         </button>
                                     );
