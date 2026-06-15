@@ -160668,5 +160668,105 @@
     "Cuisine": 24.5,
     "Chambre de Lilou": "",
     "Salon": 24.86
+  },
+  {
+    "Heure": "2026-06-15T12:05:27.000Z",
+    "Paris": 24.2,
+    "Bureau": 24.8,
+    "Chambre": 24.5,
+    "SdB": 25.1,
+    "Cuisine": 24.6,
+    "Chambre de Lilou": "",
+    "Salon": 24.75
+  },
+  {
+    "Heure": "2026-06-15T12:35:27.000Z",
+    "Paris": 25,
+    "Bureau": 24.7,
+    "Chambre": 24.5,
+    "SdB": 25,
+    "Cuisine": 25.8,
+    "Chambre de Lilou": "",
+    "Salon": 24.7
+  },
+  {
+    "Heure": "2026-06-15T13:05:27.000Z",
+    "Paris": 25.8,
+    "Bureau": 24.6,
+    "Chambre": 24.5,
+    "SdB": 25.1,
+    "Cuisine": 25.9,
+    "Chambre de Lilou": "",
+    "Salon": 24.68
+  },
+  {
+    "Heure": "2026-06-15T13:35:25.000Z",
+    "Paris": 26.3,
+    "Bureau": 24.6,
+    "Chambre": 24.5,
+    "SdB": 25.1,
+    "Cuisine": 26,
+    "Chambre de Lilou": "",
+    "Salon": 24.66
+  },
+  {
+    "Heure": "2026-06-15T14:05:27.000Z",
+    "Paris": 26.6,
+    "Bureau": 24.6,
+    "Chambre": 24.4,
+    "SdB": 25.2,
+    "Cuisine": 26,
+    "Chambre de Lilou": "",
+    "Salon": 24.64
+  },
+  {
+    "Heure": "2026-06-15T14:35:26.000Z",
+    "Paris": 26.9,
+    "Bureau": 24.6,
+    "Chambre": 24.5,
+    "SdB": 25.2,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 24.64
+  },
+  {
+    "Heure": "2026-06-15T15:05:26.000Z",
+    "Paris": 27.3,
+    "Bureau": 24.5,
+    "Chambre": 24.5,
+    "SdB": 25.2,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 24.63
+  },
+  {
+    "Heure": "2026-06-15T15:35:27.000Z",
+    "Paris": 27.6,
+    "Bureau": 24.5,
+    "Chambre": 24.5,
+    "SdB": 25.3,
+    "Cuisine": 26,
+    "Chambre de Lilou": "",
+    "Salon": 24.63
+  },
+  {
+    "Heure": "2026-06-15T16:05:27.000Z",
+    "Paris": 27.7,
+    "Bureau": 24.5,
+    "Chambre": 24.5,
+    "SdB": 25.3,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 24.64
+  },
+  {
+    "Heure": "2026-06-15T16:35:27.000Z",
+    "Paris": 27.7,
+    "Bureau": 24.6,
+    "Chambre": 24.5,
+    "SdB": 25.4,
+    "Cuisine": 26.1,
+    "Chambre de Lilou": "",
+    "Salon": 24.65
   }
 ]
