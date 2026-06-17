@@ -178,10 +178,11 @@
         };
 
         const App = () => {
+            const canUseMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
             const [logs, setLogs] = useState([]);
             const [loading, setLoading] = useState(true);
             const [errorMessage, setErrorMessage] = useState('');
-            const [isDarkMode, setIsDarkMode] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
+            const [isDarkMode, setIsDarkMode] = useState(() => canUseMatchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false);
 
             const [selectedRange, setSelectedRange] = useState(() => {
                 try {
@@ -202,11 +203,15 @@
             });
 
             useEffect(() => {
-                localStorage.setItem('monclimat_range', JSON.stringify(selectedRange.label));
+                try {
+                    localStorage.setItem('monclimat_range', JSON.stringify(selectedRange.label));
+                } catch (e) {}
             }, [selectedRange]);
 
             useEffect(() => {
-                localStorage.setItem('monclimat_hidden', JSON.stringify(hiddenKeys));
+                try {
+                    localStorage.setItem('monclimat_hidden', JSON.stringify(hiddenKeys));
+                } catch (e) {}
             }, [hiddenKeys]);
 
             const loadData = useCallback(() => {
@@ -234,11 +239,18 @@
             }, [loadData]);
 
             useEffect(() => {
+                if (!canUseMatchMedia) return;
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
                 const onThemeChange = (event) => setIsDarkMode(event.matches);
-                mediaQuery.addEventListener('change', onThemeChange);
-                return () => mediaQuery.removeEventListener('change', onThemeChange);
-            }, []);
+                if (typeof mediaQuery.addEventListener === 'function') {
+                    mediaQuery.addEventListener('change', onThemeChange);
+                    return () => mediaQuery.removeEventListener('change', onThemeChange);
+                }
+                if (typeof mediaQuery.addListener === 'function') {
+                    mediaQuery.addListener(onThemeChange);
+                    return () => mediaQuery.removeListener(onThemeChange);
+                }
+            }, [canUseMatchMedia]);
 
             useEffect(() => {
                 if (!loading) lucide.createIcons();
