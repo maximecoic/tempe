@@ -56,8 +56,10 @@ try again later »). Il ne se déclenche que sur un changement de **code** (`src
 
 **Réglage requis (une fois)** : Settings → Pages → Build and deployment → Source →
 **GitHub Actions**. Sans ça, l'ancien déploiement par branche continue en parallèle et
-reproduit les conflits. (`contents: write` suppose aussi Settings → Actions → General →
-*Workflow permissions* → **Read and write**.)
+reproduit les conflits.
+
+`index.html` est **construit et déployé par le workflow** (artefact Pages) ; il n'est plus
+commité en retour. La copie versionnée sert d'instantané — le site reflète toujours `src/`.
 
 ### Données : pas de redéploiement toutes les 30 min
 

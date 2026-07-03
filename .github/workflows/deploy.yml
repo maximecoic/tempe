@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # committer index.html régénéré
+  contents: read     # checkout
   pages: write      # déployer sur Pages
   id-token: write   # OIDC requis par deploy-pages
 
@@ -44,19 +44,6 @@ jobs:
 
       - name: Régénère index.html depuis src/
         run: node src/build.mjs
-
-      # Garde le index.html du repo en phase (hors 'paths' → ne redéclenche pas).
-      - name: Commit index.html s'il a changé
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          if git diff --staged --quiet; then
-            echo "index.html inchangé."
-          else
-            git commit -m "build: index.html [skip ci]"
-            git push
-          fi
 
       - uses: actions/configure-pages@v5
 
