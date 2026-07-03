@@ -260,11 +260,12 @@ class Component extends DCLogic {
   ];
 
   componentDidMount(){
-    // Hébergé à la racine du repo (à côté de data.json) → chemin relatif.
-    // Repli sur l'URL raw GitHub si ./data.json est absent (aperçu hors-ligne).
+    // Données lues directement depuis raw GitHub : elles reflètent chaque commit
+    // « Update data.json » sans redéploiement du site (le déploiement Pages ne se
+    // déclenche donc plus toutes les 30 min). ./data.json (copie du build) = repli.
     const RAW='https://raw.githubusercontent.com/maximecoic/tempe/refs/heads/main/data.json';
     const load=(url)=>fetch(url).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
-    load('./data.json').catch(()=>load(RAW))
+    load(RAW).catch(()=>load('./data.json'))
       .then(rows=>{
         const data = rows.map(o=>({ t:new Date(o.Heure), o }))
                          .filter(p=>!isNaN(p.t)).sort((a,b)=>a.t-b.t);

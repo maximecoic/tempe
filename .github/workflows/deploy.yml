@@ -1,43 +1,68 @@
 name: Build & deploy
 
-# Régénère index.html (à la racine, servi par GitHub Pages) dès qu'une source
-# change, puis le commit sur main. Déclenchable aussi manuellement.
+# Construit index.html depuis src/ puis déploie sur GitHub Pages via Actions
+# (déploiement sérialisé par 'concurrency' → fini les conflits
+# « Deployment failed, try again later »).
+#
+# Ne se déclenche QUE sur un changement de CODE. Les commits « Update data.json »
+# (toutes les ~30 min) ne redéclenchent plus de déploiement : l'app lit les
+# données directement depuis raw GitHub.
+#
+# PRÉREQUIS (une fois) : Settings → Pages → Build and deployment → Source →
+# « GitHub Actions » (sinon l'ancien déploiement par branche tourne en parallèle).
 on:
   push:
     branches: [main]
     paths:
       - 'src/**'
+      - 'CNAME'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # committer index.html régénéré
+  pages: write      # déployer sur Pages
+  id-token: write   # OIDC requis par deploy-pages
 
+# Un seul déploiement Pages à la fois → pas de conflit.
 concurrency:
-  group: build-index
+  group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Régénère index.html depuis src/
         run: node src/build.mjs
 
-      - name: Commit si index.html a changé
+      # Garde le index.html du repo en phase (hors 'paths' → ne redéclenche pas).
+      - name: Commit index.html s'il a changé
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           if git diff --staged --quiet; then
-            echo "index.html inchangé — rien à committer."
+            echo "index.html inchangé."
           else
-            git commit -m "build: régénère index.html depuis src [skip ci]"
+            git commit -m "build: index.html [skip ci]"
             git push
           fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
