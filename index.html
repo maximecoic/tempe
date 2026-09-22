@@ -99,13 +99,13 @@
             <div style="position:relative;width:128px;height:128px">
               <svg viewBox="0 0 128 128" style="width:128px;height:128px;transform:rotate(-90deg)">
                 <defs>
-                  <linearGradient id="gc-{{ r.key }}" x1="0" y1="0" x2="1" y2="1">
+                  <linearGradient id="gc-{{ r.safeId }}" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stop-color="{{ r.c1 }}"></stop>
                     <stop offset="100%" stop-color="{{ r.c2 }}"></stop>
                   </linearGradient>
                 </defs>
                 <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(0,0,0,.07)" stroke-width="11"></circle>
-                <circle cx="64" cy="64" r="54" fill="none" stroke="url(#gc-{{ r.key }})" stroke-width="11" stroke-linecap="round" stroke-dasharray="{{ r.dashArray }}"></circle>
+                <circle cx="64" cy="64" r="54" fill="none" stroke="url(#gc-{{ r.safeId }})" stroke-width="11" stroke-linecap="round" stroke-dasharray="{{ r.dashArray }}"></circle>
               </svg>
               <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
                 <div style="font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em">{{ r.current }}<span style="font-size:15px;color:rgba(0,0,0,.4)">°</span></div>
@@ -135,11 +135,11 @@
           <svg viewBox="0 0 1000 320" preserveAspectRatio="none" style="width:100%;height:320px;display:block;pointer-events:none">
             <defs>
               <sc-for list="{{ t3selected }}" as="r" hint-placeholder-count="4">
-                <linearGradient id="g3area-{{ r.key }}" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="g3area-{{ r.safeId }}" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="{{ r.c1 }}" stop-opacity="0.18"></stop>
                   <stop offset="100%" stop-color="{{ r.c2 }}" stop-opacity="0.012"></stop>
                 </linearGradient>
-                <linearGradient id="g3line-{{ r.key }}" x1="0" y1="0" x2="1" y2="0">
+                <linearGradient id="g3line-{{ r.safeId }}" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stop-color="{{ r.c1 }}"></stop>
                   <stop offset="100%" stop-color="{{ r.c2 }}"></stop>
                 </linearGradient>
@@ -149,13 +149,13 @@
               <line x1="0" y1="{{ t.y }}" x2="1000" y2="{{ t.y }}" stroke="rgba(0,0,0,.06)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
             </sc-for>
             <sc-for list="{{ t3selected }}" as="r" hint-placeholder-count="4">
-              <path d="{{ r.area320 }}" fill="url(#g3area-{{ r.key }})" stroke="none"></path>
+              <path d="{{ r.area320 }}" fill="url(#g3area-{{ r.safeId }})" stroke="none"></path>
             </sc-for>
             <sc-for list="{{ t3selected }}" as="r" hint-placeholder-count="4">
-              <path d="{{ r.dotted320 }}" fill="none" stroke="url(#g3line-{{ r.key }})" stroke-width="2" stroke-dasharray="0.5 5" stroke-linecap="round" vector-effect="non-scaling-stroke" opacity="0.8"></path>
+              <path d="{{ r.dotted320 }}" fill="none" stroke="url(#g3line-{{ r.safeId }})" stroke-width="2" stroke-dasharray="0.5 5" stroke-linecap="round" vector-effect="non-scaling-stroke" opacity="0.8"></path>
             </sc-for>
             <sc-for list="{{ t3selected }}" as="r" hint-placeholder-count="4">
-              <path d="{{ r.line320 }}" fill="none" stroke="url(#g3line-{{ r.key }})" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+              <path d="{{ r.line320 }}" fill="none" stroke="url(#g3line-{{ r.safeId }})" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
             </sc-for>
           </svg>
           <div style="position:absolute;left:-2px;top:0;height:320px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none">
@@ -285,6 +285,7 @@ class Component extends DCLogic {
   }
 
   fmtDate(d){ const z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); }
+  safeSvgId(key){ return String(key).replace(/[^A-Za-z0-9_-]/g,'_'); }
   parseVal(x){ if(x===''||x==null) return null; const n=+x; return isNaN(n)?null:n; }
 
   // Build solid line (normal cadence) + dotted bridges over plausible gaps.
@@ -380,7 +381,7 @@ class Component extends DCLogic {
       const C=2*Math.PI*54, dash=pct*C;
       const ys320 = series.map(s=> s.v==null ? null : pad+((H-pad*2)-((s.v-vmin)/(vmax-vmin))*(H-pad*2)));
       const lines = this.buildLines(pts,W,H,vmin,vmax,pad,normalGap);
-      return { key:k, name:dispName(k), ext:k==='Paris', c1:c.c1, c2:c.c2, hasData,
+      return { key:k, safeId:this.safeSvgId(k), name:dispName(k), ext:k==='Paris', c1:c.c1, c2:c.c2, hasData,
         current: last!=null?last.toFixed(1):'—',
         min: min!=null?min.toFixed(1):'—', max: max!=null?max.toFixed(1):'—', avg: avg!=null?avg.toFixed(1):'—',
         comfortLabel:cf.label, comfortColor:cf.color, comfortBg:cf.bg,
