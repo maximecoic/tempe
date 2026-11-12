@@ -214178,5 +214178,15 @@
     "Cuisine": 22.2,
     "Chambre de Lilou": 20.56,
     "Salon": 21.63
+  },
+  {
+    "Heure": "2026-11-12T02:26:00.000Z",
+    "Paris": 12.5,
+    "Bureau": 22.1,
+    "Chambre": 22.3,
+    "SdB": 23.3,
+    "Cuisine": 22.3,
+    "Chambre de Lilou": 20.57,
+    "Salon": 21.57
   }
 ]
